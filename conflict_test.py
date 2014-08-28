@@ -22,7 +22,6 @@ def print_name():
     if("Sean"):
         print "Sean"
         
-    if("Chris R."):
         print "Chris R."
         
     if("Bryan"):
