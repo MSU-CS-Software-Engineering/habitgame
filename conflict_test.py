@@ -19,7 +19,6 @@ def print_name():
     if("Chris W."):
         print "Chris W."
         
-    if("Sean"):
         print "Sean"
         
         print "Chris R."
