@@ -28,8 +28,8 @@ def print_name():
         
     print "Matthew"
         
-    if("Dustin"):
-        print "Dustin"
+    
+    print "Dustin"
 
     if("Darron"):
         print "Darron"
