@@ -23,7 +23,7 @@ def print_name():
         
         print "Chris R."
         
-    if("Bryan"):
+
         print "Bryan"
         
     print "Matthew"
