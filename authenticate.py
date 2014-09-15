@@ -1,6 +1,14 @@
 
 """
-This module handles authorization and sync for the dropbox storage.
+This module handles authorization and sync for the dropbox storage. How to use:
+When we start the program, call the main function and assign it to a variable (we
+need to have a copy of the dropbox client to pass later).
+
+client = dropbox_auth()
+
+Once we have the client, any sync requests will need to have the client obj passed too:
+
+sync_files(client, file_name)
 """
  
 import dropbox
@@ -9,7 +17,7 @@ import os.path
 import time
  
  
-def sync_files(client, file_name):
+def sync_files(client, file_name='character.xml'):
     """
     Pass this function a dropbox client and it will compare the local file
     with the copy on the user's dropbox. it replaces the older file with the
