@@ -4,6 +4,7 @@
 
 from tkinter  import *
 from tkinter.ttk import *
+from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 class Application(Frame):              
     def __init__(self, master=None):
@@ -25,7 +26,9 @@ class Application(Frame):
         
         top_frame = Frame(self)
         top_frame.grid(row=0,sticky='nesw')
-        
+       
+        app_style = Style() #Necessary to stylize application.
+
         #Area for Program logo
         header = Label(top_frame, text = 'Daily Hack',
                        foreground='black')
@@ -66,20 +69,31 @@ class Application(Frame):
 
         #Habit frame broken into tabed areas that will list respective
         #habits, tasks, or goals
-        habit_frame = Notebook(self, height = 200, width = 400)
-        habit_frame.grid(row=3, sticky='nesw')
+        habit_frame = Notebook(self, height = 200, width = 400, padding=5)
+        habit_frame.grid(row=3, sticky=N+S+E+W)
         habit_frame.grid_rowconfigure(3, weight=1)
         
-        tab_habit = Frame(habit_frame)
-        tab_task = Frame(habit_frame)
-        tab_goal = Frame(habit_frame)
+
+        app_style.configure("W.TFrame", background='white')
+
+        tab_habit = Frame(habit_frame, style="W.TFrame")
+        tab_task = Frame(habit_frame, style ="W.TFrame")
+        tab_goal = Frame(habit_frame, style ="W.TFrame")
 
         habit_frame.add(tab_habit, text='Habits')
         habit_frame.add(tab_task, text='Tasks')
         habit_frame.add(tab_goal, text='Goals')
 
+        add_habit_btn = Button(tab_habit, text='Add new habit', command = add_habit)
+        add_task_btn = Button(tab_task, text='Add new task', command = add_task)
+        add_goal_btn = Button(tab_goal, text='Add new goal', command = add_goal)
+
+        add_habit_btn.place(relx=0.95, rely=0.95, anchor=SE)
+        add_task_btn.place(relx=0.95, rely=0.95, anchor=SE)
+        add_goal_btn.place(relx=0.95, rely=0.95, anchor=SE)
+
         habit1=Frame(tab_habit)
-        habit1.pack()
+        habit1.grid()
                 
         #standard bottom footer for contact infor, company info, and other
         bottom_frame =Frame(self)
@@ -87,6 +101,15 @@ class Application(Frame):
         bottom_header = Label(bottom_frame, text = 'Copyright 2014',
                               foreground='black')
         bottom_header.pack()
+
+def add_habit():
+    messagebox.showinfo("Placeholder", "I'm an add_habit stub!")
+
+def add_task():
+    messagebox.showinfo("Placeholder", "I'm an add_task stub!")
+
+def add_goal():
+    messagebox.showinfo("Placeholder", "I'm an add_goal stub!")
 
 app = Application()                       
 app.master.title('Daily Hack')    
