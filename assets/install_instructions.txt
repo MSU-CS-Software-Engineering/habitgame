@@ -1,0 +1,5 @@
+asset_folder=assets
+num_directories=1
+num_files=1
+config
+landing_page.py:root
