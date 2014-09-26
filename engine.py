@@ -4,6 +4,8 @@
   Dependencies: landing_page.py
 """
 
+import landing_page.py
+
 class Character:
     """
       Class for Habit character profile
@@ -48,12 +50,14 @@ class Item:
         image: Name of accompanying image                 (string)
         value: Currency value of item                     (int)
         uses: Uses before item expires [-1 for infinite]  (int)
+        effect: Special function that the item performs   (function)
     """
-    def __init__(self, name, image, value, uses):
+    def __init__(self, name, image, value, uses, effect = None):
         self.name = name
         self.image = image
         self.value = value
         self.uses = uses
+        self.effect = effect
 
 def main():
     """
