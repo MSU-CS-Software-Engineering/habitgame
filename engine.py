@@ -6,6 +6,7 @@
 
 #import landing_page.py
 import os.path
+from datetime import date #For timestamps
 
 class Character:
     """
@@ -107,6 +108,8 @@ class Character:
             habit = self.habits[habit_id]
             print("Name:    " + habit.name)
             print("ID:      " + str(habit.ID))
+            print("Type:    " + habit.habit_type)
+            print("Timestamp: " + str(habit.timestamp))
             print("Value:   " + str(habit.value))
             print("Exp Pts: " + str(habit.exp))
 
@@ -168,15 +171,19 @@ class Habit:
       Class for Individual Habits
 
       Variables:
-        name: Name of habit         (string)
-        ID: Number to hold index in (int)
+        name: Name of habit                          (string)
+        ID: Number to hold index in                  (int)
         habitlist
-        value: Cash reward/penalty  (int)
-        exp: Experience point value (int)
+        habit_type: Type of habit (Daily, task, etc) (string)
+        timestamp: Last-accessed date                (date)
+        value: Cash reward/penalty                   (int)
+        exp: Experience point value                  (int)
     """
-    def __init__(self, name, value, exp, ID=0):
+    def __init__(self, name, value, exp, habit_type, ID=0):
         self.name = name
         self.ID = ID
+        self.habit_type = habit_type
+        self.timestamp = date.today()
         self.value = value
         self.exp = exp
 
@@ -187,6 +194,8 @@ class Habit:
         """
         habit_dict = {'name':self.name,
                       'ID'  :self.ID,
+                      'timestamp':str(self.timestamp),
+                      'type':self.habit_type,
                       'value':self.value,
                       'exp':self.exp}
         
@@ -300,6 +309,7 @@ class Game_Data:
                 new_habit = Habit(habit['name'],
                                   habit['value'],
                                   habit['exp'],
+                                  habit['habit_type'],
                                   habit['ID'])
             
                 new_character.add_habit(new_habit)
@@ -330,9 +340,9 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read more books', 50, 10)  
-    habit_2 = Habit('Eat more veggies', 100, 15)
-    habit_3 = Habit('Get more sleep', 20, 5)
+    habit_1 = Habit('Read more books', 50, 10, 'habit')  
+    habit_2 = Habit('Eat more veggies', 100, 15, 'daily')
+    habit_3 = Habit('Get more sleep', 20, 5, 'task')
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 10)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
