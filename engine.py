@@ -6,6 +6,7 @@
 
 #import landing_page.py
 import os.path
+from datetime import date #For timestamping
 
 class Character:
     """
@@ -107,6 +108,8 @@ class Character:
             habit = self.habits[habit_id]
             print("Name:    " + habit.name)
             print("ID:      " + str(habit.ID))
+            print("Type:    " + habit.habit_type
+            print("Timestamp: " + str(habit.timestamp))
             print("Value:   " + str(habit.value))
             print("Exp Pts: " + str(habit.exp))
 
@@ -168,15 +171,18 @@ class Habit:
       Class for Individual Habits
 
       Variables:
-        name: Name of habit         (string)
-        ID: Number to hold index in (int)
-        habitlist
-        value: Cash reward/penalty  (int)
-        exp: Experience point value (int)
+        name: Name of habit                         (string)
+        ID: Number to hold index in habitlist       (int)
+        habit_type: Type of habit (Daily, task, etc)(string)
+        timestamp: Last-accessed time               (date)
+        value: Cash reward/penalty                  (int)
+        exp: Experience point value                 (int)
     """
-    def __init__(self, name, value, exp, ID=0):
+    def __init__(self, name, habit_type, value, exp, ID=0):
         self.name = name
         self.ID = ID
+        self.habit_type = habit_type
+        self.timestamp = date.today()
         self.value = value
         self.exp = exp
 
@@ -187,6 +193,8 @@ class Habit:
         """
         habit_dict = {'name':self.name,
                       'ID'  :self.ID,
+                      'habit_type':self.habit_type
+                      'timestamp':self.timestamp
                       'value':self.value,
                       'exp':self.exp}
         
