@@ -1,5 +1,4 @@
-#rough first version of the parsing functions.
-#need to finish parsing tasks.
+#rough WIP, currently returns the tasks as a regular list (not a dict)
 
 import xml.dom.minidom
 
@@ -24,8 +23,24 @@ class parser:
         self.token = self.doc.getElementsByTagName('token')
         return self.token[0].firstChild.data
 
+    def parse_tasks(self):
+
+        self.task_list = self.doc.getElementsByTagName('task')
+        tasks = list()
+        
+        for task in self.task_list:
+            for node in task.childNodes:
+                #print(node.data)
+                tasks.append(node.data)
+                
+        return tasks
+
     def __init__(self, filename):
 
         self.doc = xml.dom.minidom.parse(filename)
         
-data = parser('character.xml')
+
+if __name__ == "__main__":
+    
+    data = parser('character.xml')
+    tasks = data.parse_tasks()
