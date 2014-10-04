@@ -1,115 +1,115 @@
-#Landing Page for Daily Hack
-#Using tkinter.ttk b/c it allows for a better looking gui.
-#some functionality varies between tkinter and ttk
-
 from tkinter  import *
 from tkinter.ttk import *
+
+
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
-class Application(Frame):              
-    def __init__(self, master=None):
-        Frame.__init__(self, master)   
-        self.grid(sticky=N+S+W+E)                     
-        self.top_frame()
+class Top(Frame):
+  
+    def __init__(self, parent):
+        Frame.__init__(self, parent)   
+         
+        self.parent = parent
+        
+        self.initUI()
+        
+    def initUI(self):
+        var = StringVar()
+      
+        self.parent.title("Daily Hack")
+        self.style = Style()
+        self.style.theme_use("default")
+        self.pack(fill=BOTH, expand=1)
+
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(3, weight=1)
+        self.columnconfigure(5, weight=1)
+        self.columnconfigure(6, pad=7)
+        self.rowconfigure(6, weight=1)
+        self.rowconfigure(9, pad=7)
+        
+        lbl = Label(self, text="Player Name")
+        lbl.grid(row = 0, column = 0, columnspan = 2,sticky=W, pady=4, padx=5)
+
+        level = Label(self, text="LEVEL:")
+        level.grid(row = 1, column =0 ,columnspan = 2,sticky=W, pady=4, padx=5)
+
+        cash = Label(self, text="CASH:")
+        cash.grid(row = 2, column =0 ,columnspan = 2,sticky=W, pady=4, padx=5)
+
+        health = Label(self, text="HEALTH")
+        health.grid(row = 3, column =0 ,columnspan = 2,sticky=W, pady=4, padx=5)
+
+        progress_label = Label(self, text="Daily Progress")
+        progress_label.grid(row = 3, column =3 ,sticky=W+ E+S + N, pady=4, padx=5)
+        progress_label.configure(anchor = CENTER)
+        
+        
+        progress = Progressbar(self, orient = 'horizontal', mode= 'determinate')
+        
+        progress.grid(row = 4, column=0, columnspan = 6, stick = E + W, padx = 3)
+        progress.start()
+        
+        area1 = Canvas(self)
+        area1.grid(row=5, column=0, columnspan=2, rowspan=4, 
+            padx=5, sticky=E+W+S+N)
+
+        area2 = Canvas(self)
+        area2.grid(row=5, column=2, columnspan=2, rowspan=4, 
+            padx=5, sticky=E+W+S+N)
+
+        area3 = Canvas(self)
+        area3.grid(row=5, column=4, columnspan=2, rowspan=4, 
+            padx=5, sticky=E+W+S+N)
+
+
+
+        mb=  Menubutton ( self, text="Options" )
+        mb.grid(row = 0, column = 5, sticky = E)
+        mb.menu  =  Menu ( mb, tearoff = 0 )
+        mb["menu"]  =  mb.menu
+    
+        mayoVar  = IntVar()
+        ketchVar = IntVar()
+        mb.menu.add_command( label="Habits", command = call_work_space )
+        mb.menu.add_command( label="Dailies", command = call_work_space  )
+        mb.menu.add_command( label="Tasks", command = call_work_space  )
+        mb.menu.add_command( label="Shop", command = call_work_space  )
+        mb.menu.add_command ( label="Game", command = call_work_space  )
+        mb.menu.add_command( label="Settings", command = call_work_space  )
         
 
-    def top_frame(self):
-        #Top window, this allows for resizing
-        top=self.winfo_toplevel()
-        top.rowconfigure(0, weight=1)
-        top.columnconfigure(0, weight=1)
-
-        
-        self.rowconfigure(3,weight=1)
-        self.columnconfigure(0,weight=1)
-
-        
-        top_frame = Frame(self)
-        top_frame.grid(row=0,sticky='nesw')
-        
-        app_style = Style() #Necessary to stylize application.
-
-        #Area for Program logo
-        header = Label(top_frame, text = 'Daily Hack',
-                       foreground='black')
-        header.pack(side=LEFT)
-        
-        #Frame for all of the stats to show up
-        stats =Frame(self)
-        stats.grid(row=1,sticky='nesw')
         
 
-        task_ratio = Label(stats, text = 'Stats: ')
-        task_ratio.grid(row=0,column=0)
-        cash = Label(stats, text = 'Cash: ')
-        cash.grid(row=0,column=1)
         
-        #Progress bar showing daily tasks completion at a glance
-        #Example: Between 0001 and 0600 100% task completion = green
-        #Example: Between 0600 and 1200 50% task completion = yello
-        #Example: Between 1200 and 1800 0% task completion = red
-        #This will likely consist of frames that color as the day goes on
-        #progression will depend on time of day.
-        #right now there is only one progress bar to for place holder
         
-        daily_countdown_frame =Frame(self)
-        daily_countdown_frame.grid(row=2,sticky='nesw')
+        hbtn = Button(self, text="Help")
+        hbtn.grid(row=9, column=0, padx=5)
+
+        obtn = Button(self, text="OK")
+        obtn.grid(row=9, column=3)
+
+        footer = Label(self, text="Copyright 2014")
+        footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
+        footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
+def start(self):
+    self.progress["value"] = 0
+    self.max = 24
+    self.progress["midnight"]=24
+    self.progress["value"] = 12
+
+def call_work_space():
+    work_space.run()
+              
+
+def main():
+  
+    root = Tk()
+    root.geometry("1100x400+300+300")
+    app = Top(root)
+    root.mainloop()  
+
+
+if __name__ == '__main__':
+    main()  
         
-        daily_timeline_header = Label(daily_countdown_frame,
-                                      text = 'Daily Timeline',)
-        daily_timeline_header.grid(row = 0, column = 0)
-
-        time_line_progress = Progressbar(daily_countdown_frame,
-                                             orient = "horizontal", length = 400,
-                                             mode = "determinate")
-        time_line_progress.grid(row = 1, column = 0)
-        tl_label = Label(daily_countdown_frame, text = 'progress bar')
-        tl_label.grid(row = 1, column = 0)
-        
-
-        #Habit frame broken into tabed areas that will list respective
-        #habits, tasks, or goals
-        habit_frame = Notebook(self, height = 200, width = 400, padding=5)
-        habit_frame.grid(row=3, sticky='nesw')
-        habit_frame.grid_rowconfigure(3, weight=1)
-        
-        app_style.configure("W.TFrame", background='white')
-
-        tab_habit = Frame(habit_frame, style="W.TFrame")
-        tab_task = Frame(habit_frame, style ="W.TFrame")
-        tab_goal = Frame(habit_frame, style ="W.TFrame")
-
-        habit_frame.add(tab_habit, text='Habits')
-        habit_frame.add(tab_task, text='Tasks')
-        habit_frame.add(tab_goal, text='Goals')
-
-        add_habit_btn = Button(tab_habit, text='Add new habit', command = add_habit)
-        add_task_btn = Button(tab_task, text='Add new task', command = add_task)
-        add_goal_btn = Button(tab_goal, text='Add new goal', command = add_goal)
-
-        add_habit_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_task_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_goal_btn.place(relx=0.95, rely=0.95, anchor=SE)
-
-        habit1=Frame(tab_habit)
-        habit1.grid()
-                
-        #standard bottom footer for contact infor, company info, and other
-        bottom_frame =Frame(self)
-        bottom_frame.grid(row=4, sticky=N+S+E+W)
-        bottom_header = Label(bottom_frame, text = 'Copyright 2014',
-                              foreground='black')
-        bottom_header.pack()
-
-def add_habit():
-    messagebox.showinfo("Placeholder", "I'm an add_habit stub!")
-
-def add_task():
-    messagebox.showinfo("Placeholder", "I'm an add_task stub!")
-
-def add_goal():
-    messagebox.showinfo("Placeholder", "I'm an add_goal stub!")
-
-app = Application()                       
-app.master.title('Daily Hack')    
-app.mainloop()
