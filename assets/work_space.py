@@ -41,11 +41,11 @@ class Work_Space(Frame):
 
         #Habit frame broken into tabed areas that will list respective
         #habits, tasks, or goals
+        
         habit_frame = Notebook(self, height = 200, width = 400, padding=5)
         habit_frame.grid(row=4, column = 0, columnspan = 6, rowspan= 4,sticky='nesw')
-        
-        
-        #habit_frame.configure("W.TFrame", background='white')
+        habit_frame_style = Style()
+        habit_frame_style.configure("W.TFrame", background='white')
 
         tab_habit = Frame(habit_frame, style="W.TFrame")
         tab_task = Frame(habit_frame, style ="W.TFrame")
