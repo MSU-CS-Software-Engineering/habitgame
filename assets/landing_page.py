@@ -1,6 +1,6 @@
 from tkinter  import *
 from tkinter.ttk import *
-from gui import *
+from engine import *
 
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
