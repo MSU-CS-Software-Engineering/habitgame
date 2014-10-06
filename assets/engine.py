@@ -406,7 +406,7 @@ class GUI (Frame):
         exp_label = Label(self, text="Experience:")
         exp_label.grid(row = 1, column =0,sticky=W, pady=4, padx=5)
 
-        exp = Label(self, text="'Enter Exp Here'")
+        exp = Label(self, text="'Experience Here'")
         exp.grid(row = 1, column =1,sticky=W, pady=4, padx=5)
 
         cash_label = Label(self, text="CASH:")
@@ -415,10 +415,10 @@ class GUI (Frame):
         cash = Label(self, text="'Enter Cash here'")
         cash.grid(row = 2, column =1 ,sticky=W, pady=4, padx=5)
 
-        level_label = Label(self, text="LEVEL:")
+        level_label = Label(self, text="'Enter Level Here'")
         level_label.grid(row = 3, column =0 ,sticky=W, pady=4, padx=5)
 
-        level = Label(self, text="'Enter Level Here'")
+        level = Label(self, text="LEVEL:")
         level.grid(row = 3, column =1 ,sticky=W, pady=4, padx=5)
 
         
@@ -469,6 +469,9 @@ def main():
    
     #Display current character's info
     main_character.show_info()
+    root = Tk()
+    app = GUI(root)
+    root.mainloop()
 
         
 if __name__ == "__main__":
