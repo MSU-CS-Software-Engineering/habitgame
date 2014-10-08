@@ -2,11 +2,13 @@
   Habit game core
 
   Dependencies: landing_page.py
+                parser.py
 """
 
 #import landing_page.py
 import os.path
 from datetime import date #For timestamps
+from parser import *
 
 class Character:
     """
@@ -106,12 +108,13 @@ class Character:
     def show_habit(self, habit_id):
         try:
             habit = self.habits[habit_id]
-            print("Name:    " + habit.name)
-            print("ID:      " + str(habit.ID))
-            print("Type:    " + habit.habit_type)
-            print("Timestamp: " + str(habit.timestamp))
-            print("Value:   " + str(habit.value))
-            print("Exp Pts: " + str(habit.exp))
+            print("Title:        " + habit.title)
+            print("Description: " + habit.description)
+            print("ID:          " + str(habit.ID))
+            print("Type:        " + habit.habit_type)
+            print("Timestamp:   " + str(habit.timestamp))
+            print("Value:       " + str(habit.value))
+            print("Exp Pts:     " + str(habit.exp))
 
         except:
             print("Error: Invalid habit_id")
@@ -171,7 +174,8 @@ class Habit:
       Class for Individual Habits
 
       Variables:
-        name: Name of habit                          (string)
+        title: Name of habit                         (string)
+        description: Short description of habit      (string) 
         ID: Number to hold index in                  (int)
         habitlist
         habit_type: Type of habit (Daily, task, etc) (string)
@@ -179,8 +183,9 @@ class Habit:
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, name, value, exp, habit_type, ID=0):
-        self.name = name
+    def __init__(self, title, desc, value, exp, habit_type, ID=0):
+        self.title = title
+        self.description = desc
         self.ID = ID
         self.habit_type = habit_type
         self.timestamp = date.today()
@@ -192,7 +197,8 @@ class Habit:
         Serializes class properties to a dictionary 
         which can be converted to a string
         """
-        habit_dict = {'name':self.name,
+        habit_dict = {'title':self.title,
+                      'desc':self.description,
                       'ID'  :self.ID,
                       'timestamp':str(self.timestamp),
                       'type':self.habit_type,
@@ -240,9 +246,10 @@ class Game_Data:
     Class for main game functions
     """
     def __init__(self):
-        self.savefile = 'character.txt'
+        self.savefile = 'character.xml'
         self.character_data = {}
-
+        self.token = ''
+        
     def save_data(self, character):
         """
         Saves the current character data to
@@ -282,13 +289,19 @@ class Game_Data:
         
     def load_data(self):
         """
-        Loads character_data from file then
-        stores it into character_data dict
+        Loads character_data from file with
+        XML parser. Stores results into
+        character_data dict
         """
         try:
-            f = open(self.savefile, 'r')
-            character_data = eval(f.read())
-            self.character_data = character_data
+            data = parser(self.savefile)
+            self.character_data['habits'] = data.parse_tasks()
+            self.character_data['name'] = data.parse_name()
+            self.token = data.parse_token()
+            self.character_data['level'] = data.parse_level()
+            self.character_data['exp'] = data.parse_exp()
+            self.character_data['cash'] = data.parse_cash()
+            
             #return self.build_character(self.character_data)
         
         except:
@@ -306,14 +319,15 @@ class Game_Data:
             new_character.cash = character_data['cash']
             
             for habit in character_data['habits']:
-                new_habit = Habit(habit['name'],
-                                  habit['value'],
-                                  habit['exp'],
-                                  habit['habit_type'],
-                                  habit['ID'])
+                new_habit = Habit(habit['title'],
+                                  habit['description'],
+                                  None,#value
+                                  None,#exp
+                                  None,#habit_type
+                                  habit['index'])
             
                 new_character.add_habit(new_habit)
-            
+            '''
             for item in character_data['items']:
                 new_item = Item(item['name'],
                                 item['image'],
@@ -322,7 +336,7 @@ class Game_Data:
                                 item['effect'])
             
                 new_character.add_item(new_item)
-
+            '''
             return new_character
 
         except:
@@ -340,9 +354,9 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read more books', 50, 10, 'habit')  
-    habit_2 = Habit('Eat more veggies', 100, 15, 'daily')
-    habit_3 = Habit('Get more sleep', 20, 5, 'task')
+    habit_1 = Habit('Read More','Read more books', 50, 10, 1, 'habit')  
+    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1, 'daily')
+    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 1, 'task')
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 10)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
