@@ -12,7 +12,8 @@ from parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
-
+from work_space import *
+from landing_page import *
 
 class Character:
     """
@@ -406,6 +407,7 @@ class GUI (Frame):
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
         self.initUI()
+        self.frame = landing_window(self)
         
     def initUI(self):
         self.master.title("Daily Hack")
@@ -454,16 +456,21 @@ class GUI (Frame):
     
         mayoVar  = IntVar()
         ketchVar = IntVar()
-        mb.menu.add_command( label="Habits", command = habit)
-        mb.menu.add_command( label="Dailies", command = dailies )
-        mb.menu.add_command( label="Tasks", command = task )
-        mb.menu.add_command( label="Shop", command = buy )
-        mb.menu.add_command ( label="Game", command = no_where)
-        mb.menu.add_command( label="Settings", command = no_where)
+        mb.menu.add_command( label="Home", command = self.home)
+        mb.menu.add_command( label="Habits", command = self.habit)
+        mb.menu.add_command( label="Dailies", command = self.dailies )
+        mb.menu.add_command( label="Tasks", command = self.task )
+        mb.menu.add_command( label="Shop", command = self.buy )
+        mb.menu.add_command ( label="Game", command = self.no_where)
+        mb.menu.add_command( label="Settings", command = self.no_where)
 
         footer = Label(self, text="Copyright 2014")
         footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
+
+
+        frame = landing_window(self)
+        
         
         #manual test for update
         item_test = Item('SSD', 'ssd.jpg', 6, 1)
@@ -502,20 +509,27 @@ class GUI (Frame):
             self.character_cash.set(self.character.cash)
             
         else:
-            print("Not enough cash!")
-def habit():
-    messagebox.showinfo("Placeholder", "I go to Habits work space!")
+           print("Not enough cash!")
 
-def task():
-    messagebox.showinfo("Placeholder", "I go to Task work space!")
+        
+    def home(self):
+        messagebox.showinfo("Placeholder", "I go back to home!")
 
-def dailies():
-    messagebox.showinfo("Placeholder", "I got to goals work space!")
-def buy():
-    messagebox.showinfo("Placeholder", "I go to shop!")
+    def habit(self):
 
-def no_where():
-    messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
+        self.frame = work_window(self)
+        
+
+    def task(self):
+        messagebox.showinfo("Placeholder", "I go to Task work space!")
+
+    def dailies(self):
+        messagebox.showinfo("Placeholder", "I got to goals work space!")
+    def buy(self):
+        messagebox.showinfo("Placeholder", "I got to goals work space!")
+
+    def no_where(self):
+        messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
 
 def main():
     """
@@ -528,6 +542,9 @@ def main():
     root = Tk()
     app = GUI(root, main_character)
     root.mainloop()
+    
+
+    
 
         
 if __name__ == "__main__":
