@@ -359,9 +359,9 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read More','Read more books', 50, 10, 1, 'habit')  
-    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1, 'daily')
-    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 1, 'task')
+    habit_1 = Habit('Read More','Read more books', 50, 10, 'habit')  
+    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 'daily')
+    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 'task')
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
@@ -402,7 +402,7 @@ class GUI (Frame):
         self.character_exp.set(self.character.exp)
         self.character_cash.set(self.character.cash)
         self.character_level.set(self.character.level)
-        self._geom='800x600+0+0'
+        self._geom = '800x600+0+0'
         master.geometry("{0}x{1}+0+0".format(
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
@@ -449,13 +449,14 @@ class GUI (Frame):
 
         
 
-        mb=  Menubutton ( self, text="Options" )
+        mb = Menubutton ( self, text="Options" )
         mb.grid(row = 0, column = 5, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
         mb["menu"]  =  mb.menu
     
         mayoVar  = IntVar()
         ketchVar = IntVar()
+<<<<<<< HEAD
         mb.menu.add_command( label="Home", command = self.home)
         mb.menu.add_command( label="Habits", command = self.habit)
         mb.menu.add_command( label="Dailies", command = self.dailies )
@@ -463,6 +464,14 @@ class GUI (Frame):
         mb.menu.add_command( label="Shop", command = self.buy )
         mb.menu.add_command ( label="Game", command = self.no_where)
         mb.menu.add_command( label="Settings", command = self.no_where)
+=======
+        mb.menu.add_command( label="Habits", command = habit)
+        mb.menu.add_command( label="Dailies", command = dailies )
+        mb.menu.add_command( label="Tasks", command = task )
+        mb.menu.add_command( label="Shop", command = buy )
+        mb.menu.add_command( label="Game", command = no_where)
+        mb.menu.add_command( label="Settings", command = no_where)
+>>>>>>> 4b7168d9f14101bf09a1e6de3c00decdf63d8969
 
         footer = Label(self, text="Copyright 2014")
         footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
@@ -480,10 +489,10 @@ class GUI (Frame):
         self.character.show_info()
 
     def toggle_geom(self,event):
-        geom=self.master.winfo_geometry()
+        geom = self.master.winfo_geometry()
         print(geom,self._geom)
         self.master.geometry(self._geom)
-        self._geom=geom
+        self._geom = geom
     
     def complete_habit(self, habit_ID):
         habit = self.character.get_habit(habit_ID)
@@ -509,14 +518,22 @@ class GUI (Frame):
             self.character_cash.set(self.character.cash)
             
         else:
+<<<<<<< HEAD
            print("Not enough cash!")
 
         
     def home(self):
         messagebox.showinfo("Placeholder", "I go back to home!")
+=======
+            print("Not enough cash!")
+
+def habit():
+    messagebox.showinfo("Placeholder", "I go to Habits work space!")
+>>>>>>> 4b7168d9f14101bf09a1e6de3c00decdf63d8969
 
     def habit(self):
 
+<<<<<<< HEAD
         self.frame = work_window(self)
         
 
@@ -527,6 +544,13 @@ class GUI (Frame):
         messagebox.showinfo("Placeholder", "I got to goals work space!")
     def buy(self):
         messagebox.showinfo("Placeholder", "I got to goals work space!")
+=======
+def dailies():
+    messagebox.showinfo("Placeholder", "I got to goals work space!")
+
+def buy():
+    messagebox.showinfo("Placeholder", "I go to shop!")
+>>>>>>> 4b7168d9f14101bf09a1e6de3c00decdf63d8969
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
