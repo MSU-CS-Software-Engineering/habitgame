@@ -358,9 +358,9 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read More','Read more books', 50, 10, 1, 'habit')  
-    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1, 'daily')
-    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 1, 'task')
+    habit_1 = Habit('Read More','Read more books', 50, 10, 'habit')  
+    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 'daily')
+    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 'task')
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
