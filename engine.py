@@ -9,6 +9,10 @@
 import os.path
 from datetime import date #For timestamps
 from parser import *
+from tkinter  import *
+from tkinter.ttk import *
+from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
+
 
 class Character:
     """
@@ -358,7 +362,7 @@ def load(name):
     habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1, 'daily')
     habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 1, 'task')
 
-    item_1 = Item('Laptop', 'laptop.jpg', 5, 10)
+    item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
     item_3 = Item('SSD', 'ssd.jpg', 6, 20)
 
@@ -382,14 +386,148 @@ def load(name):
     return new_character
 
 
+class GUI (Frame):
+
+    def __init__(self, master, character):
+        Frame.__init__(self, master)   
+        pad = 3
+        self.master = master
+        self.character = character
+        self.character_name = StringVar()
+        self.character_exp = StringVar()
+        self.character_cash = StringVar()
+        self.character_level = StringVar()
+        self.character_name.set(self.character.name)
+        self.character_exp.set(self.character.exp)
+        self.character_cash.set(self.character.cash)
+        self.character_level.set(self.character.level)
+        self._geom='800x600+0+0'
+        master.geometry("{0}x{1}+0+0".format(
+            master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
+        master.bind('<Escape>',self.toggle_geom)
+        self.initUI()
+        
+    def initUI(self):
+        self.master.title("Daily Hack")
+        self.style = Style()
+        self.style.theme_use("default")
+        self.pack(fill=BOTH, expand=1)
+
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(3, weight=1)
+        self.columnconfigure(5, weight=1)
+        self.columnconfigure(6, pad=7)
+        self.rowconfigure(6, weight=1)
+        self.rowconfigure(9, pad=7)
+        
+        name_lalel = Label(self, text="Player Name")
+        name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
+
+        name = Label (self, textvariable = self.character_name)
+        name.grid(row = 0, column = 1, sticky=W, pady=4, padx=5)
+        
+
+        exp_label = Label(self, text="Experience:")
+        exp_label.grid(row = 1, column =0,sticky=W, pady=4, padx=5)
+
+        exp = Label(self, textvariable = self.character_exp)
+        exp.grid(row = 1, column =1,sticky=W, pady=4, padx=5)
+
+        cash_label = Label(self, text="CASH:")
+        cash_label.grid(row = 2, column =0 ,sticky=W, pady=4, padx=5)
+
+        cash = Label(self, textvariable= self.character_cash)
+        cash.grid(row = 2, column =1 ,sticky=W, pady=4, padx=5)
+
+        level_label = Label(self, text="LEVEL:")
+        level_label.grid(row = 3, column =0 ,sticky=W, pady=4, padx=5)
+
+        level = Label(self, textvariable = self.character_level)
+        level.grid(row = 3, column =1 ,sticky=W, pady=4, padx=5)
+
+        
+
+        mb=  Menubutton ( self, text="Options" )
+        mb.grid(row = 0, column = 5, sticky = E)
+        mb.menu  =  Menu ( mb, tearoff = 0 )
+        mb["menu"]  =  mb.menu
+    
+        mayoVar  = IntVar()
+        ketchVar = IntVar()
+        mb.menu.add_command( label="Habits", command = habit)
+        mb.menu.add_command( label="Dailies", command = dailies )
+        mb.menu.add_command( label="Tasks", command = task )
+        mb.menu.add_command( label="Shop", command = buy )
+        mb.menu.add_command ( label="Game", command = no_where)
+        mb.menu.add_command( label="Settings", command = no_where)
+
+        footer = Label(self, text="Copyright 2014")
+        footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
+        footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
+        
+        #manual test for update
+        item_test = Item('SSD', 'ssd.jpg', 6, 1)
+        self.complete_habit(1)
+        self.buy_item(item_test)
+        self.use_item(0)
+        self.character.show_info()
+
+    def toggle_geom(self,event):
+        geom=self.master.winfo_geometry()
+        print(geom,self._geom)
+        self.master.geometry(self._geom)
+        self._geom=geom
+    
+    def complete_habit(self, habit_ID):
+        habit = self.character.get_habit(habit_ID)
+        self.character.cash += habit.value
+        self.character.exp += habit.exp
+        self.character.remove_habit(habit_ID)
+        self.character.set_habit_IDs()
+        self.character_exp.set(self.character.exp)
+        self.character_cash.set(self.character.cash)
+       
+        
+    def use_item(self, item_ID):
+        self.character.items[item_ID].uses -= 1
+        if self.character.items[item_ID].uses == 0:
+            self.character.remove_item(item_ID)
+            self.character.set_item_IDs()
+            
+    def buy_item(self, item):
+        if self.character.cash >= item.value:    
+            self.character.add_item(item)
+            self.character.cash -= item.value
+            self.character.set_item_IDs()
+            self.character_cash.set(self.character.cash)
+            
+        else:
+            print("Not enough cash!")
+def habit():
+    messagebox.showinfo("Placeholder", "I go to Habits work space!")
+
+def task():
+    messagebox.showinfo("Placeholder", "I go to Task work space!")
+
+def dailies():
+    messagebox.showinfo("Placeholder", "I got to goals work space!")
+def buy():
+    messagebox.showinfo("Placeholder", "I go to shop!")
+
+def no_where():
+    messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
+
 def main():
     """
       Stub for main function
     """
-    main_character = load('WH Hacker')
+    main_character = load('Tester')
    
     #Display current character's info
     main_character.show_info()
+    root = Tk()
+    app = GUI(root, main_character)
+    root.mainloop()
 
         
 if __name__ == "__main__":
