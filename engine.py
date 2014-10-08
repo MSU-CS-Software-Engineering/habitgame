@@ -513,6 +513,7 @@ class GUI (Frame):
 
         
     def home(self):
+        #Currently this goes no where, need to fix the grid_forget issue first
         messagebox.showinfo("Placeholder", "I go back to home!")
 
     def habit(self):
