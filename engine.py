@@ -411,11 +411,6 @@ class GUI (Frame):
         
         
     def initUI(self):
-
-
-
-
-
         
         self.grid()
         self.master.title("Daily Hack")
@@ -423,16 +418,17 @@ class GUI (Frame):
         self.style.theme_use("default")
         self.pack(fill=BOTH, expand=1)
 
+        #Used for resizing throughtout the window
         self.columnconfigure(1, weight=1)
         self.columnconfigure(3, weight=1)
         self.columnconfigure(5, weight=1)
-        #self.columnconfigure(0, weight = 1)
         self.columnconfigure(6, pad=7)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(9, pad=7)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
-        
+
+        #The next few widgets are the Labels in the upper right
         name_lalel = Label(self, text="Player Name")
         name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
 
@@ -465,6 +461,7 @@ class GUI (Frame):
         self.use_item(0)
         self.character.show_info()
 
+        #Drop Down Menu on upper right corner
         mb=  Menubutton (self, text="Options" )
         mb.grid(row = 0, column = 5, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
@@ -480,11 +477,12 @@ class GUI (Frame):
         mb.menu.add_command ( label="Game", command = self.no_where)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
+        #Footer at bottom, b/c that's where footers go
         footer = Label(self, text="Copyright 2014")
         footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
 
- 
+        #Creating a Dictionary for all the pages to sit on top of eachother
         self.frames = {}
         for F in (Landing_Page, Work_Space):
             frame = F(self)
@@ -494,15 +492,17 @@ class GUI (Frame):
             # will be the one that is visible.
             frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4, sticky = 'news')
 
-        
+        #Initial Page
         self.show_frame(Landing_Page)
 
+    #switches the work space window back and forth. Takes an arguement that is
+    #equivalent to the class of the window needed
     def show_frame(self, c):
         '''Show a frame for the given class'''
         frame = self.frames[c]
         frame.tkraise()
         
-        
+    #used for resizing 
     def toggle_geom(self,event):
         geom=self.master.winfo_geometry()
         print(geom,self._geom)
@@ -535,9 +535,9 @@ class GUI (Frame):
         else:
            print("Not enough cash!")
 
-        
+    #The next functions are used to switch between pages        
     def home(self):
-        #Currently this goes no where, need to fix the grid_forget issue first
+
         self.show_frame(Landing_Page)
 
     def habit(self):
@@ -551,6 +551,7 @@ class GUI (Frame):
 
     def dailies(self):
         self.show_frame(Work_Space)
+        
     def buy(self):
         self.show_frame(Work_Space)
 
