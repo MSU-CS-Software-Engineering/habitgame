@@ -412,27 +412,24 @@ class GUI (Frame):
         
     def initUI(self):
 
-
-
-
-
-        
         self.grid()
         self.master.title("Daily Hack")
         self.style = Style()
         self.style.theme_use("default")
         self.pack(fill=BOTH, expand=1)
-
+        
+        #the next few rows allow for resizing
         self.columnconfigure(1, weight=1)
         self.columnconfigure(3, weight=1)
         self.columnconfigure(5, weight=1)
-        #self.columnconfigure(0, weight = 1)
         self.columnconfigure(6, pad=7)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(9, pad=7)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
-        
+
+
+        #The next widgets are the labels in the upper left corner of GUI
         name_lalel = Label(self, text="Player Name")
         name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
 
@@ -464,7 +461,8 @@ class GUI (Frame):
         self.buy_item(item_test)
         self.use_item(0)
         self.character.show_info()
-
+        
+        #Code for the Drop Down Menu in upper right
         mb=  Menubutton (self, text="Options" )
         mb.grid(row = 0, column = 5, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
@@ -480,11 +478,14 @@ class GUI (Frame):
         mb.menu.add_command ( label="Game", command = self.no_where)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
+        #Code for the footer at the bottom of the page
         footer = Label(self, text="Copyright 2014")
         footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
-        footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
+        footer.configure(background = 'black', foreground = 'white',
+                         anchor = CENTER)
 
- 
+        #Code the creates page windows with a dicionary.  These pages can
+        #Be cycled through with something like 'self.show_frame(Landing_Page)'
         self.frames = {}
         for F in (Landing_Page, Work_Space):
             frame = F(self)
@@ -492,17 +493,19 @@ class GUI (Frame):
             # put all of the pages in the same location; 
             # the one on the top of the stacking order
             # will be the one that is visible.
-            frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4, sticky = 'news')
+            frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4,
+                       sticky = 'news')
 
-        
+        #Initial Page
         self.show_frame(Landing_Page)
 
+    #function brings the page to the front
     def show_frame(self, c):
         '''Show a frame for the given class'''
         frame = self.frames[c]
         frame.tkraise()
         
-        
+     #Toggles the window size using the escape key.       
     def toggle_geom(self,event):
         geom=self.master.winfo_geometry()
         print(geom,self._geom)
@@ -535,13 +538,11 @@ class GUI (Frame):
         else:
            print("Not enough cash!")
 
-        
+    # the next 6 functions are for the drop down menu       
     def home(self):
-        #Currently this goes no where, need to fix the grid_forget issue first
         self.show_frame(Landing_Page)
 
     def habit(self):
-
         self.show_frame(Work_Space)
         
 
@@ -551,6 +552,7 @@ class GUI (Frame):
 
     def dailies(self):
         self.show_frame(Work_Space)
+        
     def buy(self):
         self.show_frame(Work_Space)
 
