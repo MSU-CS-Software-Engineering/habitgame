@@ -390,9 +390,10 @@ def load(name):
 class GUI (Frame):
 
     def __init__(self, master, character):
-        Frame.__init__(self, master)   
+        Frame.__init__(self, master)
+        
         pad = 3
-        self.master = master
+        
         self.character = character
         self.character_name = StringVar()
         self.character_exp = StringVar()
@@ -407,9 +408,16 @@ class GUI (Frame):
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
         self.initUI()
-        self.frame = landing_window(self)
+        
         
     def initUI(self):
+
+
+
+
+
+        
+        self.grid()
         self.master.title("Daily Hack")
         self.style = Style()
         self.style.theme_use("default")
@@ -418,9 +426,12 @@ class GUI (Frame):
         self.columnconfigure(1, weight=1)
         self.columnconfigure(3, weight=1)
         self.columnconfigure(5, weight=1)
+        #self.columnconfigure(0, weight = 1)
         self.columnconfigure(6, pad=7)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(9, pad=7)
+        self.rowconfigure(5, weight=1)
+        self.rowconfigure(4, pad=7)
         
         name_lalel = Label(self, text="Player Name")
         name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
@@ -447,9 +458,14 @@ class GUI (Frame):
         level = Label(self, textvariable = self.character_level)
         level.grid(row = 3, column =1 ,sticky=W, pady=4, padx=5)
 
-        
+        #manual test for update
+        item_test = Item('SSD', 'ssd.jpg', 6, 1)
+        self.complete_habit(1)
+        self.buy_item(item_test)
+        self.use_item(0)
+        self.character.show_info()
 
-        mb=  Menubutton ( self, text="Options" )
+        mb=  Menubutton (self, text="Options" )
         mb.grid(row = 0, column = 5, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
         mb["menu"]  =  mb.menu
@@ -468,17 +484,25 @@ class GUI (Frame):
         footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
 
+ 
+        self.frames = {}
+        for F in (Landing_Page, Work_Space):
+            frame = F(self)
+            self.frames[F] = frame
+            # put all of the pages in the same location; 
+            # the one on the top of the stacking order
+            # will be the one that is visible.
+            frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4, sticky = 'news')
 
-        frame = landing_window(self)
+        
+        self.show_frame(Landing_Page)
+
+    def show_frame(self, c):
+        '''Show a frame for the given class'''
+        frame = self.frames[c]
+        frame.tkraise()
         
         
-        #manual test for update
-        item_test = Item('SSD', 'ssd.jpg', 6, 1)
-        self.complete_habit(1)
-        self.buy_item(item_test)
-        self.use_item(0)
-        self.character.show_info()
-
     def toggle_geom(self,event):
         geom=self.master.winfo_geometry()
         print(geom,self._geom)
@@ -514,23 +538,33 @@ class GUI (Frame):
         
     def home(self):
         #Currently this goes no where, need to fix the grid_forget issue first
-        messagebox.showinfo("Placeholder", "I go back to home!")
+        self.show_frame(Landing_Page)
 
     def habit(self):
 
-        self.frame = work_window(self)
+        self.show_frame(Work_Space)
         
 
     def task(self):
-        messagebox.showinfo("Placeholder", "I go to Task work space!")
+        self.show_frame(Work_Space)
+        
 
     def dailies(self):
-        messagebox.showinfo("Placeholder", "I got to goals work space!")
+        self.show_frame(Work_Space)
     def buy(self):
-        messagebox.showinfo("Placeholder", "I got to goals work space!")
+        self.show_frame(Work_Space)
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
+
+
+    
+
+
+
+
+
+
 
 def main():
     """
