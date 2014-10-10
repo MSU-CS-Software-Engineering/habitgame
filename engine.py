@@ -393,7 +393,7 @@ class GUI (Frame):
         Frame.__init__(self, master)
         
         pad = 3
-        
+        work_space = Work_Space(self)
         self.character = character
         self.character_name = StringVar()
         self.character_exp = StringVar()
@@ -404,10 +404,11 @@ class GUI (Frame):
         self.character_cash.set(self.character.cash)
         self.character_level.set(self.character.level)
         self._geom='800x600+0+0'
-        master.geometry("{0}x{1}+0+0".format(
+        master.geometry("800x600+0+0".format(
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
         self.initUI()
+        
         
         
     def initUI(self):
@@ -518,7 +519,7 @@ class GUI (Frame):
         self.character_exp.set(self.character.exp)
         self.character_cash.set(self.character.cash)
        
-        
+            
     def use_item(self, item_ID):
         self.character.items[item_ID].uses -= 1
         if self.character.items[item_ID].uses == 0:
@@ -535,31 +536,40 @@ class GUI (Frame):
         else:
            print("Not enough cash!")
 
-    #The next functions are used to switch between pages        
-    def home(self):
+    #The next functions are used to switch between pages
 
+    
+    def home(self):
+        
         self.show_frame(Landing_Page)
 
     def habit(self):
-
+ 
         self.show_frame(Work_Space)
-        
+        #Work_Space.change_habit()
+
 
     def task(self):
         self.show_frame(Work_Space)
+        #Work_Space.change_task()
+        
         
 
     def dailies(self):
         self.show_frame(Work_Space)
+        #Work_Space.change_dailies()
+
         
     def buy(self):
         self.show_frame(Work_Space)
+        #Work_Space.change_shop()
+
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
 
 
-    
+ 
 
 
 
