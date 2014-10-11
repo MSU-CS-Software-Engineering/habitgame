@@ -52,13 +52,8 @@ class Landing_Page (Frame):
         area3.columnconfigure(4, weight = 1)
 
         
-
-                  
     def start(self):
         self.progress["value"] = 0
         self.max = 24
         self.progress["midnight"]=24
         self.progress["value"] = 12
-  
- 
-        
