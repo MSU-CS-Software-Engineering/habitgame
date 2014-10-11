@@ -432,7 +432,7 @@ class GUI (Frame):
         self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
         self.style.configure('banner.TFrame', background='black')
 
-        logo_img = PhotoImage(file="assets\\art\\logo.png")
+        logo_img = PhotoImage(file=os.path.join("assets", "art", "logo.png"))
         logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel')
         logo_image.grid(row=0, column=3,sticky='e')
         logo_image.image = logo_img
@@ -452,7 +452,7 @@ class GUI (Frame):
         name.configure(font='arial 12 bold')
         
         # load character image
-        char_img = PhotoImage(file="assets\\art\\main.png")
+        char_img = PhotoImage(file=os.path.join("assets", "art", "main.png"))
         character_image = Label(self.char_frame, image=char_img)
         character_image.grid(row=1, column=0, stick=W, padx=5)
         character_image.image = char_img
@@ -535,7 +535,7 @@ class GUI (Frame):
         self.style.configure('footer.TFrame', background='black')
 
         # archetype logo 
-        archetype_img = PhotoImage(file="assets\\art\\Archetype.png")
+        archetype_img = PhotoImage(file=os.path.join("assets", "art", "Archetype.png"))
         archetype_logo = Label(footer_frame, image=archetype_img, padding="0 0 5 0")
         archetype_logo.grid(row=0, column=0, sticky=(N, E, W, S))
         archetype_logo.image = archetype_img
@@ -616,7 +616,7 @@ class GUI (Frame):
         self.show_frame(Work_Space)
 
     def no_where(self):
-        messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
+        messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")
 
 
     
