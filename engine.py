@@ -392,8 +392,8 @@ class GUI (Frame):
     def __init__(self, master, character):
         Frame.__init__(self, master)
         
-        pad = 3
-        work_space = Work_Space(self)
+        pad = 100
+        
         self.character = character
         self.character_name = StringVar()
         self.character_exp = StringVar()
@@ -404,57 +404,103 @@ class GUI (Frame):
         self.character_cash.set(self.character.cash)
         self.character_level.set(self.character.level)
         self._geom='800x600+0+0'
-        master.geometry("800x600+0+0".format(
+        master.geometry("{0}x{1}+0+0".format(
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
         self.initUI()
         
         
-        
     def initUI(self):
-        
         self.grid()
         self.master.title("Daily Hack")
         self.style = Style()
         self.style.theme_use("default")
         self.pack(fill=BOTH, expand=1)
 
-        #Used for resizing throughtout the window
         self.columnconfigure(1, weight=1)
         self.columnconfigure(3, weight=1)
         self.columnconfigure(5, weight=1)
+        #self.columnconfigure(0, weight = 1)
         self.columnconfigure(6, pad=7)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(9, pad=7)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
 
-        #The next few widgets are the Labels in the upper right
-        name_lalel = Label(self, text="Player Name")
-        name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
+        # create banner
+        self.banner = Frame(self, style='banner.TFrame', padding=5)
+        self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
+        self.style.configure('banner.TFrame', background='black')
 
-        name = Label (self, textvariable = self.character_name)
+        logo_img = PhotoImage(file="assets\\art\\logo.png")
+        logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel')
+        logo_image.grid(row=0, column=3,sticky='e')
+        logo_image.image = logo_img
+        self.style.configure('hack_logo.TLabel', background='black')
+
+        
+        # create character data frame
+        self.char_frame = Frame(self)
+        self.char_frame.grid(row=2, column=0, sticky='news')
+        
+        name_lalel = Label(self.char_frame, text="Player Name")
+        name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
+        name_lalel.configure(font='arial 12')
+        
+        name = Label(self.char_frame, textvariable = self.character_name)
         name.grid(row = 0, column = 1, sticky=W, pady=4, padx=5)
+        name.configure(font='arial 12 bold')
+        
+        # load character image
+        char_img = PhotoImage(file="assets\\art\\main.png")
+        character_image = Label(self.char_frame, image=char_img)
+        character_image.grid(row=1, column=0, stick=W, padx=5)
+        character_image.image = char_img
+
+
+        # create stats frame; embedded in the character frame
+        statsBg = Frame(self, style="statsFrame.TFrame")
+        statsBg.grid(row=1, column=0, columnspan=9, sticky='we')
+        statsBg.columnconfigure(0, weight=1)
+        
+        self.stats_frame = Frame(statsBg, style="statsFrame.TFrame")
+        self.stats_frame.grid(row=0, column=0)
+
+        # add experience stats info
+        exp_label = Label(self.stats_frame, text="exp:", style="statsLabel.TLabel")
+        exp_label.grid(row=0, column=0, sticky='nesw', pady=4, padx=5)
+        
+        exp = Label(self.stats_frame, textvariable = self.character_exp)
+        exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
+        exp.configure(background="#3D3D3D", font="arial 12 bold", foreground='#6AA7E2')
+
+        # add cash stats info
+        cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
+        cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
+
+        cash = Label(self.stats_frame, textvariable= self.character_cash)
+        cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
+        cash.configure(background="#3D3D3D", font="arial 12 bold", foreground='#3BB623')
+
+        # add level stats info
+        level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
+        level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
+
+        level = Label(self.stats_frame, textvariable = self.character_level)
+        level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
+        level.configure(background="#3D3D3D", font="arial 12 bold", foreground='#FF7F2A')
+        
+        self.style.configure("statsLabel.TLabel", background="#3D3D3D", font="arial 12 bold", foreground='white')
+        self.style.configure("statsFrame.TFrame", background="#3D3D3D")
         
 
-        exp_label = Label(self, text="Experience:")
-        exp_label.grid(row = 1, column =0,sticky=W, pady=4, padx=5)
-
-        exp = Label(self, textvariable = self.character_exp)
-        exp.grid(row = 1, column =1,sticky=W, pady=4, padx=5)
-
-        cash_label = Label(self, text="CASH:")
-        cash_label.grid(row = 2, column =0 ,sticky=W, pady=4, padx=5)
-
-        cash = Label(self, textvariable= self.character_cash)
-        cash.grid(row = 2, column =1 ,sticky=W, pady=4, padx=5)
-
-        level_label = Label(self, text="LEVEL:")
-        level_label.grid(row = 3, column =0 ,sticky=W, pady=4, padx=5)
-
-        level = Label(self, textvariable = self.character_level)
-        level.grid(row = 3, column =1 ,sticky=W, pady=4, padx=5)
-
+        '''def __init__(self, name, image, value, uses, effect = None):
+        self.name = name
+        self.ID = 0
+        self.image = image
+        self.value = value
+        self.uses = uses
+        self.effect = effect'''
         #manual test for update
         item_test = Item('SSD', 'ssd.jpg', 6, 1)
         self.complete_habit(1)
@@ -462,9 +508,8 @@ class GUI (Frame):
         self.use_item(0)
         self.character.show_info()
 
-        #Drop Down Menu on upper right corner
-        mb=  Menubutton (self, text="Options" )
-        mb.grid(row = 0, column = 5, sticky = E)
+        mb=  Menubutton(self, text="Options")
+        mb.grid(row = 2, column = 0, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
         mb["menu"]  =  mb.menu
     
@@ -478,12 +523,29 @@ class GUI (Frame):
         mb.menu.add_command ( label="Game", command = self.no_where)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
-        #Footer at bottom, b/c that's where footers go
-        footer = Label(self, text="Copyright 2014")
-        footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
-        footer.configure(background = 'black', foreground = 'white', anchor = CENTER)
+        # footer
+        footer_frame_bg = Frame(self, style='footer.TFrame', padding=3)
+        footer_frame_bg.grid(row=10, column=0, columnspan=7, sticky= (W, E))
+        footer_frame_bg.columnconfigure(0, weight=1)
 
-        #Creating a Dictionary for all the pages to sit on top of eachother
+        # centered frame; holds logo and copyright text
+        footer_frame = Frame(footer_frame_bg, style='footer.TFrame')
+        footer_frame.grid()
+        
+        self.style.configure('footer.TFrame', background='black')
+
+        # archetype logo 
+        archetype_img = PhotoImage(file="assets\\art\\Archetype.png")
+        archetype_logo = Label(footer_frame, image=archetype_img, padding="0 0 5 0")
+        archetype_logo.grid(row=0, column=0, sticky=(N, E, W, S))
+        archetype_logo.image = archetype_img
+        archetype_logo.configure(background = 'black', foreground = 'white', anchor = CENTER)
+        
+        footer = Label(footer_frame, text="Copyright 2014")
+        footer.grid(row=0, column=1, sticky = (N, E, W, S))
+        footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
+
+ 
         self.frames = {}
         for F in (Landing_Page, Work_Space):
             frame = F(self)
@@ -493,17 +555,15 @@ class GUI (Frame):
             # will be the one that is visible.
             frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4, sticky = 'news')
 
-        #Initial Page
+        
         self.show_frame(Landing_Page)
 
-    #switches the work space window back and forth. Takes an arguement that is
-    #equivalent to the class of the window needed
     def show_frame(self, c):
         '''Show a frame for the given class'''
         frame = self.frames[c]
         frame.tkraise()
         
-    #used for resizing 
+        
     def toggle_geom(self,event):
         geom=self.master.winfo_geometry()
         print(geom,self._geom)
@@ -519,7 +579,7 @@ class GUI (Frame):
         self.character_exp.set(self.character.exp)
         self.character_cash.set(self.character.cash)
        
-            
+        
     def use_item(self, item_ID):
         self.character.items[item_ID].uses -= 1
         if self.character.items[item_ID].uses == 0:
@@ -532,44 +592,34 @@ class GUI (Frame):
             self.character.cash -= item.value
             self.character.set_item_IDs()
             self.character_cash.set(self.character.cash)
-            
         else:
            print("Not enough cash!")
 
-    #The next functions are used to switch between pages
-
-    
-    def home(self):
         
+    def home(self):
+        #Currently this goes no where, need to fix the grid_forget issue first
         self.show_frame(Landing_Page)
 
     def habit(self):
- 
-        self.show_frame(Work_Space)
-        #Work_Space.change_habit()
 
+        self.show_frame(Work_Space)
+        
 
     def task(self):
         self.show_frame(Work_Space)
-        #Work_Space.change_task()
-        
         
 
     def dailies(self):
         self.show_frame(Work_Space)
-        #Work_Space.change_dailies()
-
         
     def buy(self):
         self.show_frame(Work_Space)
-        #Work_Space.change_shop()
-
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
 
 
- 
+    
 
 
 
