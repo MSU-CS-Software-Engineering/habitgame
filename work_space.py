@@ -52,6 +52,7 @@ class Work_Space (Frame):
 
     
     def add_habit(self):
+
         messagebox.showinfo("Placeholder", "I'm an add_habit stub!")
 
     def add_task(self):
@@ -59,14 +60,29 @@ class Work_Space (Frame):
 
     def add_goal(self):
         messagebox.showinfo("Placeholder", "I'm an add_goal stub!")
+
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
 
-def main():
-    
-  
-    pass
+    def gather_habit_data(self, habit_type):
+        #Create Window
+        #Take information
+        #Check for info if 'save' is clicked. Discard if 'cancel' is clicked.
+        #Add habit/Daily/Task to list
 
+        window = Toplevel(self)
+        label = Label(window, text="HERPDERP")
+        label.pack(side="top", fill="both", padx=10, pady=10)
+
+def main():
+    #For Testing purposes
+    root = Tk()
+    test=Work_Space(root)
+    test.gather_habit_data("HERP")
+    root.mainloop()
+    #End Test
+
+    #pass
 
 if __name__ == '__main__':
     main()  
