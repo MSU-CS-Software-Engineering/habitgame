@@ -52,14 +52,13 @@ class Work_Space (Frame):
 
     
     def add_habit(self):
-
-        messagebox.showinfo("Placeholder", "I'm an add_habit stub!")
+        self.gather_habit_data("habit")
 
     def add_task(self):
-        messagebox.showinfo("Placeholder", "I'm an add_task stub!")
+        self.gather_habit_data("task")
 
     def add_goal(self):
-        messagebox.showinfo("Placeholder", "I'm an add_goal stub!")
+        self.gather_habit_data("goal")
 
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
@@ -70,15 +69,61 @@ class Work_Space (Frame):
         #Check for info if 'save' is clicked. Discard if 'cancel' is clicked.
         #Add habit/Daily/Task to list
 
-        window = Toplevel(self)
-        label = Label(window, text="HERPDERP")
-        label.pack(side="top", fill="both", padx=10, pady=10)
+        data_window = Toplevel(self)
+
+        #Name of habit\daily\task
+        name_frame = Frame(data_window)
+        name_frame.pack(side="top")
+
+        name_label = Label(name_frame, text="Name")
+        name_label.pack(side="top", padx=10, pady=10)
+
+        ticket_name = Entry(name_frame)
+        ticket_name.pack(side="bottom", pady=10)
+
+        #Description
+        desc_frame = Frame(data_window)
+        desc_frame.pack(side="top")
+
+        desc_label = Label(desc_frame, text="Description")
+        desc_label.pack(side="top", padx=10)
+
+        ticket_desc = Text(desc_frame, width=40, height=4)
+        ticket_desc.pack(side="bottom", padx=10, pady=10)
+
+        #Value
+        value_frame = Frame(data_window)
+        value_frame.pack(side="top")
+
+        value_label = Label(value_frame, text="Reward Value")
+        value_label.pack(side="top", padx=10, pady=10)
+
+        ticket_value = Entry(value_frame)
+        ticket_value.pack(side="bottom")
+
+        #Buttons
+        button_frame = Frame(data_window, width=100)
+        button_frame.grid_propagate(100)
+        button_frame.pack(side="bottom", padx=10, pady=10)
+
+        cancelButton = Button(button_frame, text="Cancel", command=data_window.destroy)
+        cancelButton.pack(side="left")
+
+        confirmButton = Button(button_frame, text="Save", command=lambda: self.output_window_vals(habit_type,
+                                                                                       ticket_name.get(),
+                                                                                       ticket_desc.get(1.0, END).strip('\t\n'),
+                                                                                       ticket_value.get()))
+        confirmButton.pack(side="right")
+
+    def output_window_vals(self, ticket_type, ticket_name, ticket_desc, ticket_value):
+        values = [ticket_type, ticket_name, ticket_desc, ticket_value]
+        print(values)
+        #return values
 
 def main():
     #For Testing purposes
     root = Tk()
     test=Work_Space(root)
-    test.gather_habit_data("HERP")
     root.mainloop()
     #End Test
 
