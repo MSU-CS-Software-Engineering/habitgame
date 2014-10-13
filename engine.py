@@ -14,7 +14,7 @@ from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 from work_space import *
 from landing_page import *
-
+from generic_list import *
 class Character:
     """
       Class for Habit character profile
@@ -80,15 +80,11 @@ class Character:
 
 
     def add_habit(self, habit):
-        habit_ID = 0
-
         if len(self.habits) != 0:
-            habit_ID = len(self.habits)
-        
-        habit.ID = habit_ID
+            habit.id = len(self.habits) 
         
         self.habits.append(habit)
-        return habit_ID
+        return habit.ID
 
     def remove_habit(self, habit_ID):
         try:
@@ -105,7 +101,7 @@ class Character:
             print("Error: Invalid habit id")
 
 
-    def set_habit_IDs(self):
+    def set_habit_IDs(self):     
         for habit in enumerate(self.habits):
             habit[1].ID = habit[0]
 
@@ -130,13 +126,11 @@ class Character:
 
 
     def add_item(self, item):
-        item_ID = 0
         if len(self.items) != 0:
-            item_ID = len(self.items)
+            item.ID = len(self.items)
         
-        item.ID = item_ID
         self.items.append(item)
-        return item_ID
+        return item.ID
 
     def remove_item(self, item_ID):
         try:
@@ -359,9 +353,9 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read More','Read more books', 50, 10, 1, 'habit')  
-    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1, 'daily')
-    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 1, 'task')
+    habit_1 = Habit('Read More','Read more books', 50, 10, 'habit')  
+    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 'daily')
+    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 'task')
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
@@ -392,7 +386,7 @@ class GUI (Frame):
     def __init__(self, master, character):
         Frame.__init__(self, master)
         
-        pad = 3
+        pad = 100
         
         self.character = character
         self.character_name = StringVar()
@@ -411,60 +405,105 @@ class GUI (Frame):
         
         
     def initUI(self):
-
         self.grid()
         self.master.title("Daily Hack")
         self.style = Style()
         self.style.theme_use("default")
         self.pack(fill=BOTH, expand=1)
-        
-        #the next few rows allow for resizing
+
         self.columnconfigure(1, weight=1)
         self.columnconfigure(3, weight=1)
         self.columnconfigure(5, weight=1)
+        #self.columnconfigure(0, weight = 1)
         self.columnconfigure(6, pad=7)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(9, pad=7)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
 
+        # create banner
+        self.banner = Frame(self, style='banner.TFrame', padding=5)
+        self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
+        self.style.configure('banner.TFrame', background='black')
 
-        #The next widgets are the labels in the upper left corner of GUI
-        name_lalel = Label(self, text="Player Name")
+        logo_img = PhotoImage(file=os.path.join("assets", "art", "logo.gif"))
+        logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel')
+        logo_image.grid(row=0, column=3,sticky='e')
+        logo_image.image = logo_img
+        self.style.configure('hack_logo.TLabel', background='black')
+
+        
+        # create character data frame
+        self.char_frame = Frame(self)
+        self.char_frame.grid(row=2, column=0, sticky='news')
+        
+        name_lalel = Label(self.char_frame, text="Player Name")
         name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
-
-        name = Label (self, textvariable = self.character_name)
+        name_lalel.configure(font='arial 12')
+        
+        name = Label(self.char_frame, textvariable = self.character_name)
         name.grid(row = 0, column = 1, sticky=W, pady=4, padx=5)
+        name.configure(font='arial 12 bold')
+        
+        # load character image
+        char_img = PhotoImage(file=os.path.join("assets", "art", "main.gif"))
+        character_image = Label(self.char_frame, image=char_img)
+        character_image.grid(row=1, column=0, stick=W, padx=5)
+        character_image.image = char_img
+
+
+        # create stats frame; embedded in the character frame
+        statsBg = Frame(self, style="statsFrame.TFrame")
+        statsBg.grid(row=1, column=0, columnspan=9, sticky='we')
+        statsBg.columnconfigure(0, weight=1)
+        
+        self.stats_frame = Frame(statsBg, style="statsFrame.TFrame")
+        self.stats_frame.grid(row=0, column=0)
+
+        # add experience stats info
+        exp_label = Label(self.stats_frame, text="exp:", style="statsLabel.TLabel")
+        exp_label.grid(row=0, column=0, sticky='nesw', pady=4, padx=5)
+        
+        exp = Label(self.stats_frame, textvariable = self.character_exp)
+        exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
+        exp.configure(background="#3D3D3D", font="arial 12 bold", foreground='#6AA7E2')
+
+        # add cash stats info
+        cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
+        cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
+
+        cash = Label(self.stats_frame, textvariable= self.character_cash)
+        cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
+        cash.configure(background="#3D3D3D", font="arial 12 bold", foreground='#3BB623')
+
+        # add level stats info
+        level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
+        level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
+
+        level = Label(self.stats_frame, textvariable = self.character_level)
+        level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
+        level.configure(background="#3D3D3D", font="arial 12 bold", foreground='#FF7F2A')
+        
+        self.style.configure("statsLabel.TLabel", background="#3D3D3D", font="arial 12 bold", foreground='white')
+        self.style.configure("statsFrame.TFrame", background="#3D3D3D")
         
 
-        exp_label = Label(self, text="Experience:")
-        exp_label.grid(row = 1, column =0,sticky=W, pady=4, padx=5)
-
-        exp = Label(self, textvariable = self.character_exp)
-        exp.grid(row = 1, column =1,sticky=W, pady=4, padx=5)
-
-        cash_label = Label(self, text="CASH:")
-        cash_label.grid(row = 2, column =0 ,sticky=W, pady=4, padx=5)
-
-        cash = Label(self, textvariable= self.character_cash)
-        cash.grid(row = 2, column =1 ,sticky=W, pady=4, padx=5)
-
-        level_label = Label(self, text="LEVEL:")
-        level_label.grid(row = 3, column =0 ,sticky=W, pady=4, padx=5)
-
-        level = Label(self, textvariable = self.character_level)
-        level.grid(row = 3, column =1 ,sticky=W, pady=4, padx=5)
-
+        '''def __init__(self, name, image, value, uses, effect = None):
+        self.name = name
+        self.ID = 0
+        self.image = image
+        self.value = value
+        self.uses = uses
+        self.effect = effect'''
         #manual test for update
         item_test = Item('SSD', 'ssd.jpg', 6, 1)
         self.complete_habit(1)
         self.buy_item(item_test)
         self.use_item(0)
         self.character.show_info()
-        
-        #Code for the Drop Down Menu in upper right
-        mb=  Menubutton (self, text="Options" )
-        mb.grid(row = 0, column = 5, sticky = E)
+
+        mb=  Menubutton(self, text="Options")
+        mb.grid(row = 0, column = 6, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
         mb["menu"]  =  mb.menu
     
@@ -476,36 +515,50 @@ class GUI (Frame):
         mb.menu.add_command( label="Tasks", command = self.task )
         mb.menu.add_command( label="Shop", command = self.buy )
         mb.menu.add_command ( label="Game", command = self.no_where)
+        mb.menu.add_command(label = "List", command = self.generic)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
-        #Code for the footer at the bottom of the page
-        footer = Label(self, text="Copyright 2014")
-        footer.grid(row =9, columnspan = 7, sticky = (N, E, W, S))
-        footer.configure(background = 'black', foreground = 'white',
-                         anchor = CENTER)
+        # footer
+        footer_frame_bg = Frame(self, style='footer.TFrame', padding=3)
+        footer_frame_bg.grid(row=10, column=0, columnspan=7, sticky= (W, E))
+        footer_frame_bg.columnconfigure(0, weight=1)
 
-        #Code the creates page windows with a dicionary.  These pages can
-        #Be cycled through with something like 'self.show_frame(Landing_Page)'
+        # centered frame; holds logo and copyright text
+        footer_frame = Frame(footer_frame_bg, style='footer.TFrame')
+        footer_frame.grid()
+        
+        self.style.configure('footer.TFrame', background='black')
+
+        # archetype logo 
+        archetype_img = PhotoImage(file=os.path.join("assets", "art", "Archetype.gif"))
+        archetype_logo = Label(footer_frame, image=archetype_img, padding="0 0 5 0")
+        archetype_logo.grid(row=0, column=0, sticky=(N, E, W, S))
+        archetype_logo.image = archetype_img
+        archetype_logo.configure(background = 'black', foreground = 'white', anchor = CENTER)
+        
+        footer = Label(footer_frame, text="Copyright 2014")
+        footer.grid(row=0, column=1, sticky = (N, E, W, S))
+        footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
+
+ 
         self.frames = {}
-        for F in (Landing_Page, Work_Space):
-            frame = F(self)
+        for F in (Landing_Page, Work_Space, Generic):
+            frame = F(self, self.character)
             self.frames[F] = frame
             # put all of the pages in the same location; 
             # the one on the top of the stacking order
             # will be the one that is visible.
-            frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4,
-                       sticky = 'news')
+            frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4, sticky = 'news')
 
-        #Initial Page
+        
         self.show_frame(Landing_Page)
 
-    #function brings the page to the front
     def show_frame(self, c):
         '''Show a frame for the given class'''
         frame = self.frames[c]
         frame.tkraise()
         
-     #Toggles the window size using the escape key.       
+        
     def toggle_geom(self,event):
         geom=self.master.winfo_geometry()
         print(geom,self._geom)
@@ -534,15 +587,16 @@ class GUI (Frame):
             self.character.cash -= item.value
             self.character.set_item_IDs()
             self.character_cash.set(self.character.cash)
-            
         else:
            print("Not enough cash!")
 
-    # the next 6 functions are for the drop down menu       
+        
     def home(self):
+        #Currently this goes no where, need to fix the grid_forget issue first
         self.show_frame(Landing_Page)
 
     def habit(self):
+
         self.show_frame(Work_Space)
         
 
@@ -555,9 +609,11 @@ class GUI (Frame):
         
     def buy(self):
         self.show_frame(Work_Space)
+    def generic(self):
+        self.show_frame(Generic)
 
     def no_where(self):
-        messagebox.showinfo("Placeholder", "I don't have anywher to go yet :( !")
+        messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")
 
 
     

@@ -5,9 +5,10 @@ from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 class Landing_Page (Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, character):
         Frame.__init__(self, parent)
         self.landing_window()
+        self.character = character
         self.columnconfigure(0, weight =1)
         self.columnconfigure(2, weight = 1)
         self.columnconfigure(4, weight = 1)
