@@ -2,19 +2,19 @@
   Habit game core
 
   Dependencies: landing_page.py
-                file_parser.py
+                parser.py
 """
 
 #import landing_page.py
 import os.path
 from datetime import date #For timestamps
-from file_parser import *
+from parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 from work_space import *
 from landing_page import *
-
+from generic_list import *
 class Character:
     """
       Class for Habit character profile
@@ -168,22 +168,25 @@ class Character:
         for item in self.items:
             self.show_item(item.ID)
 
-
 class Habit:
     """
+      Class for Individual Habits
+
       Variables:
         title: Name of habit                         (string)
-        description: full description of habit       (string) 
-        ID: equivalent to the index                  (int)
+        description: Short description of habit      (string) 
+        ID: Number to hold index in                  (int)
         habitlist
+        habit_type: Type of habit (Daily, task, etc) (string)
         timestamp: Last-accessed date                (date)
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, title, desc, value, exp, ID=0):
+    def __init__(self, title, desc, value, exp, habit_type, ID=0):
         self.title = title
         self.description = desc
         self.ID = ID
+        self.habit_type = habit_type
         self.timestamp = date.today()
         self.value = value
         self.exp = exp
@@ -197,79 +200,11 @@ class Habit:
                       'desc':self.description,
                       'ID'  :self.ID,
                       'timestamp':str(self.timestamp),
+                      'type':self.habit_type,
                       'value':self.value,
                       'exp':self.exp}
         
         return habit_dict
-
-
-class Task:
-    """
-      Variables:
-        title: Name of task, shows on the dashboard  (string)
-        description: full description of task        (string) 
-        ID: equivalent to the index                  (int)
-        habitlist
-        timestamp: Last-accessed date                (date)
-        value: Cash reward/penalty                   (int)
-        exp: Experience point value                  (int)
-    """
-    def __init__(self, title, desc, value, exp, ID=0):
-        self.title = title
-        self.description = desc
-        self.ID = ID
-        self.timestamp = date.today()
-        self.value = value
-        self.exp = exp
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary 
-        which can be converted to a string
-        """
-        task_dict = {'title':self.title,
-                      'desc':self.description,
-                      'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
-                      'value':self.value,
-                      'exp':self.exp}
-        
-        return task_dict
-
-
-class Daily:
-    """
-      Variables:
-        title: Name of task, shows on the dashboard  (string)
-        description: full description of task        (string) 
-        ID: equivalent to the index                  (int)
-        habitlist
-        timestamp: Last-accessed date                (date)
-        value: Cash reward/penalty                   (int)
-        exp: Experience point value                  (int)
-    """
-    def __init__(self, title, desc, value, exp, ID=0):
-        self.title = title
-        self.description = desc
-        self.ID = ID
-        self.timestamp = date.today()
-        self.value = value
-        self.exp = exp
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary 
-        which can be converted to a string
-        """
-        daily_dict = {'title':self.title,
-                      'desc':self.description,
-                      'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
-                      'value':self.value,
-                      'exp':self.exp}
-        
-        return daily_dict
-    
     
 class Item:
     """
@@ -304,7 +239,6 @@ class Item:
                       'effect':self.effect}
         
         return item_dict
-
 
 class Game_Data:
     """
@@ -359,7 +293,7 @@ class Game_Data:
         character_data dict
         """
         try:
-            data = file_parser(self.savefile)
+            data = parser(self.savefile)
             self.character_data['habits'] = data.parse_tasks()
             self.character_data['name'] = data.parse_name()
             self.token = data.parse_token()
@@ -492,7 +426,7 @@ class GUI (Frame):
         self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
         self.style.configure('banner.TFrame', background='black')
 
-        logo_img = PhotoImage(file=os.path.join("assets", "art", "logo.png"))
+        logo_img = PhotoImage(file=os.path.join("assets", "art", "logo.gif"))
         logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel')
         logo_image.grid(row=0, column=3,sticky='e')
         logo_image.image = logo_img
@@ -512,7 +446,7 @@ class GUI (Frame):
         name.configure(font='arial 12 bold')
         
         # load character image
-        char_img = PhotoImage(file=os.path.join("assets", "art", "main.png"))
+        char_img = PhotoImage(file=os.path.join("assets", "art", "main.gif"))
         character_image = Label(self.char_frame, image=char_img)
         character_image.grid(row=1, column=0, stick=W, padx=5)
         character_image.image = char_img
@@ -569,7 +503,7 @@ class GUI (Frame):
         self.character.show_info()
 
         mb=  Menubutton(self, text="Options")
-        mb.grid(row = 2, column = 0, sticky = E)
+        mb.grid(row = 0, column = 6, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
         mb["menu"]  =  mb.menu
     
@@ -581,6 +515,7 @@ class GUI (Frame):
         mb.menu.add_command( label="Tasks", command = self.task )
         mb.menu.add_command( label="Shop", command = self.buy )
         mb.menu.add_command ( label="Game", command = self.no_where)
+        mb.menu.add_command(label = "List", command = self.generic)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
         # footer
@@ -595,7 +530,7 @@ class GUI (Frame):
         self.style.configure('footer.TFrame', background='black')
 
         # archetype logo 
-        archetype_img = PhotoImage(file=os.path.join("assets", "art", "Archetype.png"))
+        archetype_img = PhotoImage(file=os.path.join("assets", "art", "Archetype.gif"))
         archetype_logo = Label(footer_frame, image=archetype_img, padding="0 0 5 0")
         archetype_logo.grid(row=0, column=0, sticky=(N, E, W, S))
         archetype_logo.image = archetype_img
@@ -607,8 +542,8 @@ class GUI (Frame):
 
  
         self.frames = {}
-        for F in (Landing_Page, Work_Space):
-            frame = F(self)
+        for F in (Landing_Page, Work_Space, Generic):
+            frame = F(self, self.character)
             self.frames[F] = frame
             # put all of the pages in the same location; 
             # the one on the top of the stacking order
@@ -674,6 +609,8 @@ class GUI (Frame):
         
     def buy(self):
         self.show_frame(Work_Space)
+    def generic(self):
+        self.show_frame(Generic)
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")

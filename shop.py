@@ -51,33 +51,33 @@ class Shop():
         self.items = []
         
         # component items
-        self.items.append(Item('motherboard', os.path.join("assets", "art", "mobo.png"), Type.component, "motherboard description", 200, 0, 0))
-        self.items.append(Item('ram 16gb', os.path.join("assets", "art", "ramred.png"), Type.component, "ram 16gb description", 150, 0, 1))
-        self.items.append(Item('ram 8gb', os.path.join("assets", "art", "ramgreen.png"), Type.component, "ram 8gb description", 75, 0, 2))
-        self.items.append(Item('cpu fan', os.path.join("assets", "art", "cpufan.png"), Type.component, "cpu fan description", 50, 0, 3))
-        self.items.append(Item('cpu 3.5 Ghz', os.path.join("assets", "art", "cpu.png"), Type.component, "cpu 3.5 Ghz description", 300, 1, 0))
-        self.items.append(Item('gpu 2gb', os.path.join("assets", "art", "gpured.png"), Type.component, "gpu 2gb description", 300, 1, 1))
-        self.items.append(Item('gpu 1gb', os.path.join("assets", "art", "gpugreen.png"), Type.component, "gpu 1gb description", 150, 1, 2))
+        self.items.append(Item('motherboard', os.path.join("assets", "art", "mobo.gif"), Type.component, "motherboard description", 200, 0, 0))
+        self.items.append(Item('ram 16gb', os.path.join("assets", "art", "ramred.gif"), Type.component, "ram 16gb description", 150, 0, 1))
+        self.items.append(Item('ram 8gb', os.path.join("assets", "art", "ramgreen.gif"), Type.component, "ram 8gb description", 75, 0, 2))
+        self.items.append(Item('cpu fan', os.path.join("assets", "art", "cpufan.gif"), Type.component, "cpu fan description", 50, 0, 3))
+        self.items.append(Item('cpu 3.5 Ghz', os.path.join("assets", "art", "cpu.gif"), Type.component, "cpu 3.5 Ghz description", 300, 1, 0))
+        self.items.append(Item('gpu 2gb', os.path.join("assets", "art", "gpured.gif"), Type.component, "gpu 2gb description", 300, 1, 1))
+        self.items.append(Item('gpu 1gb', os.path.join("assets", "art", "gpugreen.gif"), Type.component, "gpu 1gb description", 150, 1, 2))
 
         # hardware items
-        self.items.append(Item('laptop', os.path.join("assets", "art", "laptop.png"), Type.hardware, "laptop description", 1250, 2, 0))
-        self.items.append(Item('desktop', os.path.join("assets", "art", "desktop.png"), Type.hardware, "desktop description", 2000, 2, 1))
-        self.items.append(Item('terminal', os.path.join("assets", "art", "terminal.png"), Type.hardware, "terminal description", 10000, 2, 2))
-        self.items.append(Item('server', os.path.join("assets", "art", "server.png"), Type.hardware, "server description", 5000, 2, 3))
-        self.items.append(Item('desk', os.path.join("assets", "art", "desk.png"), Type.hardware, "desk description", 500, 3, 0))
+        self.items.append(Item('laptop', os.path.join("assets", "art", "laptop.gif"), Type.hardware, "laptop description", 1250, 2, 0))
+        self.items.append(Item('desktop', os.path.join("assets", "art", "desktop.gif"), Type.hardware, "desktop description", 2000, 2, 1))
+        self.items.append(Item('terminal', os.path.join("assets", "art", "terminal.gif"), Type.hardware, "terminal description", 10000, 2, 2))
+        self.items.append(Item('server', os.path.join("assets", "art", "server.gif"), Type.hardware, "server description", 5000, 2, 3))
+        self.items.append(Item('desk', os.path.join("assets", "art", "desk.gif"), Type.hardware, "desk description", 500, 3, 0))
         
         # food items
-        self.items.append(Item('cake', os.path.join("assets", "art", "cake.png"), Type.food, "cake description", 15, 4, 0))
-        self.items.append(Item('chicken', os.path.join("assets", "art", "chicken.png"), Type.food, "chicken description", 10, 4, 1))
-        self.items.append(Item('pizza', os.path.join("assets", "art", "pizza.png"), Type.food, "pizza description", 20, 4, 2))
-        self.items.append(Item('soda', os.path.join("assets", "art", "soda.png"), Type.food, "soda description", 30, 4, 3))
-        self.items.append(Item('popcorn', os.path.join("assets", "art", "popcorn.png"), Type.food, "popcorn description", 5, 5, 0))
+        self.items.append(Item('cake', os.path.join("assets", "art", "cake.gif"), Type.food, "cake description", 15, 4, 0))
+        self.items.append(Item('chicken', os.path.join("assets", "art", "chicken.gif"), Type.food, "chicken description", 10, 4, 1))
+        self.items.append(Item('pizza', os.path.join("assets", "art", "pizza.gif"), Type.food, "pizza description", 20, 4, 2))
+        self.items.append(Item('soda', os.path.join("assets", "art", "soda.gif"), Type.food, "soda description", 30, 4, 3))
+        self.items.append(Item('popcorn', os.path.join("assets", "art", "popcorn.gif"), Type.food, "popcorn description", 5, 5, 0))
 
         # miscellaneous items
-        self.items.append(Item('gold coins', os.path.join("assets", "art", "goldcoins.png"), Type.money, "gold coins description", 50000, 6, 0))
-        self.items.append(Item('change', os.path.join("assets", "art", "change.png"), Type.money, "change description", 50, 6, 1))
-        self.items.append(Item('dollars', os.path.join("assets", "art", "dollars.png"), Type.money, "dollars description", 500, 6, 2))
-        self.items.append(Item('money bag', os.path.join("assets", "art", "moneybag.png"), Type.money, "money bag description", 2000, 6, 3))
+        self.items.append(Item('gold coins', os.path.join("assets", "art", "goldcoins.gif"), Type.money, "gold coins description", 50000, 6, 0))
+        self.items.append(Item('change', os.path.join("assets", "art", "change.gif"), Type.money, "change description", 50, 6, 1))
+        self.items.append(Item('dollars', os.path.join("assets", "art", "dollars.gif"), Type.money, "dollars description", 500, 6, 2))
+        self.items.append(Item('money bag', os.path.join("assets", "art", "moneybag.gif"), Type.money, "money bag description", 2000, 6, 3))
 
         # create a canvas to allow for scrolling of the shop Frame
         self.canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='white')

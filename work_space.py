@@ -6,7 +6,7 @@ from tkinter import messagebox  #Must be explicitly imported. Used for placehold
 
 class Work_Space (Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, character):
         Frame.__init__(self, parent)
         self.parent = parent
         self.work_window()
