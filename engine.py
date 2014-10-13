@@ -8,7 +8,7 @@
 #import landing_page.py
 import os.path
 from datetime import date #For timestamps
-from parser import *
+from file_parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
@@ -293,7 +293,7 @@ class Game_Data:
         character_data dict
         """
         try:
-            data = parser(self.savefile)
+            data = file_parser(self.savefile)
             self.character_data['habits'] = data.parse_tasks()
             self.character_data['name'] = data.parse_name()
             self.token = data.parse_token()
