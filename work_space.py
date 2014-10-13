@@ -1,9 +1,11 @@
 from tkinter  import *
 from tkinter.ttk import *
 from shop import *
-
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
+
+
 class Work_Space (Frame):
+
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -11,6 +13,7 @@ class Work_Space (Frame):
         
         self.rowconfigure(4, weight =1)
         self.columnconfigure(0, weight = 1)
+
 
     def work_window(self):
         #creating the workspace 

@@ -2,7 +2,7 @@
   Habit game core
 
   Dependencies: landing_page.py
-                parser.py
+                file_parser.py
 """
 
 #import landing_page.py
@@ -168,25 +168,22 @@ class Character:
         for item in self.items:
             self.show_item(item.ID)
 
+
 class Habit:
     """
-      Class for Individual Habits
-
       Variables:
         title: Name of habit                         (string)
-        description: Short description of habit      (string) 
-        ID: Number to hold index in                  (int)
+        description: full description of habit       (string) 
+        ID: equivalent to the index                  (int)
         habitlist
-        habit_type: Type of habit (Daily, task, etc) (string)
         timestamp: Last-accessed date                (date)
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, title, desc, value, exp, habit_type, ID=0):
+    def __init__(self, title, desc, value, exp, ID=0):
         self.title = title
         self.description = desc
         self.ID = ID
-        self.habit_type = habit_type
         self.timestamp = date.today()
         self.value = value
         self.exp = exp
@@ -200,11 +197,79 @@ class Habit:
                       'desc':self.description,
                       'ID'  :self.ID,
                       'timestamp':str(self.timestamp),
-                      'type':self.habit_type,
                       'value':self.value,
                       'exp':self.exp}
         
         return habit_dict
+
+
+class Task:
+    """
+      Variables:
+        title: Name of task, shows on the dashboard  (string)
+        description: full description of task        (string) 
+        ID: equivalent to the index                  (int)
+        habitlist
+        timestamp: Last-accessed date                (date)
+        value: Cash reward/penalty                   (int)
+        exp: Experience point value                  (int)
+    """
+    def __init__(self, title, desc, value, exp, ID=0):
+        self.title = title
+        self.description = desc
+        self.ID = ID
+        self.timestamp = date.today()
+        self.value = value
+        self.exp = exp
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary 
+        which can be converted to a string
+        """
+        task_dict = {'title':self.title,
+                      'desc':self.description,
+                      'ID'  :self.ID,
+                      'timestamp':str(self.timestamp),
+                      'value':self.value,
+                      'exp':self.exp}
+        
+        return task_dict
+
+
+class Daily:
+    """
+      Variables:
+        title: Name of task, shows on the dashboard  (string)
+        description: full description of task        (string) 
+        ID: equivalent to the index                  (int)
+        habitlist
+        timestamp: Last-accessed date                (date)
+        value: Cash reward/penalty                   (int)
+        exp: Experience point value                  (int)
+    """
+    def __init__(self, title, desc, value, exp, ID=0):
+        self.title = title
+        self.description = desc
+        self.ID = ID
+        self.timestamp = date.today()
+        self.value = value
+        self.exp = exp
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary 
+        which can be converted to a string
+        """
+        daily_dict = {'title':self.title,
+                      'desc':self.description,
+                      'ID'  :self.ID,
+                      'timestamp':str(self.timestamp),
+                      'value':self.value,
+                      'exp':self.exp}
+        
+        return daily_dict
+    
     
 class Item:
     """
@@ -239,6 +304,7 @@ class Item:
                       'effect':self.effect}
         
         return item_dict
+
 
 class Game_Data:
     """
