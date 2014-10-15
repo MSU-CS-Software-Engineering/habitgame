@@ -2,14 +2,35 @@ from tkinter  import *
 from tkinter.ttk import *
 
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
+
+class ResizingCanvas(Canvas):
+    def __init__(self,parent,**kwargs):
+        Canvas.__init__(self,parent,**kwargs)
+        self.bind("<Configure>", self.on_resize)
+        self.height = self.winfo_reqheight()
+        self.width = self.winfo_reqwidth()
+
+    def on_resize(self,event):
+        # determine the ratio of old width/height to new width/height
+        wscale = float(event.width)/self.width
+        hscale = float(event.height)/self.height
+        self.width = event.width
+        self.height = event.height
+        # resize the canvas 
+        self.config(width=self.width, height=self.height)
+        # rescale all the objects tagged with the "all" tag
+        self.scale("all",0,0,wscale,hscale)
+
+
+
 class Generic (Frame):
     def __init__(self, parent, character):
         Frame.__init__(self, parent)
         self.parent = parent
         self.character = character
-        #self.rowconfigure(4, weight = 1)
-        #self.columnconfigure(0, weight = 1)
-        #self.columnconfigure(1, weight = 1)
+        self.rowconfigure(4, weight = 1)
+        self.columnconfigure(0, weight = 1)
+        self.columnconfigure(1, weight = 1)
 
         self.list_window()
 
@@ -20,17 +41,21 @@ class Generic (Frame):
         habit_length = len(habit_list)
 
         # Create canvas
-        canvas = Canvas(self, background = 'gray', width = 800, height = 600)
-        canvas.grid(row = 4, column = 0)
-        #canvas.grid_rowconfigure(4, weight = 1)
-        #canvas.grid_columnconfigure(0, weight = 1)
-    
+        canvas = ResizingCanvas(self,width = 1350, background = 'red')
+        #canvas = Canvas(self, background = 'gray', width = 800, height = 600)
+
+        canvas.grid(row = 4, column = 0, sticky = 'news')
+        canvas.grid_rowconfigure(4, weight = 1)
+        canvas.grid_columnconfigure(0, weight = 1)
+
+
+
         # Create scrollbars
 
         yscrollbar = Scrollbar(self, orient=VERTICAL, command=canvas.yview)
-        yscrollbar.grid(row=4, column = 1, sticky = 'news')
-        #yscrollbar.grid_rowconfigure(4, weight = 1)
-        #yscrollbar.grid_columnconfigure(1, weight = 1)
+        yscrollbar.grid(row = 4, column = 1, sticky = 'ns')
+        yscrollbar.grid_rowconfigure(4, weight = 1)
+        yscrollbar.grid_columnconfigure(1, weight = 1)
         # Create frame inside canvas
         frame_style = Style()
         
@@ -45,7 +70,11 @@ class Generic (Frame):
         #Scrollbar function and bindings
         def set_scrollregion(event):
             canvas.configure(scrollregion=canvas.bbox('all'))
+        
+            
         canvas.bind('<Configure>', set_scrollregion)
+
+        canvas.addtag_all("all")
         '''
         for i in range(150):
             x = " This is a sentence "
@@ -59,8 +88,8 @@ class Generic (Frame):
             ############
             habit_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
             habit_frame.grid(row = habit.ID, column = 0)
-            habit_frame.grid_propagate(False)
-            
+            #habit_frame.grid_propagate(False)
+            canvas.addtag_all("all")
             
 
             habit_name = Label(habit_frame, text = habit.title,
@@ -99,7 +128,7 @@ class Generic (Frame):
             habit_description_value.configure(yscrollcommand = scrollbar.set)
             scrollbar.configure(command = habit_description_value.yview)
             habit_description_value.insert(INSERT, x)
-            habit_description_value.grid_propagate(False)
+            #habit_description_value.grid_propagate(False)
 
 
 
@@ -175,8 +204,21 @@ class Generic (Frame):
         pass
     def completed(self):
         pass
+        
 
 
+
+def main():
+    #For Testing purposes
+    #root = Tk()
+    #test=Generic(root)
+    #root.mainloop()
+    #End Test
+
+    pass
+
+if __name__ == '__main__':
+    main()  
 
     
 
