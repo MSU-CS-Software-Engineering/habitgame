@@ -387,8 +387,8 @@ class GUI (Frame):
         Frame.__init__(self, master)
         
         pad = 100
-        
         self.character = character
+
         self.character_name = StringVar()
         self.character_exp = StringVar()
         self.character_cash = StringVar()
