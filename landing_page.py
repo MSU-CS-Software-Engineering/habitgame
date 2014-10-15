@@ -8,6 +8,7 @@ class Landing_Page (Frame):
     def __init__(self, parent, character):
         Frame.__init__(self, parent)
         self.landing_window()
+        
         self.columnconfigure(0, weight =1)
         self.columnconfigure(2, weight = 1)
         self.columnconfigure(4, weight = 1)
@@ -15,7 +16,7 @@ class Landing_Page (Frame):
         #self.rowconfigure (4, weight =1)
         #self.rowconfigure (5, weight = 1)
         self.rowconfigure (6, weight = 1)
- 
+        self.character = character
     def landing_window(self):
 
         #label above progress bar
@@ -33,19 +34,21 @@ class Landing_Page (Frame):
         progress.columnconfigure(0, weight = 1)
 
         #three areas for adding dailies, task, habit widgets
-        area1 = Canvas(self)
+        landing_frame_style = Style()
+        landing_frame_style.configure("lf.TFrame", background = 'white')
+        area1 = Frame(self, style = "lf.TFrame")
         area1.grid(row=6, column=0, columnspan=2, rowspan=4, 
             padx=5, sticky='enws')
         area1.rowconfigure(6, weight =1)
         area1.columnconfigure(0, weight = 1)
 
-        area2 = Canvas(self)
+        area2 = Frame(self, style = "lf.TFrame")
         area2.grid(row=6, column=2, columnspan=2, rowspan=4, 
             padx=5, sticky='enws')
         area2.rowconfigure(6, weight =1)
         area2.columnconfigure(2, weight = 1)
 
-        area3 = Canvas(self)
+        area3 = Frame(self, style = "lf.TFrame")
         area3.grid(row=6, column=4, columnspan=2, rowspan=4, 
             padx=5, sticky=E+W+S+N)
         area3.rowconfigure(6, weight =1)
