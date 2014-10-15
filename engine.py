@@ -2,19 +2,21 @@
   Habit game core
 
   Dependencies: landing_page.py
-                parser.py
+                file_parser.py
 """
 
 #import landing_page.py
 import os.path
 from datetime import date #For timestamps
-from parser import *
+from file_parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 from work_space import *
 from landing_page import *
 from generic_list import *
+
+
 class Character:
     """
       Class for Habit character profile
@@ -25,6 +27,8 @@ class Character:
         exp: Total experience points  (int)
         level: Current level          (int)
         habits: Current habits        (list of Habit objects)
+        tasks:                        (list of Task objects)
+        dailies:                      (list of Daily objects)
         items: Owned (soft|hard)ware  (list of Item objects)
     """
     def __init__(self, name):
@@ -33,8 +37,11 @@ class Character:
         self.exp = 0
         self.level = 1
         self.habits = []
+        self.tasks = []
+        self.dailies = []
         self.items = []
-    
+
+
     def serialize(self):
         """
         Serializes class properties to a dictionary 
@@ -45,24 +52,35 @@ class Character:
                           'exp' : self.exp,
                           'level' : self.level,
                           'habits': None,
+                          'tasks': None,
+                          'dailies': None,
                           'items': None}
 
-
         habits_list = []
+        tasks_list = []
+        dailies_list = []
         items_list = []
         
         for habit in self.habits:
             habits_list.append(habit.serialize())
 
-        
+        for task in self.tasks:
+            tasks_list.append(task.serialize())
+
+        for daily in self.dailies:
+            dailies_list.append(daily.serialize())
+
         for item in self.items:
             items_list.append(item.serialize())
 
         character_dict['habits'] = habits_list
+        character_dict['tasks'] = tasks_list
+        character_dict['dailies'] = dailies_list
         character_dict['items'] = items_list
         
         return character_dict
-            
+
+
     def show_info(self):
         """
         Displays the characters current information:
@@ -75,6 +93,10 @@ class Character:
         print("Level:      "+str(self.level))
         print("\n\nHabits:\n-------")
         self.show_habits()
+        print("\n\nTasks:\n-------")
+        self.show_tasks()
+        print("\n\nDailies:\n-------")
+        self.show_dailies()
         print("\n\nItems:\n------")
         self.show_items()
 
@@ -86,12 +108,40 @@ class Character:
         self.habits.append(habit)
         return habit.ID
 
+    def add_task(self, task):
+        if len(self.tasks) != 0:
+            task.id = len(self.tasks) 
+        
+        self.tasks.append(task)
+        return task.ID
+
+    def add_daily(self, daily):
+        if len(self.dailies) != 0:
+            daily.id = len(self.dailies) 
+        
+        self.dailies.append(daily)
+        return daily.ID
+
     def remove_habit(self, habit_ID):
         try:
             print("Removed habit:", self.habits.pop(habit_ID))
             self.set_habit_IDs()
         except:
             print("Error: Invalid habit id")
+
+    def remove_task(self, task_ID):
+        try:
+            print("Removed task:", self.tasks.pop(task_ID))
+            self.set_task_IDs()
+        except:
+            print("Error: Invalid task id")
+
+    def remove_daily(self, daily_ID):
+        try:
+            print("Removed daily:", self.dailies.pop(daily_ID))
+            self.set_daily_IDs()
+        except:
+            print("Error: Invalid daily id")
 
     def get_habit(self, habit_ID):
         try:
@@ -100,10 +150,32 @@ class Character:
         except:
             print("Error: Invalid habit id")
 
+    def get_task(self, task_ID):
+        try:
+            task = self.tasks[task_ID]
+            return task
+        except:
+            print("Error: Invalid task id")
+
+    def get_daily(self, daily_ID):
+        try:
+            daily = self.dailies[daily_ID]
+            return daily
+        except:
+            print("Error: Invalid daily id")
+
 
     def set_habit_IDs(self):     
         for habit in enumerate(self.habits):
             habit[1].ID = habit[0]
+
+    def set_task_IDs(self):     
+        for task in enumerate(self.tasks):
+            task[1].ID = task[0]
+
+    def set_daily_IDs(self):     
+        for daily in enumerate(self.dailies):
+            daily[1].ID = daily[0]
 
 
     def show_habit(self, habit_id):
@@ -112,7 +184,6 @@ class Character:
             print("Title:        " + habit.title)
             print("Description: " + habit.description)
             print("ID:          " + str(habit.ID))
-            print("Type:        " + habit.habit_type)
             print("Timestamp:   " + str(habit.timestamp))
             print("Value:       " + str(habit.value))
             print("Exp Pts:     " + str(habit.exp))
@@ -120,10 +191,43 @@ class Character:
         except:
             print("Error: Invalid habit_id")
 
+    def show_task(self, task_id):
+        try:
+            task = self.tasks[task_id]
+            print("Title:        " + task.title)
+            print("Description: " + task.description)
+            print("ID:          " + str(task.ID))
+            print("Timestamp:   " + str(task.timestamp))
+            print("Value:       " + str(task.value))
+            print("Exp Pts:     " + str(task.exp))
+
+        except:
+            print("Error: Invalid task_id")
+
+    def show_daily(self, daily_id):
+        try:
+            daily = self.dailies[daily_id]
+            print("Title:        " + daily.title)
+            print("Description: " + daily.description)
+            print("ID:          " + str(daily.ID))
+            print("Timestamp:   " + str(daily.timestamp))
+            print("Value:       " + str(daily.value))
+            print("Exp Pts:     " + str(daily.exp))
+
+        except:
+            print("Error: Invalid daily_id")
+
     def show_habits(self):
         for habit in self.habits:
             self.show_habit(habit.ID)
 
+    def show_tasks(self):
+        for task in self.tasks:
+            self.show_task(task.ID)
+
+    def show_dailies(self):
+        for daily in self.dailies:
+            self.show_daily(daily.ID)
 
     def add_item(self, item):
         if len(self.items) != 0:
@@ -168,6 +272,7 @@ class Character:
         for item in self.items:
             self.show_item(item.ID)
 
+
 class Habit:
     """
       Class for Individual Habits
@@ -176,17 +281,14 @@ class Habit:
         title: Name of habit                         (string)
         description: Short description of habit      (string) 
         ID: Number to hold index in                  (int)
-        habitlist
-        habit_type: Type of habit (Daily, task, etc) (string)
         timestamp: Last-accessed date                (date)
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, title, desc, value, exp, habit_type, ID=0):
+    def __init__(self, title, desc, value, exp, ID=0):
         self.title = title
         self.description = desc
         self.ID = ID
-        self.habit_type = habit_type
         self.timestamp = date.today()
         self.value = value
         self.exp = exp
@@ -200,11 +302,77 @@ class Habit:
                       'desc':self.description,
                       'ID'  :self.ID,
                       'timestamp':str(self.timestamp),
-                      'type':self.habit_type,
                       'value':self.value,
                       'exp':self.exp}
         
         return habit_dict
+
+
+class Task:
+    """
+      Variables:
+        title: Name of habit                         (string)
+        description: Short description of habit      (string) 
+        ID: Number to hold index in                  (int)
+        timestamp: Last-accessed date                (date)
+        value: Cash reward/penalty                   (int)
+        exp: Experience point value                  (int)
+    """
+    def __init__(self, title, desc, value, exp, ID=0):
+        self.title = title
+        self.description = desc
+        self.ID = ID
+        self.timestamp = date.today()
+        self.value = value
+        self.exp = exp
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary 
+        which can be converted to a string
+        """
+        task_dict = {'title':self.title,
+                      'desc':self.description,
+                      'ID'  :self.ID,
+                      'timestamp':str(self.timestamp),
+                      'value':self.value,
+                      'exp':self.exp}
+        
+        return task_dict
+
+
+class Daily:
+    """
+      Variables:
+        title: Name of habit                         (string)
+        description: Short description of habit      (string) 
+        ID: Number to hold index in                  (int)
+        timestamp: Last-accessed date                (date)
+        value: Cash reward/penalty                   (int)
+        exp: Experience point value                  (int)
+    """
+    def __init__(self, title, desc, value, exp, ID=0):
+        self.title = title
+        self.description = desc
+        self.ID = ID
+        self.timestamp = date.today()
+        self.value = value
+        self.exp = exp
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary 
+        which can be converted to a string
+        """
+        daily_dict = {'title':self.title,
+                      'desc':self.description,
+                      'ID'  :self.ID,
+                      'timestamp':str(self.timestamp),
+                      'value':self.value,
+                      'exp':self.exp}
+        
+        return daily_dict
+
     
 class Item:
     """
@@ -239,6 +407,7 @@ class Item:
                       'effect':self.effect}
         
         return item_dict
+
 
 class Game_Data:
     """
@@ -293,7 +462,7 @@ class Game_Data:
         character_data dict
         """
         try:
-            data = parser(self.savefile)
+            data = file_parser(self.savefile)
             self.character_data['habits'] = data.parse_tasks()
             self.character_data['name'] = data.parse_name()
             self.token = data.parse_token()
@@ -305,6 +474,7 @@ class Game_Data:
         
         except:
             self.error('Failed to load data')
+
 
     def build_character(self, character_data):
         """
@@ -353,20 +523,30 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read More','Read more books', 50, 10, 'habit')  
-    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 'daily')
-    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 'task')
+    habit_1 = Habit('Read More','Read more books', 50, 10, 0)  
+    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1)
+    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 2)
+
+    task_1 = Task('Make dinner', 'and make it delicious', 10, 10, 0)
+
+    daily_1 = Daily('Play guitar', 'hit strings in a pleasing combination', 15, 25, 0)
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
     item_3 = Item('SSD', 'ssd.jpg', 6, 20)
 
     habits = []
+    tasks = []
+    dailies = []
     items = []
 
     habits.append(habit_1)
     habits.append(habit_2)
     habits.append(habit_3)
+
+    tasks.append(task_1)
+
+    dailies.append(daily_1)
 
     items.append(item_1)
     items.append(item_2)
@@ -374,6 +554,12 @@ def load(name):
 
     for habit in habits:
         new_character.add_habit(habit)
+
+    for task in tasks:
+        new_character.add_task(task)
+
+    for daily in dailies:
+        new_character.add_daily(daily)
 
     for item in items:
         new_character.add_item(item)
@@ -387,8 +573,8 @@ class GUI (Frame):
         Frame.__init__(self, master)
         
         pad = 100
+        
         self.character = character
-
         self.character_name = StringVar()
         self.character_exp = StringVar()
         self.character_cash = StringVar()
@@ -609,6 +795,7 @@ class GUI (Frame):
         
     def buy(self):
         self.show_frame(Work_Space)
+        
     def generic(self):
         self.show_frame(Generic)
 
@@ -642,3 +829,4 @@ def main():
         
 if __name__ == "__main__":
     main()
+
