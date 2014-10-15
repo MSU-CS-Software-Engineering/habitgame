@@ -39,11 +39,27 @@ class Work_Space (Frame):
         add_task_btn = Button(tab_task, text='Add new task', command = self.add_task)
         add_goal_btn = Button(tab_goal, text='Add new goal', command = self.add_goal)
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
+        
+        delete_habit_btn = Button(tab_habit, text='Delete habit', command = self.delete_habit)
+        delete_task_btn = Button(tab_task, text='Delete task', command = self.delete_task)
+        delete_goal_btn = Button(tab_goal, text='Delete goal', command = self.delete_goal)
+
+        edit_habit_btn = Button(tab_habit, text='Edit habit', command = self.edit_habit)
+        edit_task_btn = Button(tab_task, text='Edit task', command = self.edit_task)
+        edit_goal_btn = Button(tab_goal, text='Edit goal', command = self.edit_goal)
 
         add_habit_btn.place(relx=0.95, rely=0.95, anchor=SE)
         add_task_btn.place(relx=0.95, rely=0.95, anchor=SE)
         add_goal_btn.place(relx=0.95, rely=0.95, anchor=SE)
         add_buy_btn.place(relx=0.95, rely=0.95, anchor=SE)
+        
+        delete_habit_btn.place(relx=0.85, rely=0.95, anchor=SE)
+        delete_task_btn.place(relx=0.85, rely=0.95, anchor=SE)
+        delete_goal_btn.place(relx=0.85, rely=0.95, anchor=SE)
+
+        edit_habit_btn.place(relx=0.75, rely=0.95, anchor=SE)
+        edit_task_btn.place(relx=0.75, rely=0.95, anchor=SE)
+        edit_goal_btn.place(relx=0.75, rely=0.95, anchor=SE)
 
         shop = Shop(tab_shop)
         
@@ -62,6 +78,36 @@ class Work_Space (Frame):
 
     def add_goal(self):
         self.gather_habit_data("goal")
+        
+    def delete_habit(self):
+        answer = messagebox.askokcancel("Delete Habit", "Delete habit?")
+        if answer is True:
+            print("User clicked Ok")
+        else:
+            print("User clicked Cancel")
+            
+    def delete_task(self):
+        answer = messagebox.askokcancel("Delete Task", "Delete task?")
+        if answer is True:
+            print("User clicked Ok")
+        else:
+            print("User clicked Cancel")
+
+    def delete_goal(self):
+        answer = messagebox.askokcancel("Delete Goal", "Delete goal?")
+        if answer is True:
+            print("User clicked Ok")
+        else:
+            print("User clicked Cancel")
+            
+    def edit_habit(self):
+        messagebox.showinfo("Updated Habit", "Habit updated.")
+
+    def edit_task(self):
+        messagebox.showinfo("Updated Task", "Task updated.")
+
+    def edit_goal(self):
+        messagebox.showinfo("Updated Goal", "Goal updated.")
 
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
