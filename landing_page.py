@@ -7,8 +7,9 @@ from tkinter import messagebox  #Must be explicitly imported. Used for placehold
 class Landing_Page (Frame):
     def __init__(self, parent, character):
         Frame.__init__(self, parent)
-        self.landing_window()
         
+        
+        self.character = character
         self.columnconfigure(0, weight =1)
         self.columnconfigure(2, weight = 1)
         self.columnconfigure(4, weight = 1)
@@ -16,9 +17,14 @@ class Landing_Page (Frame):
         #self.rowconfigure (4, weight =1)
         #self.rowconfigure (5, weight = 1)
         self.rowconfigure (6, weight = 1)
-        self.character = character
+        self.landing_window()
     def landing_window(self):
 
+
+        habit_list = self.character.habits
+        tasks_list = self.character.tasks
+        dailies_list = self.character.dailies
+        
         #label above progress bar
         progress_label = Label(self, text="Daily Progress")
         progress_label.grid(row = 4, column =2 ,sticky='ew', pady=4, padx=5)
@@ -36,11 +42,22 @@ class Landing_Page (Frame):
         #three areas for adding dailies, task, habit widgets
         landing_frame_style = Style()
         landing_frame_style.configure("lf.TFrame", background = 'white')
+
+        habit_frame_style = Style()
+        habit_frame_style.configure("hf.TFrame", background = 'red')
+
+       
         area1 = Frame(self, style = "lf.TFrame")
         area1.grid(row=6, column=0, columnspan=2, rowspan=4, 
             padx=5, sticky='enws')
+        area1.grid_propagate(False)
         area1.rowconfigure(6, weight =1)
         area1.columnconfigure(0, weight = 1)
+        
+
+
+
+            
 
         area2 = Frame(self, style = "lf.TFrame")
         area2.grid(row=6, column=2, columnspan=2, rowspan=4, 
@@ -48,11 +65,26 @@ class Landing_Page (Frame):
         area2.rowconfigure(6, weight =1)
         area2.columnconfigure(2, weight = 1)
 
+ 
+
+
+        
+
         area3 = Frame(self, style = "lf.TFrame")
         area3.grid(row=6, column=4, columnspan=2, rowspan=4, 
             padx=5, sticky=E+W+S+N)
         area3.rowconfigure(6, weight =1)
         area3.columnconfigure(4, weight = 1)
+
+
+
+        #Bottom go to buttons
+        go_to_habits = Button(area1, text='GO TO HABITS', command = self.to_habits)
+        go_to_dailies = Button(area2, text='GO TO DAILIES', command = self.to_tasks)
+        go_to_tasks = Button(area3, text='GO TO TASKS', command = self.to_dailies)
+        go_to_habits.pack(fill = X, side = 'bottom', expand = True, anchor = S)
+        go_to_dailies.pack(fill = X, side = 'bottom', expand = True, anchor = S)
+        go_to_tasks.pack(fill = X, side = 'bottom', expand = True, anchor = S)
 
         
     def start(self):
@@ -60,3 +92,16 @@ class Landing_Page (Frame):
         self.max = 24
         self.progress["midnight"]=24
         self.progress["value"] = 12
+
+        
+    def to_habits(self):
+        pass
+        
+
+    def to_dailies(self):
+        pass
+        
+
+    def to_tasks(self):
+        pass
+        
