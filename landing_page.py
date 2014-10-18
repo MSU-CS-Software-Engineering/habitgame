@@ -47,9 +47,8 @@ class Landing_Page (Frame):
 
         habit_frame_style = Style()
         habit_frame_style.configure("hf.TFrame", background = 'red', height = 100)
-        
-        header_style = Style()
-        header_style.configure("header.TLabel", font = "Veranda 24 Bold")
+
+
             
         area1 = Frame(self, style = "lf.TFrame")
         area1.grid(row=6, column=0, columnspan=2, rowspan=4, 
@@ -60,7 +59,8 @@ class Landing_Page (Frame):
         habit_list = self.character.habits
         counter = 0
 
-        habit_header = Label(area1, text = "HABITS", anchor = CENTER, font = "Veranda 24 bold")
+        habit_header = Label(area1, text = "HABITS", anchor = CENTER,
+                             font = "Veranda 24 bold", foreground = 'blue')
         habit_header.grid(row = 0, column = 0, sticky = 'new',pady = (3,0), padx = 3)
 
         area2 = Frame(self, style = "lf.TFrame")
@@ -70,7 +70,8 @@ class Landing_Page (Frame):
         area2.columnconfigure(2, weight = 1)
         area2.grid_propagate(False)
 
-        dailies_header = Label(area2, text = "DAILIES", anchor = CENTER, font = "Veranda 24 bold")
+        dailies_header = Label(area2, text = "DAILIES", anchor = CENTER,
+                               font = "Veranda 24 bold", foreground = 'blue')
         dailies_header.grid(row = 0, column = 2, sticky = 'new',pady = (3,0), padx = 3)
 
         area3 = Frame(self, style = "lf.TFrame")
@@ -80,7 +81,8 @@ class Landing_Page (Frame):
         area3.columnconfigure(4, weight = 1)
         area3.grid_propagate(False)
 
-        tasks_header = Label(area3, text = "TASKS", anchor = CENTER, font = "Veranda 24 bold")
+        tasks_header = Label(area3, text = "TASKS", anchor = CENTER,
+                             font = "Veranda 24 bold", foreground = 'blue')
         tasks_header.grid(row = 0, column = 4, sticky = 'new',pady = (3,0), padx = 3)
 
         
@@ -105,7 +107,7 @@ class Landing_Page (Frame):
                     habit_frame = Frame(area1, style="hf.TFrame", height = 100)
                     habit_frame.grid(row = habit.ID+1, column = 0, sticky = 'new',pady = (3,0), padx = 3)
 
-                    habit_name = Label(habit_frame, text = habit.title, anchor = CENTER)
+                    habit_name = Label(habit_frame, text = habit.title, anchor = CENTER, font = "Veranda 16 bold")
                     habit_name.pack(fill = X, expand = True)
 
                     habit_description = Label (habit_frame, text = habit.description, wraplength = 375,
@@ -135,10 +137,11 @@ class Landing_Page (Frame):
                 number = 0
             
                 dailies_frame = Frame(area2, style="hf.TFrame")
-                habit_frame.grid(row = dailies.ID+1, column = 2, sticky = 'news',pady = (3,0), padx = 3)
+                dailies_frame.grid(row = 1, column = 2, sticky = 'news',pady = (3,0), padx = 3)
 
-                dailies_name = Label(dailies_frame, text = "No Habits to Display", anchor = CENTER)
-                dailies_name.pack(fill = X, expand = True)
+                dailies_name = Label(dailies_frame, text = "No Habits to Display",
+                                     anchor = CENTER)
+                dailies_name.pack(fill = BOTH, expand = True)
         else:
             number = len(dailies_list)
 
@@ -147,19 +150,24 @@ class Landing_Page (Frame):
                 dailies = dailies_list[x]
                 if counter < 5:
                     dailies_frame = Frame(area2, style="hf.TFrame", height = 100)
-                    dailies_frame.grid(row = dailies.ID+1, column = 2, sticky = 'new',pady = (3,0), padx = 3)
+                    dailies_frame.grid(row = dailies.ID+1, column = 2,
+                                       sticky = 'new',pady = (3,0), padx = 3)
 
-                    dailies_name = Label(dailies_frame, text = dailies.title, anchor = CENTER)
+                    dailies_name = Label(dailies_frame, text = dailies.title,
+                                         anchor = CENTER, font = "Veranda 16 bold")
                     dailies_name.pack(fill = X, expand = True)
 
-                    dailies_description = Label (dailies_frame, text = dailies.description, wraplength = 375,
-                                               justify = LEFT)
+                    dailies_description = Label (dailies_frame,
+                                                 text = dailies.description,
+                                                 wraplength = 375,justify = LEFT)
                     dailies_description.pack(fill = X, expand = True)
 
 
-                    dailies_value=Label(dailies_frame, text ="Value:     " + str(dailies.value))
+                    dailies_value=Label(dailies_frame,
+                                        text ="Value:     " + str(dailies.value))
                     dailies_value.pack (fill = X, expand = True)
-                    dailies_date_time = Label(dailies_frame, text ="Date/Time:     "+str(dailies.timestamp) )
+                    dailies_date_time = Label(dailies_frame,
+                                              text ="Date/Time:     "+str(dailies.timestamp) )
                     dailies_date_time.pack(fill = X, expand = True)
 
                     def function_builder(args):
@@ -181,13 +189,16 @@ class Landing_Page (Frame):
                 number = 0
             
                 task_frame = Frame(area3, style="hf.TFrame")
-                task_frame.grid(row = task.ID+1, column = 4, sticky = 'news',pady = (3,0), padx = 3)
+                task_frame.grid(row = 1, column = 4,rowspan = 4,
+                                sticky = 'news',pady = (3,0), padx = 3)
 
-                task_name = Label(habit_frame, text = "No Habits to Display", anchor = CENTER)
-                task_name.pack(fill = X, expand = True)
+
+                task_name = Label(task_frame, text = "No Habits to Display",
+                                  anchor = CENTER, font = "Veranda 16 bold")
+                task_name.pack(fill = BOTH, expand = True)
         else:
             number = len(tasks_list)
-
+            
         if number != 0:
             for x in range(number):
                 task = tasks_list[x]
@@ -195,7 +206,8 @@ class Landing_Page (Frame):
                     task_frame = Frame(area3, style="hf.TFrame", height = 100)
                     task_frame.grid(row = task.ID+1, column = 4, sticky = 'new',pady = (3,0), padx = 3)
 
-                    task_name = Label(task_frame, text = task.title, anchor = CENTER)
+                    task_name = Label(task_frame, text = task.title,
+                                      anchor = CENTER, font = "Veranda 16 bold")
                     task_name.pack(fill = X, expand = True)
                     x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
 
@@ -206,7 +218,8 @@ class Landing_Page (Frame):
 
                     task_value=Label(task_frame, text ="Value:     " + str(task.value))
                     task_value.pack (fill = X, expand = True)
-                    task_date_time = Label(task_frame, text ="Date/Time:     "+str(task.timestamp) )
+                    task_date_time = Label(task_frame,
+                                           text ="Date/Time:     "+str(task.timestamp) )
                     task_date_time.pack(fill = X, expand = True)
 
                     def function_builder(args):
