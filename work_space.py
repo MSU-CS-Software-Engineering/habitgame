@@ -2,6 +2,8 @@ from tkinter  import *
 from tkinter.ttk import *
 from shop import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
+from resize_window import *
+
 
 
 class Work_Space (Frame):
@@ -21,14 +23,21 @@ class Work_Space (Frame):
         frame = Notebook(self, height = 200, width = 400, padding=5)
         frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
         frame_style = Style()
-        frame_style.configure("W.TFrame", background='white')
+        frame_style.configure("W.TFrame", background='black')
         frame.rowconfigure(4, weight = 1)
         frame.columnconfigure(0, weight = 1)
+        #frame.grid_propagate(False)
 
-        tab_habit = Canvas(frame)
-        tab_dailies = Canvas(frame)
-        tab_tasks = Canvas(frame)
-        tab_shop = Canvas(frame)
+        tab_habit = Canvas(frame, width=850, height=400)
+        tab_dailies = Canvas(frame, width=850, height=400)
+        tab_tasks = Canvas(frame, width=850, height=400)
+        tab_shop = Canvas(frame, width=850, height=400)
+
+        tab_habit.pack(fill = BOTH, expand = YES)
+        tab_dailies.pack(fill = BOTH, expand = YES)
+        tab_tasks.pack(fill = BOTH, expand = YES)
+        tab_shop.pack(fill = BOTH, expand = YES)
+
 
         bar_habit = Scrollbar(tab_habit, orient = VERTICAL)
         bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL)
@@ -37,6 +46,31 @@ class Work_Space (Frame):
         bar_habit.pack(side = RIGHT, fill = Y)
         bar_tasks.pack(side = RIGHT, fill = Y)
         bar_dailies.pack(side = RIGHT, fill = Y)
+
+        bar_habit.configure(command = tab_habit.yview)
+        bar_tasks.configure(command = tab_tasks.yview)
+        bar_dailies.configure(command = tab_dailies.yview)
+
+        tab_habit.configure(yscrollcommand = bar_habit.set)
+        tab_tasks.configure(yscrollcommand = bar_tasks.set)
+        tab_dailies.configure(yscrollcommand = bar_dailies.set)
+
+        habit = Frame()
+        tab_habit.create_window(0,0, anchor = N + E, window = habit)
+
+        habit_label = Label(habit, text = "home")
+        habit_label.grid(row = 0, column = 0, sticky = 'new')
+        
+        
+
+        frame_habit = Frame(tab_habit)
+        frame_habit.pack(side = LEFT, fill = BOTH)
+
+        frame_tasks = Frame(tab_tasks)
+        frame_tasks.pack(side = LEFT, fill = BOTH)
+
+        frame_dailies = Frame(tab_dailies)
+        frame_dailies.pack(side = LEFT, fill = BOTH)
                         
 
         frame.add(tab_habit, text='Habits')

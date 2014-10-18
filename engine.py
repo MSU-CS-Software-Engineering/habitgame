@@ -682,7 +682,7 @@ class GUI (Frame):
         self.uses = uses
         self.effect = effect'''
         #manual test for update
-        item_test = Item('SSD', 'ssd.jpg', 6, 1)
+        item_test = Item('SSD', 'ssd.jpg', 6, 1)    
         self.complete_habit(1)
         self.buy_item(item_test)
         self.use_item(0)
