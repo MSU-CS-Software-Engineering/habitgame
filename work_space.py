@@ -18,55 +18,52 @@ class Work_Space (Frame):
     def work_window(self):
         #creating the workspace 
 
-        habit_frame = Notebook(self, height = 200, width = 400, padding=5)
-        habit_frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
-        habit_frame_style = Style()
-        habit_frame_style.configure("W.TFrame", background='white')
-        habit_frame.rowconfigure(4, weight = 1)
-        habit_frame.columnconfigure(0, weight = 1)
+        frame = Notebook(self, height = 200, width = 400, padding=5)
+        frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
+        frame_style = Style()
+        frame_style.configure("W.TFrame", background='white')
+        frame.rowconfigure(4, weight = 1)
+        frame.columnconfigure(0, weight = 1)
 
-        tab_habit = Frame(habit_frame, style="W.TFrame")
-        tab_task = Frame(habit_frame, style ="W.TFrame")
-        tab_goal = Frame(habit_frame, style ="W.TFrame")
-        tab_shop = Frame(habit_frame, style = "W.TFrame")
+        tab_habit = Canvas(frame)
+        tab_dailies = Canvas(frame)
+        tab_tasks = Canvas(frame)
+        tab_shop = Canvas(frame)
 
-        habit_frame.add(tab_habit, text='Habits')
-        habit_frame.add(tab_task, text='Tasks')
-        habit_frame.add(tab_goal, text='Goals')
-        habit_frame.add(tab_shop, text='Shop')
+        bar_habit = Scrollbar(tab_habit, orient = VERTICAL)
+        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL)
+        bar_tasks = Scrollbar(tab_tasks, orient = VERTICAL)
+
+        bar_habit.pack(side = RIGHT, fill = Y)
+        bar_tasks.pack(side = RIGHT, fill = Y)
+        bar_dailies.pack(side = RIGHT, fill = Y)
+                        
+
+        frame.add(tab_habit, text='Habits')
+        frame.add(tab_tasks, text='Tasks')
+        frame.add(tab_dailies, text='Dailies')
+        frame.add(tab_shop, text='Shop')
 
         add_habit_btn = Button(tab_habit, text='Add new habit', command = self.add_habit)
-        add_task_btn = Button(tab_task, text='Add new task', command = self.add_task)
-        add_goal_btn = Button(tab_goal, text='Add new goal', command = self.add_goal)
+        add_task_btn = Button(tab_tasks, text='Add new task', command = self.add_task)
+        add_goal_btn = Button(tab_dailies, text='Add new goal', command = self.add_goal)
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
         
         delete_habit_btn = Button(tab_habit, text='Delete habit', command = self.delete_habit)
-        delete_task_btn = Button(tab_task, text='Delete task', command = self.delete_task)
-        delete_goal_btn = Button(tab_goal, text='Delete goal', command = self.delete_goal)
+        delete_task_btn = Button(tab_tasks, text='Delete task', command = self.delete_task)
+        delete_goal_btn = Button(tab_dailies, text='Delete goal', command = self.delete_goal)
 
         edit_habit_btn = Button(tab_habit, text='Edit habit', command = self.edit_habit)
-        edit_task_btn = Button(tab_task, text='Edit task', command = self.edit_task)
-        edit_goal_btn = Button(tab_goal, text='Edit goal', command = self.edit_goal)
+        edit_task_btn = Button(tab_tasks, text='Edit task', command = self.edit_task)
+        edit_goal_btn = Button(tab_dailies, text='Edit goal', command = self.edit_goal)
 
-        add_habit_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_task_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_goal_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_buy_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        
-        delete_habit_btn.place(relx=0.85, rely=0.95, anchor=SE)
-        delete_task_btn.place(relx=0.85, rely=0.95, anchor=SE)
-        delete_goal_btn.place(relx=0.85, rely=0.95, anchor=SE)
-
-        edit_habit_btn.place(relx=0.75, rely=0.95, anchor=SE)
-        edit_task_btn.place(relx=0.75, rely=0.95, anchor=SE)
-        edit_goal_btn.place(relx=0.75, rely=0.95, anchor=SE)
 
         shop = Shop(tab_shop)
         
         habit1=Frame(tab_habit)
         habit1.grid()
 
-        habit_frame.select(tab_shop)
+        frame.select(tab_shop)
     
 
     
