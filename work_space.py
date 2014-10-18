@@ -166,8 +166,7 @@ class Work_Space (Frame):
 
     def output_window_vals(self, ticket_type, ticket_name, ticket_desc, ticket_value):
         values = [ticket_type, ticket_name, ticket_desc, ticket_value]
-        print(values)
-        #return values
+        return values
 
 def main():
     #For Testing purposes
