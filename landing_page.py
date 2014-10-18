@@ -47,80 +47,181 @@ class Landing_Page (Frame):
 
         habit_frame_style = Style()
         habit_frame_style.configure("hf.TFrame", background = 'red', height = 100)
-
+        
+        header_style = Style()
+        header_style.configure("header.TLabel", font = "Veranda 24 Bold")
+            
         area1 = Frame(self, style = "lf.TFrame")
-        area1.grid(row=6, column=0, columnspan=2, 
+        area1.grid(row=6, column=0, columnspan=2, rowspan=4, 
             padx=5, sticky='enws')
         area1.grid_propagate(False)
         area1.rowconfigure(6, weight =1)
         area1.columnconfigure(0, weight = 1)
         habit_list = self.character.habits
         counter = 0
-    
-        for habit in habit_list:
-            if counter < 5:
-                habit_frame = Frame(area1, style="hf.TFrame", height = 100)
-                habit_frame.grid(row = habit.ID, column = 0, sticky = 'new',pady = (3,0), padx = 3)
 
-                habit_name = Label(habit_frame, text = habit.title, anchor = CENTER)
-                habit_name.pack(fill = X, expand = True)
-                x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
-
-                habit_description = Label (habit_frame, text = x, wraplength = 375,
-                                           justify = LEFT)
-                habit_description.pack(fill = X, expand = True)
-
-
-                habit_value=Label(habit_frame, text ="Value:     " + str(habit.value))
-                habit_value.pack (fill = X, expand = True)
-                habit_date_time = Label(habit_frame, text ="Date/Time:     "+str(habit.timestamp) )
-                habit_date_time.pack(fill = X, expand = True)
-
-                def function_builder(args):
-                    messagebox.showinfo("Place Holder", "go to " + args)
-                    
-                complete_button = Button(habit_frame,
-                                         text='COMPLETE '+habit.title,
-                                         command = self.complete)
-                complete_button.pack(fill = X, expand = True, side = BOTTOM)
-
-                
-
-
-
-                
-                    
-
-
-                
-                
-            
-        
-        
-   
-
-    
-
-
-
-            counter += 1
+        habit_header = Label(area1, text = "HABITS", anchor = CENTER, font = "Veranda 24 bold")
+        habit_header.grid(row = 0, column = 0, sticky = 'new',pady = (3,0), padx = 3)
 
         area2 = Frame(self, style = "lf.TFrame")
-        area2.grid(row=6, column=2, columnspan=2, 
+        area2.grid(row=6, column=2, columnspan=2, rowspan=4, 
             padx=5, sticky='enws')
         area2.rowconfigure(6, weight =1)
         area2.columnconfigure(2, weight = 1)
+        area2.grid_propagate(False)
 
- 
-
-
-        
+        dailies_header = Label(area2, text = "DAILIES", anchor = CENTER, font = "Veranda 24 bold")
+        dailies_header.grid(row = 0, column = 2, sticky = 'new',pady = (3,0), padx = 3)
 
         area3 = Frame(self, style = "lf.TFrame")
-        area3.grid(row=6, column=4, columnspan=2, 
-            padx=5, sticky=E+W+S+N)
+        area3.grid(row=6, column=4, columnspan=2, rowspan=4, 
+            padx=5, sticky='news')
         area3.rowconfigure(6, weight =1)
         area3.columnconfigure(4, weight = 1)
+        area3.grid_propagate(False)
+
+        tasks_header = Label(area3, text = "TASKS", anchor = CENTER, font = "Veranda 24 bold")
+        tasks_header.grid(row = 0, column = 4, sticky = 'new',pady = (3,0), padx = 3)
+
+        
+        #for habit in habit_list:
+        if len(habit_list) > 4:
+            number = 5
+        elif len(habit_list) == 0:
+                number = 0
+            
+                habit_frame = Frame(area1, style="hf.TFrame")
+                habit_frame.grid(row = habit.ID + 1, column = 0, sticky = 'news',pady = (3,0), padx = 3)
+
+                habit_name = Label(habit_frame, text = "No Habits to Display", anchor = CENTER)
+                habit_name.pack(fill = X, expand = True)
+        else:
+            number = len(habit_list)
+
+        if number != 0:
+            for x in range(number):
+                habit = habit_list[x]
+                if counter < 5:
+                    habit_frame = Frame(area1, style="hf.TFrame", height = 100)
+                    habit_frame.grid(row = habit.ID+1, column = 0, sticky = 'new',pady = (3,0), padx = 3)
+
+                    habit_name = Label(habit_frame, text = habit.title, anchor = CENTER)
+                    habit_name.pack(fill = X, expand = True)
+
+                    habit_description = Label (habit_frame, text = habit.description, wraplength = 375,
+                                               justify = LEFT)
+                    habit_description.pack(fill = X, expand = True)
+
+
+                    habit_value=Label(habit_frame, text ="Value:     " + str(habit.value))
+                    habit_value.pack (fill = X, expand = True)
+                    habit_date_time = Label(habit_frame, text ="Date/Time:     "+str(habit.timestamp) )
+                    habit_date_time.pack(fill = X, expand = True)
+
+                    def function_builder(args):
+                        messagebox.showinfo("Place Holder", "go to " + args)
+                        
+                    complete_button = Button(habit_frame,
+                                             text='COMPLETE '+habit.title,
+                                             command = self.complete)
+                    complete_button.pack(fill = X, expand = True, side = BOTTOM)
+
+                    
+
+        #Dailies landing area
+        if len(dailies_list) > 4:
+            number = 5
+        elif len(dailies_list) == 0:
+                number = 0
+            
+                dailies_frame = Frame(area2, style="hf.TFrame")
+                habit_frame.grid(row = dailies.ID+1, column = 2, sticky = 'news',pady = (3,0), padx = 3)
+
+                dailies_name = Label(dailies_frame, text = "No Habits to Display", anchor = CENTER)
+                dailies_name.pack(fill = X, expand = True)
+        else:
+            number = len(dailies_list)
+
+        if number != 0:
+            for x in range(number):
+                dailies = dailies_list[x]
+                if counter < 5:
+                    dailies_frame = Frame(area2, style="hf.TFrame", height = 100)
+                    dailies_frame.grid(row = dailies.ID+1, column = 2, sticky = 'new',pady = (3,0), padx = 3)
+
+                    dailies_name = Label(dailies_frame, text = dailies.title, anchor = CENTER)
+                    dailies_name.pack(fill = X, expand = True)
+
+                    dailies_description = Label (dailies_frame, text = dailies.description, wraplength = 375,
+                                               justify = LEFT)
+                    dailies_description.pack(fill = X, expand = True)
+
+
+                    dailies_value=Label(dailies_frame, text ="Value:     " + str(dailies.value))
+                    dailies_value.pack (fill = X, expand = True)
+                    dailies_date_time = Label(dailies_frame, text ="Date/Time:     "+str(dailies.timestamp) )
+                    dailies_date_time.pack(fill = X, expand = True)
+
+                    def function_builder(args):
+                        messagebox.showinfo("Place Holder", "go to " + args)
+                        
+                    complete_button = Button(dailies_frame,
+                                             text='COMPLETE '+dailies.title,
+                                             command = self.complete)
+                    complete_button.pack(fill = X, expand = True, side = BOTTOM)
+                 
+
+                
+                   
+
+        #Tasks
+        if len(tasks_list) > 4:
+            number = 5
+        elif len(tasks_list) == 0:
+                number = 0
+            
+                task_frame = Frame(area3, style="hf.TFrame")
+                task_frame.grid(row = task.ID+1, column = 4, sticky = 'news',pady = (3,0), padx = 3)
+
+                task_name = Label(habit_frame, text = "No Habits to Display", anchor = CENTER)
+                task_name.pack(fill = X, expand = True)
+        else:
+            number = len(tasks_list)
+
+        if number != 0:
+            for x in range(number):
+                task = tasks_list[x]
+                if counter < 5:
+                    task_frame = Frame(area3, style="hf.TFrame", height = 100)
+                    task_frame.grid(row = task.ID+1, column = 4, sticky = 'new',pady = (3,0), padx = 3)
+
+                    task_name = Label(task_frame, text = task.title, anchor = CENTER)
+                    task_name.pack(fill = X, expand = True)
+                    x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
+
+                    task_description = Label (task_frame, text = x, wraplength = 375,
+                                               justify = LEFT)
+                    task_description.pack(fill = X, expand = True)
+
+
+                    task_value=Label(task_frame, text ="Value:     " + str(task.value))
+                    task_value.pack (fill = X, expand = True)
+                    task_date_time = Label(task_frame, text ="Date/Time:     "+str(task.timestamp) )
+                    task_date_time.pack(fill = X, expand = True)
+
+                    def function_builder(args):
+                        messagebox.showinfo("Place Holder", "go to " + args)
+                        
+                    complete_button = Button(task_frame,
+                                             text='COMPLETE '+task.title,
+                                             command = self.complete)
+                    complete_button.pack(fill = X, expand = True, side = BOTTOM)
+
+                    
+
+                
+                
+    
 
 
 
