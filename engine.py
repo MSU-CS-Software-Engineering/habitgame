@@ -170,7 +170,6 @@ class Character:
         except:
             print("Error: Invalid daily id")
 
-
     def set_habit_IDs(self):     
         for habit in enumerate(self.habits):
             habit[1].ID = habit[0]
@@ -187,7 +186,7 @@ class Character:
     def show_habit(self, habit_id):
         try:
             habit = self.habits[habit_id]
-            print("Title:        " + habit.title)
+            print("Title:       " + habit.title)
             print("Description: " + habit.description)
             print("ID:          " + str(habit.ID))
             print("Timestamp:   " + str(habit.timestamp))
@@ -200,7 +199,7 @@ class Character:
     def show_task(self, task_id):
         try:
             task = self.tasks[task_id]
-            print("Title:        " + task.title)
+            print("Title:       " + task.title)
             print("Description: " + task.description)
             print("ID:          " + str(task.ID))
             print("Timestamp:   " + str(task.timestamp))
@@ -213,7 +212,7 @@ class Character:
     def show_daily(self, daily_id):
         try:
             daily = self.dailies[daily_id]
-            print("Title:        " + daily.title)
+            print("Title:       " + daily.title)
             print("Description: " + daily.description)
             print("ID:          " + str(daily.ID))
             print("Timestamp:   " + str(daily.timestamp))
@@ -250,7 +249,6 @@ class Character:
         except:
             print("Invalid item id!")
             return -1
-
 
     def get_item(self, item_ID):
         try:
@@ -689,14 +687,8 @@ class GUI (Frame):
         self.value = value
         self.uses = uses
         self.effect = effect'''
-        #manual test for update
-        item_test = Item('SSD', 'ssd.jpg', 6, 1)
-        self.complete_habit(1)
-        self.buy_item(item_test)
-        self.use_item(0)
-        self.character.show_info()
 
-        mb=  Menubutton(self, text="Options")
+        mb =  Menubutton(self, text="Options")
         mb.grid(row = 0, column = 6, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
         mb["menu"]  =  mb.menu
@@ -770,17 +762,24 @@ class GUI (Frame):
        
         
     def use_item(self, item_ID):
+        #Items with -1 uses are permanent upgrade items.
+        if self.character.items[item_ID].uses < 0:
+            return None
+
         self.character.items[item_ID].uses -= 1
+        #Function for given item is called here.
         if self.character.items[item_ID].uses == 0:
             self.character.remove_item(item_ID)
             self.character.set_item_IDs()
-            
+        
+        
     def buy_item(self, item):
         if self.character.cash >= item.value:    
             self.character.add_item(item)
             self.character.cash -= item.value
             self.character.set_item_IDs()
-            self.character_cash.set(self.character.cash)
+            self.character_cash.set(self.character.cash)            
+
         else:
            print("Not enough cash!")
 
@@ -811,14 +810,6 @@ class GUI (Frame):
         messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")
 
 
-    
-
-
-
-
-
-
-
 def main():
     """
       Stub for main function
@@ -826,15 +817,11 @@ def main():
     main_character = load('Tester')
    
     #Display current character's info
-    main_character.show_info()
+    #main_character.show_info()
     root = Tk()
     app = GUI(root, main_character)
     root.mainloop()
-    
-
-    
 
         
 if __name__ == "__main__":
     main()
-
