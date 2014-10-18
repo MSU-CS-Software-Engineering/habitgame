@@ -2,7 +2,7 @@ from tkinter  import *
 from tkinter.ttk import *
 from shop import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
-from resize_window import *
+
 
 
 
