@@ -88,10 +88,12 @@ class Character:
 
     def remove_habit(self, habit_ID):
         try:
-            print("Removed habit:", self.habits.pop(habit_ID))
+            hab_id = self.habits.pop(habit_ID).ID
             self.set_habit_IDs()
+            return hab_id
         except:
-            print("Error: Invalid habit id")
+            print("Invalid habit id!")
+            return -1
 
     def get_habit(self, habit_ID):
         try:
@@ -134,11 +136,12 @@ class Character:
 
     def remove_item(self, item_ID):
         try:
-            print("Removed:", self.items.pop(item_ID))
+            item_id = self.items.pop(item_ID).ID
             self.set_item_IDs()
+            return item_id
         except:
-            print("Error: Invalid item ID")
-
+            print("Invalid item id!")
+            return -1
 
     def get_item(self, item_ID):
         try:
@@ -495,12 +498,15 @@ class GUI (Frame):
         self.value = value
         self.uses = uses
         self.effect = effect'''
+        
+        '''
         #manual test for update
         item_test = Item('SSD', 'ssd.jpg', 6, 1)
         self.complete_habit(1)
         self.buy_item(item_test)
         self.use_item(0)
         self.character.show_info()
+        '''
 
         mb=  Menubutton(self, text="Options")
         mb.grid(row = 2, column = 0, sticky = E)
