@@ -94,8 +94,7 @@ class Work_Space (Frame):
 
         shop = Shop(tab_shop)
         
-        habit1=Frame(tab_habit)
-        habit1.grid()
+
 
         frame.select(tab_shop)
     
