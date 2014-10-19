@@ -37,7 +37,7 @@ in the tasks.
 import xml.dom.minidom
 
 
-class parser:
+class file_parser:
 
 
     #This list is used to check parsed values for conversion
@@ -104,6 +104,15 @@ class parser:
             tasks.append(task_dict)
                 
         return tasks
+
+
+    def update_file(self, char):
+
+        #placeholder, this will handle saving character data to the file
+        #I'm thinking we'll want to pass everything in as a single list
+        #and structure the XML data depending on whether it's a single item or
+        #a list 
+        return
     
 
     def __init__(self, filename):

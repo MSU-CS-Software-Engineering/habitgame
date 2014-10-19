@@ -1,10 +1,14 @@
 from tkinter  import *
 from tkinter.ttk import *
 from shop import *
-
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
+
+
+
+
 class Work_Space (Frame):
-    def __init__(self, parent):
+
+    def __init__(self, parent, character):
         Frame.__init__(self, parent)
         self.parent = parent
         self.work_window()
@@ -12,42 +16,88 @@ class Work_Space (Frame):
         self.rowconfigure(4, weight =1)
         self.columnconfigure(0, weight = 1)
 
+
     def work_window(self):
         #creating the workspace 
 
-        habit_frame = Notebook(self, height = 200, width = 400, padding=5)
-        habit_frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
-        habit_frame_style = Style()
-        habit_frame_style.configure("W.TFrame", background='white')
-        habit_frame.rowconfigure(4, weight = 1)
-        habit_frame.columnconfigure(0, weight = 1)
+        frame = Notebook(self, height = 200, width = 400, padding=5)
+        frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
+        frame_style = Style()
+        frame_style.configure("W.TFrame", background='black')
+        frame.rowconfigure(4, weight = 1)
+        frame.columnconfigure(0, weight = 1)
+        #frame.grid_propagate(False)
 
-        tab_habit = Frame(habit_frame, style="W.TFrame")
-        tab_task = Frame(habit_frame, style ="W.TFrame")
-        tab_goal = Frame(habit_frame, style ="W.TFrame")
-        tab_shop = Frame(habit_frame, style = "W.TFrame")
+        tab_habit = Canvas(frame, width=850, height=400)
+        tab_dailies = Canvas(frame, width=850, height=400)
+        tab_tasks = Canvas(frame, width=850, height=400)
+        tab_shop = Canvas(frame, width=850, height=400)
 
-        habit_frame.add(tab_habit, text='Habits')
-        habit_frame.add(tab_task, text='Tasks')
-        habit_frame.add(tab_goal, text='Goals')
-        habit_frame.add(tab_shop, text='Shop')
+        tab_habit.pack(fill = BOTH, expand = YES)
+        tab_dailies.pack(fill = BOTH, expand = YES)
+        tab_tasks.pack(fill = BOTH, expand = YES)
+        tab_shop.pack(fill = BOTH, expand = YES)
+
+
+        bar_habit = Scrollbar(tab_habit, orient = VERTICAL)
+        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL)
+        bar_tasks = Scrollbar(tab_tasks, orient = VERTICAL)
+
+        bar_habit.pack(side = RIGHT, fill = Y)
+        bar_tasks.pack(side = RIGHT, fill = Y)
+        bar_dailies.pack(side = RIGHT, fill = Y)
+
+        bar_habit.configure(command = tab_habit.yview)
+        bar_tasks.configure(command = tab_tasks.yview)
+        bar_dailies.configure(command = tab_dailies.yview)
+
+        tab_habit.configure(yscrollcommand = bar_habit.set)
+        tab_tasks.configure(yscrollcommand = bar_tasks.set)
+        tab_dailies.configure(yscrollcommand = bar_dailies.set)
+
+        habit = Frame()
+        tab_habit.create_window(0,0, anchor = N + E, window = habit)
+
+        habit_label = Label(habit, text = "home")
+        habit_label.grid(row = 0, column = 0, sticky = 'new')
+        
+        
+
+        frame_habit = Frame(tab_habit)
+        frame_habit.pack(side = LEFT, fill = BOTH)
+
+        frame_tasks = Frame(tab_tasks)
+        frame_tasks.pack(side = LEFT, fill = BOTH)
+
+        frame_dailies = Frame(tab_dailies)
+        frame_dailies.pack(side = LEFT, fill = BOTH)
+                        
+
+        frame.add(tab_habit, text='Habits')
+        frame.add(tab_tasks, text='Tasks')
+        frame.add(tab_dailies, text='Dailies')
+        frame.add(tab_shop, text='Shop')
 
         add_habit_btn = Button(tab_habit, text='Add new habit', command = self.add_habit)
-        add_task_btn = Button(tab_task, text='Add new task', command = self.add_task)
-        add_goal_btn = Button(tab_goal, text='Add new goal', command = self.add_goal)
+        add_task_btn = Button(tab_tasks, text='Add new task', command = self.add_task)
+        add_goal_btn = Button(tab_dailies, text='Add new goal', command = self.add_goal)
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
+        
+        delete_habit_btn = Button(tab_habit, text='Delete habit', command = self.delete_habit)
+        delete_task_btn = Button(tab_tasks, text='Delete task', command = self.delete_task)
+        delete_goal_btn = Button(tab_dailies, text='Delete goal', command = self.delete_goal)
 
-        add_habit_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_task_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_goal_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_buy_btn.place(relx=0.95, rely=0.95, anchor=SE)
+        edit_habit_btn = Button(tab_habit, text='Edit habit', command = self.edit_habit)
+        edit_task_btn = Button(tab_tasks, text='Edit task', command = self.edit_task)
+        edit_goal_btn = Button(tab_dailies, text='Edit goal', command = self.edit_goal)
+
 
         shop = Shop(tab_shop)
         
         habit1=Frame(tab_habit)
         habit1.grid()
 
-        habit_frame.select(tab_shop)
+        frame.select(tab_shop)
     
 
     
@@ -59,6 +109,36 @@ class Work_Space (Frame):
 
     def add_goal(self):
         self.gather_habit_data("goal")
+        
+    def delete_habit(self):
+        answer = messagebox.askokcancel("Delete Habit", "Delete habit?")
+        if answer is True:
+            print("User clicked Ok")
+        else:
+            print("User clicked Cancel")
+            
+    def delete_task(self):
+        answer = messagebox.askokcancel("Delete Task", "Delete task?")
+        if answer is True:
+            print("User clicked Ok")
+        else:
+            print("User clicked Cancel")
+
+    def delete_goal(self):
+        answer = messagebox.askokcancel("Delete Goal", "Delete goal?")
+        if answer is True:
+            print("User clicked Ok")
+        else:
+            print("User clicked Cancel")
+            
+    def edit_habit(self):
+        messagebox.showinfo("Updated Habit", "Habit updated.")
+
+    def edit_task(self):
+        messagebox.showinfo("Updated Task", "Task updated.")
+
+    def edit_goal(self):
+        messagebox.showinfo("Updated Goal", "Goal updated.")
 
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             

@@ -51,33 +51,65 @@ class Shop():
         self.items = []
         
         # component items
-        self.items.append(Item('motherboard', os.path.join("assets", "art", "mobo.png"), Type.component, "motherboard description", 200, 0, 0))
-        self.items.append(Item('ram 16gb', os.path.join("assets", "art", "ramred.png"), Type.component, "ram 16gb description", 150, 0, 1))
-        self.items.append(Item('ram 8gb', os.path.join("assets", "art", "ramgreen.png"), Type.component, "ram 8gb description", 75, 0, 2))
-        self.items.append(Item('cpu fan', os.path.join("assets", "art", "cpufan.png"), Type.component, "cpu fan description", 50, 0, 3))
-        self.items.append(Item('cpu 3.5 Ghz', os.path.join("assets", "art", "cpu.png"), Type.component, "cpu 3.5 Ghz description", 300, 1, 0))
-        self.items.append(Item('gpu 2gb', os.path.join("assets", "art", "gpured.png"), Type.component, "gpu 2gb description", 300, 1, 1))
-        self.items.append(Item('gpu 1gb', os.path.join("assets", "art", "gpugreen.png"), Type.component, "gpu 1gb description", 150, 1, 2))
+        self.items.append(Item('Motherboard', os.path.join("assets", "art", "mobo.gif"),
+                               Type.component, "motherboard description", 200, 1, 0))
+        self.items.append(Item('RAM 16gb', os.path.join("assets", "art", "ramred.gif"),
+                               Type.component, "ram 16gb description", 150, 1, 1))
+        self.items.append(Item('RAM 8gb', os.path.join("assets", "art", "ramgreen.gif"),
+                               Type.component, "ram 8gb description", 75, 1, 2))
+        self.items.append(Item('CPU fan', os.path.join("assets", "art", "cpufan.gif"),
+                               Type.component, "cpu fan description", 50, 1, 3))
+        self.items.append(Item('CPU 3.5 Ghz', os.path.join("assets", "art", "cpu.gif"),
+                               Type.component, "cpu 3.5 Ghz description", 300, 2, 0))
+        self.items.append(Item('GPU 2gb', os.path.join("assets", "art", "gpured.gif"),
+                               Type.component, "gpu 2gb description", 300, 2, 1))
+        self.items.append(Item('GPU 1gb', os.path.join("assets", "art", "gpugreen.gif"),
+                               Type.component, "gpu 1gb description", 150, 2, 2))
 
+        # software items
+        self.items.append(Item('Fortify', os.path.join("assets", "art", "fortify.gif"),
+                               Type.money, "50% less damage for bad habits and missing habits", 2500, 4, 0))
+        self.items.append(Item('Fork', os.path.join("assets", "art", "fork.gif"),
+                               Type.money, "2x habit reward", 10000, 4, 1))
+        self.items.append(Item('Smokescreen', os.path.join("assets", "art", "smoke.gif"),
+                               Type.money, "restore to full health", 5000, 4, 2))
+        self.items.append(Item('Penetrate', os.path.join("assets", "art", "penetrate.gif"),
+                               Type.money, "2x damage to bosses, receive 1/2 of habit reward", 7500, 4, 3))
+        
         # hardware items
-        self.items.append(Item('laptop', os.path.join("assets", "art", "laptop.png"), Type.hardware, "laptop description", 1250, 2, 0))
-        self.items.append(Item('desktop', os.path.join("assets", "art", "desktop.png"), Type.hardware, "desktop description", 2000, 2, 1))
-        self.items.append(Item('terminal', os.path.join("assets", "art", "terminal.png"), Type.hardware, "terminal description", 10000, 2, 2))
-        self.items.append(Item('server', os.path.join("assets", "art", "server.png"), Type.hardware, "server description", 5000, 2, 3))
-        self.items.append(Item('desk', os.path.join("assets", "art", "desk.png"), Type.hardware, "desk description", 500, 3, 0))
+        self.items.append(Item('Laptop', os.path.join("assets", "art", "laptop.gif"),
+                               Type.hardware, "laptop description", 1250, 6, 0))
+        self.items.append(Item('Desktop', os.path.join("assets", "art", "desktop.gif"),
+                               Type.hardware, "desktop description", 2000, 6, 1))
+        self.items.append(Item('Terminal', os.path.join("assets", "art", "terminal.gif"),
+                               Type.hardware, "terminal description", 10000, 6, 2))
+        self.items.append(Item('Server', os.path.join("assets", "art", "server.gif"),
+                               Type.hardware, "server description", 5000, 6, 3))
+        self.items.append(Item('Desk', os.path.join("assets", "art", "desk.gif"),
+                               Type.hardware, "desk description", 500, 7, 0))
         
         # food items
-        self.items.append(Item('cake', os.path.join("assets", "art", "cake.png"), Type.food, "cake description", 15, 4, 0))
-        self.items.append(Item('chicken', os.path.join("assets", "art", "chicken.png"), Type.food, "chicken description", 10, 4, 1))
-        self.items.append(Item('pizza', os.path.join("assets", "art", "pizza.png"), Type.food, "pizza description", 20, 4, 2))
-        self.items.append(Item('soda', os.path.join("assets", "art", "soda.png"), Type.food, "soda description", 30, 4, 3))
-        self.items.append(Item('popcorn', os.path.join("assets", "art", "popcorn.png"), Type.food, "popcorn description", 5, 5, 0))
+        self.items.append(Item('Cake', os.path.join("assets", "art", "cake.gif"),
+                               Type.food, "cake description", 15, 9, 0))
+        self.items.append(Item('Chicken', os.path.join("assets", "art", "chicken.gif"),
+                               Type.food, "chicken description", 10, 9, 1))
+        self.items.append(Item('Pizza', os.path.join("assets", "art", "pizza.gif"),
+                               Type.food, "pizza description", 20, 9, 2))
+        self.items.append(Item('Soda', os.path.join("assets", "art", "soda.gif"),
+                               Type.food, "soda description", 30, 9, 3))
+        self.items.append(Item('Popcorn', os.path.join("assets", "art", "popcorn.gif"),
+                               Type.food, "popcorn description", 5, 10, 0))
 
         # miscellaneous items
-        self.items.append(Item('gold coins', os.path.join("assets", "art", "goldcoins.png"), Type.money, "gold coins description", 50000, 6, 0))
-        self.items.append(Item('change', os.path.join("assets", "art", "change.png"), Type.money, "change description", 50, 6, 1))
-        self.items.append(Item('dollars', os.path.join("assets", "art", "dollars.png"), Type.money, "dollars description", 500, 6, 2))
-        self.items.append(Item('money bag', os.path.join("assets", "art", "moneybag.png"), Type.money, "money bag description", 2000, 6, 3))
+        self.items.append(Item('Gold coins', os.path.join("assets", "art", "goldcoins.gif"),
+                               Type.money, "gold coins description", 50000, 12, 0))
+        self.items.append(Item('Change', os.path.join("assets", "art", "change.gif"),
+                               Type.money, "change description", 50, 12, 1))
+        self.items.append(Item('Dollars', os.path.join("assets", "art", "dollars.gif"),
+                               Type.money, "dollars description", 500, 12, 2))
+        self.items.append(Item('Money bag', os.path.join("assets", "art", "moneybag.gif"),
+                               Type.money, "money bag description", 2000, 12, 3))
+
 
         # create a canvas to allow for scrolling of the shop Frame
         self.canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='white')
@@ -102,28 +134,51 @@ class Shop():
         self.style.configure('shopFrame.TFrame', background='white')
 
 
+        # shop divider labels
+        components = Label(self.shopFrame, text="Components", padding=3)
+        components.grid(row=0, column=0, columnspan = 4, sticky='news')
+        components.configure(background="#A3BECD", font="arial 16 bold")
+        
+        software = Label(self.shopFrame, text="Software", padding=3)
+        software.grid(row=3, column=0, columnspan = 4, sticky='news')
+        software.configure(background="#A3BECD", font="arial 16 bold")
+        
+        hardware = Label(self.shopFrame, text="Hardware", padding=3)
+        hardware.grid(row=5, column=0, columnspan = 4, sticky='news')
+        hardware.configure(background="#A3BECD", font="arial 16 bold")
+        
+        food = Label(self.shopFrame, text="Food", padding=3)
+        food.grid(row=8, column=0, columnspan = 4, sticky='news')
+        food.configure(background="#A3BECD", font="arial 16 bold")
+        
+        misc = Label(self.shopFrame, text="Miscellaneous", padding=3)
+        misc.grid(row=11, column=0, columnspan = 4, sticky='news')
+        misc.configure(background="#A3BECD", font="arial 16 bold")
+        
+        
         # selected item's name
         self.itemSelect = Label(shop_plugin_frame, text='name', padding=5)
         self.itemSelect.grid(sticky='news', row=1, columnspan=2)
-        self.itemSelect.configure(font='arial 12')
+        self.itemSelect.configure(font='arial 14 bold')
         
         # selected item's description
         self.descriptSelect = Label(shop_plugin_frame, text='description', padding=5)
         self.descriptSelect.grid(sticky='news', row=2, columnspan=2)
-        self.descriptSelect.configure(font='arial 12')
+        self.descriptSelect.configure(font='arial 12 bold')
         
         # selected item's cost
         self.costSelect = Label(shop_plugin_frame, text='cost', padding=5)
         self.costSelect.grid(sticky='news', row=3, columnspan=2)
-        self.costSelect.configure(font='arial 12')
+        self.costSelect.configure(font='arial 12 bold')
         
         # create a 'buy' label to act as a button
         buy = Label(shop_plugin_frame, text='Buy', style='buy.TLabel', anchor='center', padding=5)
         buy.grid(sticky='news', row=4, columnspan=2)
         buy.bind('<Enter>', lambda e: self.style.configure('buy.TLabel', background='#0086D3'))
         buy.bind('<Leave>', lambda e: self.style.configure('buy.TLabel', background='#0086BF'))
-        self.style.configure('buy.TLabel', background='#0086BF', font='arial 12 bold')
-        
+        self.style.configure('buy.TLabel', background='#0086BF', font='arial 14 bold')
+
+        # populate store with items
         self.createItems()
 
     
@@ -132,8 +187,11 @@ class Shop():
         information frame, right above the buy button
     """
     def setItemInfo(self, name, descript, cost):
+        name = "Item: " + name
         self.itemSelect.configure(text=name)
+        descript = "Info: " + descript
         self.descriptSelect.configure(text=descript)
+        cost = "Cost: $" + str(cost)
         self.costSelect.configure(text=cost)
 
     def createItems(self):
@@ -145,17 +203,27 @@ class Shop():
             t_cost = self.items[row].getCost()
             
             #create frame for item data
-            item_frame = Frame(self.shopFrame, style='itemFrame.TFrame')
-            item_frame.grid(row=self.items[row].getRow()+1, column=self.items[row].getColumn())
+            item_frame = Frame(self.shopFrame, style='itemFrame.TFrame', padding=10)
+            item_frame.grid(row=self.items[row].getRow(), column=self.items[row].getColumn(), sticky='wn')
             self.style.configure('itemFrame.TFrame', background='white')
             # user clicks on the frame containing all of the item's info
             item_frame.bind('<1>', lambda e, name=t_name, descript = t_descript,
+                            cost = t_cost, : self.setItemInfo(name, descript, cost))
+
+            #create label to hold the item's name
+            new_desc = Label(item_frame, text=self.items[row].getName(), style='name.TLabel', padding=3)
+            new_desc.grid(row=0, column=0)
+            self.style.configure('name.TLabel', font='arial 12 bold', background='white')
+            temp_str = self.items[row].getFile()
+            new_desc.bind('<1>', lambda e, tstr=temp_str: self.itemSelect.configure(text=tstr))
+            # user clicks on the label to hold the item's name
+            new_desc.bind('<1>', lambda e, name=t_name, descript = t_descript,
                             cost = t_cost, : self.setItemInfo(name, descript, cost))
             
             #create label to hold the item's image
             img = PhotoImage(file=self.items[row].getFile())
             new_item = Label(item_frame, image=img, style='item.TLabel')
-            new_item.grid(row=0, column=0)
+            new_item.grid(row=1, column=0)
             new_item.image = img
             self.style.configure('item.TLabel', background='white')
             temp_str = self.items[row].getFile()
@@ -164,26 +232,14 @@ class Shop():
                             cost = t_cost, : self.setItemInfo(name, descript, cost))        
 
             #create label to hold the item's cost
-            new_cost = Label(item_frame, text='$'+str(self.items[row].getCost()), style='cost.TLabel')
-            new_cost.grid(row=1, column=0)
+            new_cost = Label(item_frame, text='$'+str(self.items[row].getCost()), style='cost.TLabel', padding=3)
+            new_cost.grid(row=2, column=0)
             self.style.configure('cost.TLabel', font='arial 14', foreground='green', background='white')
             temp_str = self.items[row].getFile()
             # user clicks on the cost label
             new_cost.bind('<1>', lambda e, name=t_name, descript = t_descript,
                             cost = t_cost, : self.setItemInfo(name, descript, cost))
-            
-            #create label to hold the item's name
-            new_desc = Label(item_frame, text=self.items[row].getName(), style='name.TLabel')
-            new_desc.grid(row=2, column=0)
-            self.style.configure('name.TLabel', font='arial 12', background='white')
-            temp_str = self.items[row].getFile()
-            new_desc.bind('<1>', lambda e, tstr=temp_str: self.itemSelect.configure(text=tstr))
-            # user clicks on the label to hold the item's name
-            new_desc.bind('<1>', lambda e, name=t_name, descript = t_descript,
-                            cost = t_cost, : self.setItemInfo(name, descript, cost))
-            
-    
+
     def setupCanvasFrame(self, event):
         # resets the scroll region for the frame inserted into the canvas
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        
