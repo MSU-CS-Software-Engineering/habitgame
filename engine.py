@@ -15,6 +15,7 @@ from tkinter import messagebox  #Must be explicitly imported. Used for placehold
 from work_space import *
 from landing_page import *
 from generic_list import *
+from shop import *
 
 
 class Character:
@@ -595,7 +596,9 @@ class GUI (Frame):
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
         self.initUI()
-        
+
+        # link the shop so it can call GUI's buy_item()
+        MyShop.setApp(self)
         
     def initUI(self):
         self.grid()
@@ -783,8 +786,9 @@ class GUI (Frame):
             self.character.cash -= item.value
             self.character.set_item_IDs()
             self.character_cash.set(self.character.cash)
+            print(item.name + " bought!")
         else:
-           print("Not enough cash!")
+           print("Not enough cash for " + item.name + "!")
 
         
     def home(self):
@@ -831,6 +835,7 @@ def main():
     #main_character.show_info()
     root = Tk()
     app = GUI(root, main_character)
+    
     root.mainloop()
     
 

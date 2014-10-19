@@ -1,6 +1,6 @@
 from tkinter  import *
 from tkinter.ttk import *
-from shop import *
+from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 
@@ -91,10 +91,7 @@ class Work_Space (Frame):
         edit_task_btn = Button(tab_tasks, text='Edit task', command = self.edit_task)
         edit_goal_btn = Button(tab_dailies, text='Edit goal', command = self.edit_goal)
 
-
-        shop = Shop(tab_shop)
-        
-
+        MyShop.setShop(tab_shop)
 
         frame.select(tab_shop)
     
