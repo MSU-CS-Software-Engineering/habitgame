@@ -14,13 +14,13 @@ class characterTestCase(unittest.TestCase):
         self.root = Tk()
         self.testCharacter = Character("Tom")
 
-        self.habit_1 = Habit('Read More', 'Read more books', 50, 10, 'habit', 0)
-        self.habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 'habit', 1)
-        self.habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 'habit', 2)
+        self.habit_1 = Habit('Read More', 'Read more books', 50, 10, 0)
+        self.habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1)
+        self.habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 2)
 
-        self.task_1 = Habit('Make dinner', 'and make it delicious', 10, 10, 'task', 0)
+        self.task_1 = Task('Make dinner', 'and make it delicious', 10, 10, 0)
 
-        self.daily_1 = Habit('Play guitar', 'hit strings in a pleasing combination', 15, 25, 'daily', 0)
+        self.daily_1 = Daily('Play guitar', 'hit strings in a pleasing combination', 15, 25, 0)
 
         self.item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
         self.item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
@@ -42,7 +42,23 @@ class engine_testCase(characterTestCase):
         self.assertEqual(self.testCharacter.remove_habit(1), 1, "Failed to remove habit with ID of 1")
         self.assertEqual(self.testCharacter.remove_habit(100), -1, "Remove_habit did not throw invalid ID exception!")
         self.assertEqual(len(self.testCharacter.habits), 2, "Post-removal habit count mismatch!")
-        
+
+        #Tasks
+        self.assertEqual(self.testCharacter.add_task(self.task_1), 0, "Task ID mismatch!")
+        self.assertEqual(len(self.testCharacter.tasks), 1, "Post-add task count mismatch!")
+
+        self.assertEqual(self.testCharacter.remove_task(0), 0, "Failed to remove task with ID of 0")
+        self.assertEqual(self.testCharacter.remove_task(100), -1, "Remove_task did not throw invalid ID exception!")
+        self.assertEqual(len(self.testCharacter.tasks), 0, "Post-removal task count mismatch!")
+
+        #Dailies
+        self.assertEqual(self.testCharacter.add_daily(self.daily_1), 0, "Daily ID mismatch!")
+        self.assertEqual(len(self.testCharacter.dailies), 1, "Post-add daily count mismatch!")
+
+        self.assertEqual(self.testCharacter.remove_daily(0), 0, "Failed to remove daily with ID of 0")
+        self.assertEqual(self.testCharacter.remove_daily(100), -1, "Remove_daily did not throw invalid ID exception!")
+        self.assertEqual(len(self.testCharacter.dailies), 0, "Post-removal daily count mismatch!")
+
         #Items
         self.assertEqual(self.testCharacter.add_item(self.item_1), 0, "Habit ID mismatch!")
         self.assertEqual(self.testCharacter.add_item(self.item_2), 1, "Habit ID mismatch!")
@@ -62,13 +78,10 @@ class engine_testCase(characterTestCase):
         self.testCharacter.add_habit(self.habit_2)
         self.testCharacter.add_habit(self.habit_3)
         self.app = GUI(self.root, self.testCharacter)
-        base_cash = self.app.character.cash
-        print("BASE CASH: ", base_cash)
-        base_exp = self.app.character.exp
-        
+
         for index in range(len(self.testCharacter.habits)):
             self.app.complete_habit(0) #Pop each habit from the list
-        
+
         self.assertEqual(self.app.character.cash, 170, "Cash not adding correctly!")
         self.assertEqual(self.app.character.exp, 30, "Experience points not adding correctly!")
         self.assertEqual(len(self.app.character.habits), 0, "Habits are not emptying when completed!")

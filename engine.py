@@ -1,9 +1,9 @@
-"""
+'''
   Habit game core
 
   Dependencies: landing_page.py
                 file_parser.py
-"""
+'''
 
 #import landing_page.py
 import os.path
@@ -133,17 +133,21 @@ class Character:
 
     def remove_task(self, task_ID):
         try:
-            print("Removed task:", self.tasks.pop(task_ID))
+            task_id = self.tasks.pop(task_ID).ID
             self.set_task_IDs()
+            return task_id
         except:
-            print("Error: Invalid task id")
+            print("Invalid task id!")
+            return -1
 
     def remove_daily(self, daily_ID):
         try:
-            print("Removed daily:", self.dailies.pop(daily_ID))
+            daily_id = self.dailies.pop(daily_ID).ID
             self.set_daily_IDs()
+            return daily_id
         except:
-            print("Error: Invalid daily id")
+            print("Invalid daily id!")
+            return -1
 
     def get_habit(self, habit_ID):
         try:
@@ -824,7 +828,7 @@ def main():
     main_character = load('Tester')
    
     #Display current character's info
-    main_character.show_info()
+    #main_character.show_info()
     root = Tk()
     app = GUI(root, main_character)
     root.mainloop()
