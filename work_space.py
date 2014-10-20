@@ -23,7 +23,8 @@ class Work_Space (Frame):
         frame = Notebook(self, height = 200, width = 400, padding=5)
         frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
         frame_style = Style()
-        frame_style.configure("W.TFrame", background='black')
+        frame_style.configure("W.TFrame", background='black',
+                              height = 100, width = 800, pady = 100, padx = 300)
         frame.rowconfigure(4, weight = 1)
         frame.columnconfigure(0, weight = 1)
         #frame.grid_propagate(False)
@@ -38,65 +39,107 @@ class Work_Space (Frame):
         tab_tasks.pack(fill = BOTH, expand = YES)
         tab_shop.pack(fill = BOTH, expand = YES)
 
+        habit = Canvas(tab_habit)
+        habit.grid(sticky = 'news')
+        #habit.grid_propagate(False)
 
-        bar_habit = Scrollbar(tab_habit, orient = VERTICAL)
-        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL)
-        bar_tasks = Scrollbar(tab_tasks, orient = VERTICAL)
+        
+        habits = Frame(habit)
+        habits.grid(sticky = 'news')
+        #habits.grid_propagate(False)
 
-        bar_habit.pack(side = RIGHT, fill = Y)
+
+
+        bar_habit = Scrollbar(tab_habit, orient = VERTICAL, command = habit.yview)
+        habit.configure(yscrollcommand = bar_habit.set)
+
+        tab_habit.rowconfigure(0, weight = 1)
+        tab_habit.columnconfigure(0, weight = 1)
+
+
+        habit.create_window(0,20, anchor = N + E, window = habits)
+        bar_habit.grid(row = 0, column = 1, sticky = 'ns')
+        '''
+        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL, command = tab_dailies.yview)
+        tab_dailies.configure(yscrollcommand = bar_dailies.set)
+        
+        bar_tasks = Scrollbar(tab_tasks, orient = VERTICAL, command = tab_tasks.yview)
+        tab_tasks.configure(yscrollcommand = bar_tasks.set)
+        
+
         bar_tasks.pack(side = RIGHT, fill = Y)
         bar_dailies.pack(side = RIGHT, fill = Y)
 
-        bar_habit.configure(command = tab_habit.yview)
-        bar_tasks.configure(command = tab_tasks.yview)
-        bar_dailies.configure(command = tab_dailies.yview)
+        '''
+        def setupHabitFrame(event):
+            # resets the scroll region for the frame inserted into the canvas
+            habit.configure(scrollregion=habit.bbox("all"))
 
-        tab_habit.configure(yscrollcommand = bar_habit.set)
-        tab_tasks.configure(yscrollcommand = bar_tasks.set)
-        tab_dailies.configure(yscrollcommand = bar_dailies.set)
 
-        habit = Frame()
-        tab_habit.create_window(0,0, anchor = N + E, window = habit)
+        habit.bind("<Configure>", setupHabitFrame)
+        for x in range(15):
+            individual_habit = Frame(habits, style = "W.TFrame")
+            individual_habit.grid(row = x, column = 0,
+                                  sticky = 'ew')
 
-        habit_label = Label(habit, text = "home")
-        habit_label.grid(row = 0, column = 0, sticky = 'new')
+            
+
+            habit_name = Label(individual_habit, text = "Hello Hello Hello")
+            habit_name.grid(row = 0, column = 0, sticky = 'news')
+            habit_name.configure(width = 130, anchor = CENTER)
+            x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
+
+            habit_description = Label(individual_habit, text = x,
+                                      wraplength = 800)
+            habit_description.grid(row = 1, column = 0, sticky = 'ew')
+            habit_description.configure(width = 130, anchor = CENTER)
         
         
-
+        '''
         frame_habit = Frame(tab_habit)
         frame_habit.pack(side = LEFT, fill = BOTH)
+
 
         frame_tasks = Frame(tab_tasks)
         frame_tasks.pack(side = LEFT, fill = BOTH)
 
         frame_dailies = Frame(tab_dailies)
         frame_dailies.pack(side = LEFT, fill = BOTH)
-                        
+        '''                               
 
         frame.add(tab_habit, text='Habits')
         frame.add(tab_tasks, text='Tasks')
         frame.add(tab_dailies, text='Dailies')
         frame.add(tab_shop, text='Shop')
 
-        add_habit_btn = Button(tab_habit, text='Add new habit', command = self.add_habit)
+        add_habit_btn = Button(habit, text='Add new habit', command = self.add_habit)
         add_task_btn = Button(tab_tasks, text='Add new task', command = self.add_task)
         add_goal_btn = Button(tab_dailies, text='Add new goal', command = self.add_goal)
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
         
-        delete_habit_btn = Button(tab_habit, text='Delete habit', command = self.delete_habit)
+        delete_habit_btn = Button(habit, text='Delete habit', command = self.delete_habit)
         delete_task_btn = Button(tab_tasks, text='Delete task', command = self.delete_task)
         delete_goal_btn = Button(tab_dailies, text='Delete goal', command = self.delete_goal)
 
-        edit_habit_btn = Button(tab_habit, text='Edit habit', command = self.edit_habit)
+        edit_habit_btn = Button(habit, text='Edit habit', command = self.edit_habit)
         edit_task_btn = Button(tab_tasks, text='Edit task', command = self.edit_task)
         edit_goal_btn = Button(tab_dailies, text='Edit goal', command = self.edit_goal)
+        
+        habit.create_window(-700,0,window = add_habit_btn)
+        habit.create_window(-600,0,window = edit_habit_btn)
+        habit.create_window(-500,0,window = delete_habit_btn)
 
+        #add_habit_btn.grid(row = 0, column = 0, padx  =(385, 50), pady = 10)
+        #delete_habit_btn.grid(row = 0, column = 1, padx = (0, 50))
+        #edit_habit_btn.grid(row = 0, column = 2)
+        #add_habit_btn.rowconfigure(0, weight = 1)
+        #add_habit_btn.columnconfigure(0, weight = 1)
         MyShop.setShop(tab_shop)
 
         frame.select(tab_shop)
     
 
-    
+
     def add_habit(self):
         self.gather_habit_data("habit")
 
