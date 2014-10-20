@@ -14,7 +14,8 @@ our login page to finish the process of authentication.
 db.sync_files(file_name) will sync between local and remote files.
 
 """
-   
+
+import xml.dom.minidom
 import dropbox
 import webbrowser
 import os.path
@@ -24,7 +25,6 @@ from tkinter import ttk
 
 
 class db:
-
     def set_code(self, new_code):
         self.code = new_code
 
@@ -61,7 +61,13 @@ class db:
         else:
             print('The 2 files have the same timestamp, no sync required')
 
-               
+    def getNodeText(self, nodelist):
+        rc = []
+        for node in nodelist:
+            if node.nodeType == node.TEXT_NODE:
+                rc.append(node.data)
+        return ''.join(rc)
+    
     def dropbox_start(self):
         """
         starts the dropbox process; control will be passed
@@ -76,12 +82,14 @@ class db:
         # check to see if there's an xml file already. if so, no need to go through the whole flow 
         if os.path.isfile(self.file_name):
                
-            #TODO: use XML parsing instead of reading the file line by line
+            #DONE: use XML parsing instead of reading the file line by line
                
             file = open(self.file_name)
-            line = file.readline()
-            access_token = line.strip()
-     
+            file_string = file.read()
+            character_xml_data = xml.dom.minidom.parseString(file_string)
+            token_node = character_xml_data.getElementsByTagName("token")[0]
+            access_token = self.getNodeText(token_node.childNodes)
+            
             self.client = dropbox.client.DropboxClient(access_token)
        
             # if there's a local file but no remote, push the local to db
@@ -120,7 +128,18 @@ class db:
             file = open(self.file_name, 'wb')
             # TODO: file creation function goes here, placeholder write
             # init_file(file)
-            file.write(access_token)
+
+            newdoc = xml.dom.minidom.Document()
+            root_element = newdoc.createElement('data')
+            token_element = newdoc.createElement('token')
+            token_text = newdoc.createTextNode(access_token)
+            token_element.appendChild(token_text)
+            root_element.appendChild(token_element)
+            newdoc.appendChild(root_element)
+            
+            self.data_document = newdoc
+            file.write(self.data_document.toprettyxml(indent="   ", encoding="utf-8"))
+            
             file.close()
    
             # for some reason open(file_name, 'r+') (read AND write) wouldn't work, so I had to
@@ -129,6 +148,7 @@ class db:
             file = open(self.file_name, 'r')
             self.client.put_file('//' + self.file_name, file)
             file.close()
+            
         else:
             # file on db, so this is an existing user w/ a new install
             file = open(self.file_name, 'wb')
@@ -239,7 +259,7 @@ class db:
         """
         This runs the dropbox setup function when a db object is first initialized.
         """
-        
+        self.data_document = ''
         self.dropbox_start()
         
         
