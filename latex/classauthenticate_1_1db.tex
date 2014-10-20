@@ -1,0 +1,70 @@
+\hypertarget{classauthenticate_1_1db}{\section{authenticate.\-db Class Reference}
+\label{classauthenticate_1_1db}\index{authenticate.\-db@{authenticate.\-db}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classauthenticate_1_1db_aaf50cde8ecce54c63ee76cd9cc097b55}{def {\bfseries set\-\_\-code}}\label{classauthenticate_1_1db_aaf50cde8ecce54c63ee76cd9cc097b55}
+
+\item 
+def \hyperlink{classauthenticate_1_1db_a1a29fbc0d4886ec731bf66c61834469f}{sync\-\_\-files}
+\item 
+def \hyperlink{classauthenticate_1_1db_ad8e9b741251f7f568192ce88beab8b36}{dropbox\-\_\-start}
+\item 
+def \hyperlink{classauthenticate_1_1db_a9e79b1a35bad0774f6aac222d6bde47f}{dropbox\-\_\-finish}
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classauthenticate_1_1db_a55b1202e92698417cae468126486c7b9}{{\bfseries code}}\label{classauthenticate_1_1db_a55b1202e92698417cae468126486c7b9}
+
+\item 
+\hypertarget{classauthenticate_1_1db_ab20d3de032a4521b086e8392debd2e48}{{\bfseries file\-\_\-name}}\label{classauthenticate_1_1db_ab20d3de032a4521b086e8392debd2e48}
+
+\item 
+\hypertarget{classauthenticate_1_1db_ad894cdae535ccef5e7146712d7d403d9}{{\bfseries client}}\label{classauthenticate_1_1db_ad894cdae535ccef5e7146712d7d403d9}
+
+\item 
+\hypertarget{classauthenticate_1_1db_ac37e2cb2beeab1a4a33d0ad58b7f8f3d}{{\bfseries flow}}\label{classauthenticate_1_1db_ac37e2cb2beeab1a4a33d0ad58b7f8f3d}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classauthenticate_1_1db_a9e79b1a35bad0774f6aac222d6bde47f}{\index{authenticate\-::db@{authenticate\-::db}!dropbox\-\_\-finish@{dropbox\-\_\-finish}}
+\index{dropbox\-\_\-finish@{dropbox\-\_\-finish}!authenticate::db@{authenticate\-::db}}
+\subsubsection[{dropbox\-\_\-finish}]{\setlength{\rightskip}{0pt plus 5cm}def authenticate.\-db.\-dropbox\-\_\-finish (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{code}
+\end{DoxyParamCaption}
+)}}\label{classauthenticate_1_1db_a9e79b1a35bad0774f6aac222d6bde47f}
+\begin{DoxyVerb}Call this function to finish the dropbox flow and create a dropbox clients
+(after the user pastes their authorization code in the login screen).
+\end{DoxyVerb}
+ \hypertarget{classauthenticate_1_1db_ad8e9b741251f7f568192ce88beab8b36}{\index{authenticate\-::db@{authenticate\-::db}!dropbox\-\_\-start@{dropbox\-\_\-start}}
+\index{dropbox\-\_\-start@{dropbox\-\_\-start}!authenticate::db@{authenticate\-::db}}
+\subsubsection[{dropbox\-\_\-start}]{\setlength{\rightskip}{0pt plus 5cm}def authenticate.\-db.\-dropbox\-\_\-start (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classauthenticate_1_1db_ad8e9b741251f7f568192ce88beab8b36}
+\begin{DoxyVerb}starts the dropbox process, then control will be passed back to the login window
+\end{DoxyVerb}
+ \hypertarget{classauthenticate_1_1db_a1a29fbc0d4886ec731bf66c61834469f}{\index{authenticate\-::db@{authenticate\-::db}!sync\-\_\-files@{sync\-\_\-files}}
+\index{sync\-\_\-files@{sync\-\_\-files}!authenticate::db@{authenticate\-::db}}
+\subsubsection[{sync\-\_\-files}]{\setlength{\rightskip}{0pt plus 5cm}def authenticate.\-db.\-sync\-\_\-files (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{file\-\_\-name = {\ttfamily 'character.xml'}}
+\end{DoxyParamCaption}
+)}}\label{classauthenticate_1_1db_a1a29fbc0d4886ec731bf66c61834469f}
+\begin{DoxyVerb}Call this function and it will compare the local file
+with the copy on the user's dropbox. it replaces the older file with the
+contents of the newer.
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+authenticate.\-py\end{DoxyCompactItemize}

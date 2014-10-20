@@ -13,23 +13,23 @@ above your name. Only modify the one if statement with your name"""
 
 def print_name():
     
-    if("Timothy"):
+    if(0):
         print "Timothy"
         
-    if("Chris W."):
-        print "Chris W."
+    print ("Chris W.")
         
-        print "Sean"
+    print "Sean"
         
-        print "Chris R."
+    print "Chris R."
         
 
-        print "Bryan"
+    print "Bryan"
         
     print "Matthew"
     
     print "Dustin"
 
-    if("Darron"):
+    if(0):
         print "Darron"
         
+print_name()
