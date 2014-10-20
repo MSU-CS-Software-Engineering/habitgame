@@ -65,18 +65,18 @@ class Work_Space (Frame):
 
 
         habit.bind("<Configure>", setupHabitFrame)
-        for x in habit_list:
+        for h in habit_list:
             individual_habit = Frame(habits)
-            individual_habit.grid(row = x.ID, column = 0,
+            individual_habit.grid(row = h.ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
             
 
-            habit_name = Label(individual_habit, text = x.title)
+            habit_name = Label(individual_habit, text = h.title)
             habit_name.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             habit_name.configure(width = 130, anchor = CENTER)
 
-            habit_description = Label(individual_habit, text = x.description,
+            habit_description = Label(individual_habit, text = h.description,
                                       wraplength = 800)
             habit_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             habit_description.configure(width = 130, anchor = CENTER)
@@ -101,7 +101,7 @@ class Work_Space (Frame):
         dailies.grid(sticky = 'news')
 
         bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL, command = daily.yview)
-        daily.configure(yscrollcommand = bar_habit.set)
+        daily.configure(yscrollcommand = bar_dailies.set)
 
         tab_dailies.rowconfigure(0, weight = 1)
         tab_dailies.columnconfigure(0, weight = 1)
@@ -143,6 +143,57 @@ class Work_Space (Frame):
             edit_dailies_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         
+        #Begining of Tasks Tab Code
+
+        task = Canvas(tab_tasks, background = 'black')
+        task.grid(sticky = 'news')
+
+        
+        tasks= Frame(task, style = "W.TFrame")
+        tasks.grid(sticky = 'news')
+
+        bar_tasks = Scrollbar(tab_tasks, orient = VERTICAL, command = task.yview)
+        task.configure(yscrollcommand = bar_tasks.set)
+
+        tab_tasks.rowconfigure(0, weight = 1)
+        tab_tasks.columnconfigure(0, weight = 1)
+
+
+        task.create_window(0,20, anchor = N + E, window = tasks)
+        bar_tasks.grid(row = 0, column = 1, sticky = 'ns')
+
+        def setupTasksFrame(event):
+            # resets the scroll region for the frame inserted into the canvas
+            task.configure(scrollregion=task.bbox("all"))
+
+
+        task.bind("<Configure>", setupTasksFrame)
+        for t in tasks_list:
+            individual_tasks = Frame(tasks)
+            individual_tasks.grid(row = t.ID, column = 0,
+                                  sticky = 'ew', pady = (10,0), padx = 3)
+
+            
+
+            tasks_title = Label(individual_tasks, text = t.title)
+            tasks_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
+            tasks_title.configure(width = 130, anchor = CENTER)
+
+            tasks_description = Label(individual_tasks, text = t.description,
+                                      wraplength = 800)
+            tasks_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
+            tasks_description.configure(width = 130, anchor = CENTER)
+
+            delete_tasks_btn = Button(individual_tasks, text='Delete Task',
+                                      command = self.delete_habit)
+            delete_tasks_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
+
+            edit_tasks_btn = Button(individual_tasks, text='Edit Task', command = self.edit_habit)
+            edit_tasks_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
+            
+            edit_tasks_btn = Button(individual_tasks, text='Complete Task', command = self.edit_habit)
+            edit_tasks_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
+
 
 
         
@@ -153,27 +204,16 @@ class Work_Space (Frame):
         frame.add(tab_shop, text='Shop')
 
         add_habit_btn = Button(habit, text='Add new habit', command = self.add_habit)
-        add_task_btn = Button(tab_tasks, text='Add new task', command = self.add_task)
-        add_goal_btn = Button(tab_dailies, text='Add new goal', command = self.add_goal)
+        add_task_btn = Button(task, text='Add new task', command = self.add_task)
+        add_daily_btn = Button(daily, text='Add new goal', command = self.add_daily)
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
         
-        #delete_habit_btn = Button(habit, text='Delete habit', command = self.delete_habit)
-        delete_task_btn = Button(tab_tasks, text='Delete task', command = self.delete_task)
-        delete_goal_btn = Button(tab_dailies, text='Delete goal', command = self.delete_goal)
-
-        #edit_habit_btn = Button(habit, text='Edit habit', command = self.edit_habit)
-        edit_task_btn = Button(tab_tasks, text='Edit task', command = self.edit_task)
-        edit_goal_btn = Button(tab_dailies, text='Edit goal', command = self.edit_goal)
         
         habit.create_window(-675,0,window = add_habit_btn)
-        #habit.create_window(-600,0,window = edit_habit_btn)
-        #habit.create_window(-500,0,window = delete_habit_btn)
+        daily.create_window(-675,0,window = add_daily_btn)
+        task.create_window(-675,0,window = add_task_btn)
 
-        #add_habit_btn.grid(row = 0, column = 0, padx  =(385, 50), pady = 10)
-        #delete_habit_btn.grid(row = 0, column = 1, padx = (0, 50))
-        #edit_habit_btn.grid(row = 0, column = 2)
-        #add_habit_btn.rowconfigure(0, weight = 1)
-        #add_habit_btn.columnconfigure(0, weight = 1)
+
         MyShop.setShop(tab_shop)
 
         frame.select(tab_shop)
@@ -186,7 +226,7 @@ class Work_Space (Frame):
     def add_task(self):
         self.gather_habit_data("task")
 
-    def add_goal(self):
+    def add_daily(self):
         self.gather_habit_data("goal")
         
     def delete_habit(self):
