@@ -24,7 +24,8 @@ class Work_Space (Frame):
         #creating the workspace 
 
         frame = Notebook(self, height = 200, width = 400, padding=5)
-        frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4, sticky = 'nesw')
+        frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4,
+                   sticky = 'nesw')
         frame_style = Style()
         frame_style.configure("W.TFrame", background='black',
                               pady = (10,0), padx =3)
@@ -49,7 +50,8 @@ class Work_Space (Frame):
         habits = Frame(habit, style = "W.TFrame")
         habits.grid(sticky = 'news')
 
-        bar_habit = Scrollbar(tab_habit, orient = VERTICAL, command = habit.yview)
+        bar_habit = Scrollbar(tab_habit, orient = VERTICAL,
+                              command = habit.yview)
         habit.configure(yscrollcommand = bar_habit.set)
 
         tab_habit.rowconfigure(0, weight = 1)
@@ -81,14 +83,28 @@ class Work_Space (Frame):
             habit_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             habit_description.configure(width = 130, anchor = CENTER)
 
+            habit_value = Label(individual_habit,
+                                text = "Value:     "+str(h.value),
+                                wraplength = 800)
+            habit_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
+            habit_value.configure(width = 130, anchor = CENTER)
+
+            habit_date = Label(individual_habit,
+                               text = "Date:     "+str(h.timestamp),
+                               wraplength = 800)
+            habit_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
+            habit_date.configure(width = 130, anchor = CENTER)
+
             delete_habit_btn = Button(individual_habit, text='Delete habit',
                                       command = self.delete_habit)
             delete_habit_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
-            edit_habit_btn = Button(individual_habit, text='Edit habit', command = self.edit_habit)
+            edit_habit_btn = Button(individual_habit, text='Edit habit',
+                                    command = self.edit_habit)
             edit_habit_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
-            edit_habit_btn = Button(individual_habit, text='Complete habit', command = self.edit_habit)
+            edit_habit_btn = Button(individual_habit, text='Complete habit',
+                                    command = self.edit_habit)
             edit_habit_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         #Begining of Dailies Tab Code
@@ -100,7 +116,8 @@ class Work_Space (Frame):
         dailies= Frame(daily, style = "W.TFrame")
         dailies.grid(sticky = 'news')
 
-        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL, command = daily.yview)
+        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL,
+                                command = daily.yview)
         daily.configure(yscrollcommand = bar_dailies.set)
 
         tab_dailies.rowconfigure(0, weight = 1)
@@ -127,19 +144,33 @@ class Work_Space (Frame):
             dailies_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             dailies_title.configure(width = 130, anchor = CENTER)
 
-            dailies_description = Label(individual_habit, text = d.description,
+            dailies_description = Label(individual_dailies, text = d.description,
                                       wraplength = 800)
             dailies_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             dailies_description.configure(width = 130, anchor = CENTER)
+
+            dailies_value = Label(individual_dailies,
+                                  text = "Value:     "+str(d.value),
+                                  wraplength = 800)
+            dailies_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
+            dailies_value.configure(width = 130, anchor = CENTER)
+
+            dailies_date = Label(individual_dailies,
+                                 text = "Date:     "+str(d.timestamp),
+                                 wraplength = 800)
+            dailies_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
+            dailies_date.configure(width = 130, anchor = CENTER)
 
             delete_dailies_btn = Button(individual_dailies, text='Delete Daily',
                                       command = self.delete_habit)
             delete_dailies_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
-            edit_dailies_btn = Button(individual_dailies, text='Edit Daily', command = self.edit_habit)
+            edit_dailies_btn = Button(individual_dailies, text='Edit Daily',
+                                      command = self.edit_habit)
             edit_dailies_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
-            edit_dailies_btn = Button(individual_dailies, text='Complete Daily', command = self.edit_habit)
+            edit_dailies_btn = Button(individual_dailies, text='Complete Daily',
+                                      command = self.edit_habit)
             edit_dailies_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         
@@ -184,14 +215,27 @@ class Work_Space (Frame):
             tasks_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             tasks_description.configure(width = 130, anchor = CENTER)
 
+            tasks_value = Label(individual_tasks, text = "Value:     "+str(t.value),
+                                      wraplength = 800)
+            tasks_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
+            tasks_value.configure(width = 130, anchor = CENTER)
+
+            tasks_date = Label(individual_tasks,
+                               text = "Date:     "+str(t.timestamp),
+                               wraplength = 800)
+            tasks_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
+            tasks_date.configure(width = 130, anchor = CENTER)
+
             delete_tasks_btn = Button(individual_tasks, text='Delete Task',
                                       command = self.delete_habit)
             delete_tasks_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
-            edit_tasks_btn = Button(individual_tasks, text='Edit Task', command = self.edit_habit)
+            edit_tasks_btn = Button(individual_tasks, text='Edit Task',
+                                    command = self.edit_habit)
             edit_tasks_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
-            edit_tasks_btn = Button(individual_tasks, text='Complete Task', command = self.edit_habit)
+            edit_tasks_btn = Button(individual_tasks, text='Complete Task',
+                                    command = self.edit_habit)
             edit_tasks_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
 
@@ -203,9 +247,12 @@ class Work_Space (Frame):
         frame.add(tab_dailies, text='Dailies')
         frame.add(tab_shop, text='Shop')
 
-        add_habit_btn = Button(habit, text='Add new habit', command = self.add_habit)
-        add_task_btn = Button(task, text='Add new task', command = self.add_task)
-        add_daily_btn = Button(daily, text='Add new goal', command = self.add_daily)
+        add_habit_btn = Button(habit, text='Add new habit',
+                               command = self.add_habit)
+        add_task_btn = Button(task, text='Add new task',
+                              command = self.add_task)
+        add_daily_btn = Button(daily, text='Add new goal',
+                               command = self.add_daily)
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
         
         
@@ -305,13 +352,15 @@ class Work_Space (Frame):
         button_frame.grid_propagate(100)
         button_frame.pack(side="bottom", padx=10, pady=10)
 
-        cancelButton = Button(button_frame, text="Cancel", command=data_window.destroy)
+        cancelButton = Button(button_frame, text="Cancel",
+                              command=data_window.destroy)
         cancelButton.pack(side="left")
 
-        confirmButton = Button(button_frame, text="Save", command=lambda: self.output_window_vals(habit_type,
-                                                                                       ticket_name.get(),
-                                                                                       ticket_desc.get(1.0, END).strip('\t\n'),
-                                                                                       ticket_value.get()))
+        confirmButton = Button(button_frame, text="Save",
+                               command=lambda: self.output_window_vals(habit_type,
+                                                                       ticket_name.get(),
+                                                                       ticket_desc.get(1.0, END).strip('\t\n'),
+                                                                       ticket_value.get()))
         confirmButton.pack(side="right")
 
     def output_window_vals(self, ticket_type, ticket_name, ticket_desc, ticket_value):
