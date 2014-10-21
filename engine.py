@@ -129,6 +129,7 @@ class Character:
             self.set_habit_IDs()
             return hab_id
         except:
+            print("Hello")
             print("Invalid habit id!")
             return -1
 
@@ -138,6 +139,7 @@ class Character:
             self.set_task_IDs()
             return task_id
         except:
+            print (task_ID)
             print("Invalid task id!")
             return -1
 
@@ -147,6 +149,8 @@ class Character:
             self.set_daily_IDs()
             return daily_id
         except:
+            print("Hello2")
+
             print("Invalid daily id!")
             return -1
 
