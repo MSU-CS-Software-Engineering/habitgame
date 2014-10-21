@@ -16,7 +16,7 @@ from work_space import *
 from landing_page import *
 from generic_list import *
 from shop import *
-
+import authenticate
 
 class Character:
     """
@@ -442,7 +442,7 @@ class Game_Data:
         """
         Saves character_data to file
         """
-        
+        '''
         if os.path.isfile(self.savefile):
            file_overwrite = input("Overwrite existing data file?(Y/N)")
            if file_overwrite == "Y":
@@ -466,6 +466,7 @@ class Game_Data:
                 
             except:
                 self.error("Failed to write data to file")
+        '''
         
     def load_data(self):
         """
@@ -821,18 +822,13 @@ class GUI (Frame):
         messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")
 
 
-    
-
-
-
-
-
-
-
 def main():
     """
       Stub for main function
     """
+
+    db = authenticate.db()
+
     main_character = load('Tester')
    
     #Display current character's info
