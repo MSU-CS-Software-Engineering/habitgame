@@ -438,31 +438,11 @@ class Game_Data:
         """
         Saves character_data to file
         """
-        '''
-        if os.path.isfile(self.savefile):
-           file_overwrite = input("Overwrite existing data file?(Y/N)")
-           if file_overwrite == "Y":
-               try:
-                   f = open(self.savefile, 'w')
-                   f.write(str(self.character_data))
-                   print("Data written to file")
-                   f.close()
-                   
-               except:
-                   print("Failed to write data to file")
-                   
-           else:
-               print("File not saved")
-        else:
-            try:
-                f = open(self.savefile, 'w')
-                f.write(str(self.character_data))
-                print("Data written to file")
-                f.close()
-                
-            except:
-                self.error("Failed to write data to file")
-        '''
+        try:
+            file_parser.update_file(self.character_data)
+            
+        except:
+            self.error
         
     def load_data(self):
         """
@@ -603,6 +583,7 @@ class GUI (Frame):
         
     def initUI(self):
         self.grid()
+        self.current_visible_frame = None
         self.master.title("Daily Hack")
         self.style = Style()
         self.style.theme_use("default")
@@ -742,21 +723,48 @@ class GUI (Frame):
 
  
         self.frames = {}
-        for F in (Landing_Page, Work_Space, Generic):
-            frame = F(self, self.character)
-            self.frames[F] = frame
-            # put all of the pages in the same location; 
-            # the one on the top of the stacking order
-            # will be the one that is visible.
-            frame.grid(row = 4, column = 0, columnspan = 7, rowspan = 4, sticky = 'news')
+        
+        # Add main frames to grid for geometry memory
+        # then remove them
 
+        work_space_frame = Work_Space(self, self.character)
+        generic_frame = Generic(self, self.character)
+        landing_page_frame = Landing_Page(self, self.character)
+
+        self.frames[Work_Space] = work_space_frame
+        self.frames[Generic] = generic_frame
+        self.frames[Landing_Page] = landing_page_frame
         
         self.show_frame(Landing_Page)
-
+        
     def show_frame(self, c):
-        '''Show a frame for the given class'''
-        frame = self.frames[c]
-        frame.tkraise()
+        '''
+        Show a frame for the given class
+        '''
+        
+        if c in ('habit', 'daily', 'task', 'shop'):
+            if self.current_visible_frame != self.frames[Work_Space]: 
+                self.current_visible_frame.grid_remove()
+                
+            frame = self.frames[Work_Space]
+            frame.grid(row = 4, column = 0, columnspan = 7,
+                       rowspan = 4, sticky = 'news')
+
+            #Adjust notebook to desired tab
+            frame.select_tab(c)
+            self.current_visible_frame = frame
+            
+            
+        else:
+            if self.current_visible_frame != self.frames[c]:
+                if self.current_visible_frame != None:
+                    self.current_visible_frame.grid_remove()
+
+                frame = self.frames[c]
+                frame.grid(row = 4, column = 0, columnspan = 7,
+                           rowspan = 4, sticky = 'news')
+                self.current_visible_frame = frame
+            
         
         
     def toggle_geom(self,event):
@@ -798,18 +806,18 @@ class GUI (Frame):
 
     def habit(self):
 
-        self.show_frame(Work_Space)
+        self.show_frame('habit')
         
 
     def task(self):
-        self.show_frame(Work_Space)
+        self.show_frame('task')
         
 
     def dailies(self):
-        self.show_frame(Work_Space)
+        self.show_frame('daily')
         
     def buy(self):
-        self.show_frame(Work_Space)
+        self.show_frame('shop')
         
     def generic(self):
         self.show_frame(Generic)
