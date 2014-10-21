@@ -105,13 +105,72 @@ class file_parser:
                 
         return tasks
 
+    def parse_dailies(self):
+        """
+        Returns a list of dictionaries, each dict is a separate daily.
+        The dictionary attribute names are determined by the tag name used
+        in the XML.
+
+        Ex: to get the title of the first daily, you could just
+        do tasks[0]['title']
+        """
+
+        self.daily_list = self.doc.getElementsByTagName('daily')
+
+        dailes = list()
+        
+        for daily in self.daily_list:
+            daily_dict = {}
+            
+            for node in daily.childNodes:
+                if node.nodeType != node.TEXT_NODE:
+                    tag_type = node.nodeName
+                    inner = node.childNodes[0].data
+
+                    if tag_type in self.integer_types:
+                        inner = int(inner)
+                        
+                    daily_dict[tag_type] = inner
+
+            dailies.append(daily_dict)
+                
+        return tasks
+
+    def parse_habits(self):
+        """
+        Returns list of dictionaries for habits
+        """
+
+        self.habit_list = self.doc.getElementsByTagName('habit')
+
+        habits = list()
+        
+        for habit in self.habit_list:
+            habit_dict = {}
+            
+            for node in habit.childNodes:
+                if node.nodeType != node.TEXT_NODE:
+                    tag_type = node.nodeName
+                    inner = node.childNodes[0].data
+
+                    if tag_type in self.integer_types:
+                        inner = int(inner)
+                        
+                    habit_dict[tag_type] = inner
+
+            habits.append(habit_dict)
+                
+        return habits
+
 
     def update_file(self, char):
 
         #placeholder, this will handle saving character data to the file
         #I'm thinking we'll want to pass everything in as a single list
         #and structure the XML data depending on whether it's a single item or
-        #a list 
+        #a list
+        
+        
         return
     
 
