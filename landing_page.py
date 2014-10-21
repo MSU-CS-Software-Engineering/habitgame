@@ -85,7 +85,7 @@ class Landing_Page (Frame):
                              font = "Veranda 24 bold", foreground = 'blue')
         tasks_header.grid(row = 0, column = 4, sticky = 'new',pady = (3,0), padx = 3)
 
-        
+        #Habits Code Area
         if len(habit_list) > 4:
             number = 5
         elif len(habit_list) == 0:
@@ -120,11 +120,22 @@ class Landing_Page (Frame):
 
                 def function_builder(args):
                     messagebox.showinfo("Place Holder", "go to " + args)
-                    
-                complete_button = Button(habit_frame,
-                                         text='COMPLETE '+habit.title,
-                                         command = self.complete)
+
+                def kill(top, habitID):
+                    print (habitID)
+                    self.character.remove_habit(habitID)
+                    top.destroy()                
+                
+
+                complete_button = Button(habit_frame)
+                complete_button.configure(text='COMPLETE '+habit.title,
+                                         command = lambda top = habit_frame, habitID = habit.ID : kill(top, habitID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
+
+                   
+
+                            
+
 
                 
 
@@ -169,10 +180,16 @@ class Landing_Page (Frame):
 
                 def function_builder(args):
                     messagebox.showinfo("Place Holder", "go to " + args)
+
+                def kill(top, dailiesID):
+                    
+                    self.character.remove_daily(dailiesID)
+                    top.destroy() 
                     
                 complete_button = Button(dailies_frame,
                                          text='COMPLETE '+dailies.title,
-                                         command = self.complete)
+                                         command = lambda top = dailies_frame,
+                                         dailyID = dailies.ID : kill(top, dailyID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
              
 
@@ -221,10 +238,15 @@ class Landing_Page (Frame):
 
                 def function_builder(args):
                     messagebox.showinfo("Place Holder", "go to " + args)
+
+                def kill(top, taskID):
+                    self.character.remove_task(taskID)
+                    top.destroy() 
                     
                 complete_button = Button(task_frame,
                                          text='COMPLETE '+task.title,
-                                         command = self.complete)
+                                         command = lambda top = task_frame,
+                                         taskID = task.ID : kill(top, taskID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
 
                     
@@ -263,5 +285,4 @@ class Landing_Page (Frame):
     def to_tasks(self):
         pass
 
-    def complete(self):
-        messagebox.showinfo("Placeholder", "I completed something")
+           
