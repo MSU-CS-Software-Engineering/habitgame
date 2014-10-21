@@ -603,6 +603,33 @@ class GUI (Frame):
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
 
+
+        # create menu bar with file, edit, and help drop down tabs
+        # temp_menu_func is the default command for all the menu options
+        menu = Menu(self)
+
+        file_menu = Menu(menu, tearoff=0)
+        file_menu.add_command(label="New game", command=temp_menu_func)
+        file_menu.add_command(label="Load game", command=temp_menu_func)
+        file_menu.add_command(label="Save game", command=temp_menu_func)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=root.destroy)
+        menu.add_cascade(label="File", menu=file_menu)
+
+        edit_menu = Menu(menu, tearoff=0)
+        edit_menu.add_command(label="Habits", command=temp_menu_func)
+        edit_menu.add_command(label="Dailies", command=temp_menu_func)
+        edit_menu.add_command(label="Tasks", command=temp_menu_func)
+        menu.add_cascade(label="Edit", menu=edit_menu)
+
+        help_menu = Menu(menu, tearoff=0)
+        help_menu.add_command(label="How to play", command=temp_menu_func)
+        help_menu.add_command(label="About", command=temp_menu_func)
+        menu.add_cascade(label="Help", menu=help_menu)
+
+        self.config(menu=menu)
+
+
         # create banner
         self.banner = Frame(self, style='banner.TFrame', padding=5)
         self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
@@ -740,7 +767,11 @@ class GUI (Frame):
         self.frames[Landing_Page] = landing_page_frame
         
         self.show_frame(Landing_Page)
-        
+
+    """ This is the default for all menu bar options, except for exit """
+    def temp_menu_func():
+        print("test menu")
+            
     def show_frame(self, c):
         '''
         Show a frame for the given class
