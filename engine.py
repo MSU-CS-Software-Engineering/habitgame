@@ -457,6 +457,7 @@ class Game_Data:
         try:
             data = file_parser(self.savefile)
             self.character_data['habits'] = data.parse_tasks()
+            self.character_data['dailies'] = data.parse_dailies()
             self.character_data['name'] = data.parse_name()
             self.token = data.parse_token()
             self.character_data['level'] = data.parse_level()
@@ -728,9 +729,6 @@ class GUI (Frame):
  
         self.frames = {}
         
-        # Add main frames to grid for geometry memory
-        # then remove them
-
         work_space_frame = Work_Space(self, self.character)
         generic_frame = Generic(self, self.character)
         landing_page_frame = Landing_Page(self, self.character)
