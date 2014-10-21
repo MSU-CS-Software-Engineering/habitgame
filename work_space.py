@@ -14,9 +14,23 @@ class Work_Space (Frame):
         self.character = character
         self.rowconfigure(4, weight =1)
         self.columnconfigure(0, weight = 1)
-
         self.work_window()
-
+        
+    def select_tab(self, tab):
+        '''
+        Used for selecting tab from an element
+        outside of Work_Space
+        '''
+        tabs = {'task' : self.tab_tasks,
+                'daily': self.tab_dailies,
+                'habit': self.tab_habit,
+                'shop' : self.tab_shop}
+        try:
+            self.frame.select(tabs[tab])
+            
+        except:
+            messagebox.showerror("Error", "Couldn't change tabs")
+            
     def work_window(self):
         habit_list = self.character.habits
         tasks_list = self.character.tasks
@@ -239,9 +253,6 @@ class Work_Space (Frame):
             edit_tasks_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
 
-
-        
-
         frame.add(tab_habit, text='Habits')
         frame.add(tab_tasks, text='Tasks')
         frame.add(tab_dailies, text='Dailies')
@@ -259,13 +270,18 @@ class Work_Space (Frame):
         habit.create_window(-675,0,window = add_habit_btn)
         daily.create_window(-675,0,window = add_daily_btn)
         task.create_window(-675,0,window = add_task_btn)
-
-
-        MyShop.setShop(tab_shop)
-
-        frame.select(tab_shop)
     
-
+        #Set self.frame as local variable 'frame'
+        self.frame = frame
+        
+        self.tab_tasks = tab_tasks
+        self.tab_dailies = tab_dailies
+        self.tab_shop = tab_shop
+        self.tab_habit = tab_habit
+        
+        MyShop.setShop(self.tab_shop)
+        self.frame.select(self.tab_shop)
+        
 
     def add_habit(self):
         self.gather_habit_data("habit")
@@ -371,7 +387,7 @@ class Work_Space (Frame):
 def main():
     #For Testing purposes
     root = Tk()
-    test=Work_Space(root)
+    test = Work_Space(root)
     root.mainloop()
     #End Test
 

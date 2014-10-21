@@ -113,7 +113,7 @@ class db:
             self.login_window()
         
 
-    def dropbox_finish(self, code):
+    def dropbox_finish(self, code, firstname, lastname, username, birthday):
         """
         Call this function to finish the dropbox flow and create a dropbox client
         (after the user pastes their authorization code in the login screen).
@@ -130,11 +130,35 @@ class db:
             # init_file(file)
 
             newdoc = xml.dom.minidom.Document()
+
+            #Create XML Node Elements
             root_element = newdoc.createElement('data')
             token_element = newdoc.createElement('token')
+            firstname_element = newdoc.createElement('firstname')
+            lastname_element = newdoc.createElement('lastname')
+            username_element = newdoc.createElement('username')
+            birthday_element = newdoc.createElement('birthday')
+
+            #Create text nodes for elements
             token_text = newdoc.createTextNode(access_token)
+            firstname_text = newdoc.createTextNode(firstname)
+            lastname_text = newdoc.createTextNode(lastname)
+            username_text = newdoc.createTextNode(username)
+            birthday_text = newdoc.createTextNode(birthday)
+
+            #Append text nodes to elements
             token_element.appendChild(token_text)
+            firstname_element.appendChild(firstname_text)
+            lastname_element.appendChild(lastname_text)
+            username_element.appendChild(username_text)
+            birthday_element.appendChild(birthday_text)
+            
+            #Append elements to root element
             root_element.appendChild(token_element)
+            root_element.appendChild(firstname_element)
+            root_element.appendChild(lastname_element)
+            root_element.appendChild(username_element)
+            root_element.appendChild(birthday_element)
             newdoc.appendChild(root_element)
             
             self.data_document = newdoc
@@ -164,7 +188,9 @@ class db:
         then it destroys the window when that's finished.
         """
 
-        self.dropbox_finish(self.auth_code.get())
+        birthday_string = "-".join((self.birthdate_month.get(), self.birthdate_day.get(), self.birthdate_year.get()))
+        
+        self.dropbox_finish(self.auth_code.get(), self.fname.get(), self.lname.get(), self.character_name.get(), birthday_string)
         self.root.destroy()
 
     
