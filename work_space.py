@@ -14,9 +14,23 @@ class Work_Space (Frame):
         self.character = character
         self.rowconfigure(4, weight =1)
         self.columnconfigure(0, weight = 1)
-
         self.work_window()
-
+        
+    def select_tab(self, tab):
+        '''
+        Used for selecting tab from an element
+        outside of Work_Space
+        '''
+        tabs = {'task' : self.tab_tasks,
+                'daily': self.tab_dailies,
+                'habit': self.tab_habit,
+                'shop' : self.tab_shop}
+        try:
+            self.frame.select(tabs[tab])
+            
+        except:
+            messagebox.showerror("Error", "Couldn't change tabs")
+            
     def work_window(self):
         habit_list = self.character.habits
         tasks_list = self.character.tasks
@@ -143,15 +157,11 @@ class Work_Space (Frame):
             edit_dailies_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         
-
-
-        
-
         frame.add(tab_habit, text='Habits')
         frame.add(tab_tasks, text='Tasks')
         frame.add(tab_dailies, text='Dailies')
         frame.add(tab_shop, text='Shop')
-
+        
         add_habit_btn = Button(habit, text='Add new habit', command = self.add_habit)
         add_task_btn = Button(tab_tasks, text='Add new task', command = self.add_task)
         add_goal_btn = Button(tab_dailies, text='Add new goal', command = self.add_goal)
@@ -174,11 +184,18 @@ class Work_Space (Frame):
         #edit_habit_btn.grid(row = 0, column = 2)
         #add_habit_btn.rowconfigure(0, weight = 1)
         #add_habit_btn.columnconfigure(0, weight = 1)
-        MyShop.setShop(tab_shop)
 
-        frame.select(tab_shop)
-    
-
+        #Set self.frame as local variable 'frame'
+        self.frame = frame
+        
+        self.tab_tasks = tab_tasks
+        self.tab_dailies = tab_dailies
+        self.tab_shop = tab_shop
+        self.tab_habit = tab_habit
+        
+        MyShop.setShop(self.tab_shop)
+        self.frame.select(self.tab_shop)
+        
 
     def add_habit(self):
         self.gather_habit_data("habit")
@@ -282,7 +299,7 @@ class Work_Space (Frame):
 def main():
     #For Testing purposes
     root = Tk()
-    test=Work_Space(root)
+    test = Work_Space(root)
     root.mainloop()
     #End Test
 
