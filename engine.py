@@ -729,6 +729,7 @@ class GUI (Frame):
         mb.menu.add_command( label="Shop", command = self.buy )
         mb.menu.add_command ( label="Game", command = self.no_where)
         mb.menu.add_command(label = "List", command = self.generic)
+        mb.menu.add_command(label = "Save Game", command = self.save_game)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
         # footer
@@ -847,7 +848,6 @@ class GUI (Frame):
 
     def task(self):
         self.show_frame('task')
-        
 
     def dailies(self):
         self.show_frame('daily')
@@ -855,6 +855,9 @@ class GUI (Frame):
     def buy(self):
         self.show_frame('shop')
         
+    def save_game(self):
+        messagebox.showinfo("Save", "Game Saved!")  
+    
     def generic(self):
         self.show_frame(Generic)
 
