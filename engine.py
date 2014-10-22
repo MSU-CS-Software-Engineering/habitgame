@@ -580,6 +580,7 @@ class GUI (Frame):
         master.geometry("{0}x{1}+0+0".format(
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
+        self.master = master
         self.initUI()
 
         # link the shop so it can call GUI's buy_item()
@@ -609,25 +610,25 @@ class GUI (Frame):
         menu = Menu(self)
 
         file_menu = Menu(menu, tearoff=0)
-        file_menu.add_command(label="New game", command=temp_menu_func)
-        file_menu.add_command(label="Load game", command=temp_menu_func)
-        file_menu.add_command(label="Save game", command=temp_menu_func)
+        file_menu.add_command(label="New game", command=self.temp_menu_func)
+        file_menu.add_command(label="Load game", command=self.temp_menu_func)
+        file_menu.add_command(label="Save game", command=self.temp_menu_func)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=root.destroy)
+        file_menu.add_command(label="Exit", command=self.master.destroy)
         menu.add_cascade(label="File", menu=file_menu)
 
         edit_menu = Menu(menu, tearoff=0)
-        edit_menu.add_command(label="Habits", command=temp_menu_func)
-        edit_menu.add_command(label="Dailies", command=temp_menu_func)
-        edit_menu.add_command(label="Tasks", command=temp_menu_func)
+        edit_menu.add_command(label="Habits", command=self.temp_menu_func)
+        edit_menu.add_command(label="Dailies", command=self.temp_menu_func)
+        edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
         menu.add_cascade(label="Edit", menu=edit_menu)
 
         help_menu = Menu(menu, tearoff=0)
-        help_menu.add_command(label="How to play", command=temp_menu_func)
-        help_menu.add_command(label="About", command=temp_menu_func)
+        help_menu.add_command(label="How to play", command=self.temp_menu_func)
+        help_menu.add_command(label="About", command=self.temp_menu_func)
         menu.add_cascade(label="Help", menu=help_menu)
 
-        self.config(menu=menu)
+        #self.config(menu=menu)
 
 
         # create banner
@@ -769,7 +770,7 @@ class GUI (Frame):
         self.show_frame(Landing_Page)
 
     """ This is the default for all menu bar options, except for exit """
-    def temp_menu_func():
+    def temp_menu_func(self):
         print("test menu")
             
     def show_frame(self, c):
