@@ -1,37 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="utf-8"?>
 <data>
-    <token>xoH35mr0iRwAAAAAAAAAI0OZOexRWxqEKabFZRlf6m2WY3j8xkLEcwAEpV297oXv</token>
-    <name>Krugg</name>
-    <cash>42</cash>
-    <exp>120</exp>
-    <level>2</level>
-    <habits>
-        <habit>Practice smashing.</habit>
-        <habit>Brush teeth.</habit>
-    </habits>
-    <tasks>
-        <task>
-            <index>0</index>
-            <title>Kill Grugg</title>
-            <description>Grugg stole favorite rock. Must pay.</description>
-            <due>10/4/2014</due>
-        </task>
-        <task>
-            <index>1</index>
-            <title>Dance</title>
-            <description>Dance good.</description>
-            <due>10/10/2014</due>
-        </task>
-        <task>
-            <index>2</index>
-            <title>Grunt menacingly</title>
-            <description>Favorite activity, like sound of own voice.</description>
-            <due>10/5/2014</due>
-        </task>
-    </tasks>
-    <items>
-        <item>Laptop</item>
-        <item>Pizza</item>
-    </items>
+   <token>LSgDEkSmcWgAAAAAAAAankxV_1ubCXD9e48hHyQlR2u5tMgrvRUE8_58q5pgnSnJ</token>
+   <firstname>John</firstname>
+   <lastname>Doe</lastname>
+   <username>Hacker_Man</username>
+   <birthday>01-01-01</birthday>
+   <cash>0</cash>
+   <exp>0</exp>
+   <level>0</level>
+   <habits/>
+   <tasks/>
+   <dailies/>
+   <items>
+      <item>
+         <title>Laptop</title>
+         <desc>HP G62 Laptop Computer</desc>
+         <ID>0</ID>
+         <image>laptop.jpg</image>
+         <value>5</value>
+         <uses>1</uses>
+         <effect>None</effect>
+      </item>
+      <item>
+         <title>CAT-5 Cable</title>
+         <desc>Provides help via ethernet</desc>
+         <ID>1</ID>
+         <image>cat5.jpg</image>
+         <value>4</value>
+         <uses>15</uses>
+         <effect>None</effect>
+      </item>
+      <item>
+         <title>SSD</title>
+         <desc>Store information</desc>
+         <ID>2</ID>
+         <image>ssd.jpg</image>
+         <value>6</value>
+         <uses>20</uses>
+         <effect>None</effect>
+      </item>
+   </items>
 </data>
