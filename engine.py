@@ -900,19 +900,20 @@ def main():
     main_character = gd.build_character(gd.character_data)
     #main_character.show_info()
 
+    
     #If tasks, habits, dailies, items are empty, load some default tasks
-    if not gd.character_data['tasks']:
-        main_character.tasks = load('tasks')
-        main_character.set_task_IDs()
-    if not gd.character_data['dailies']:
-        main_character.dailies = load('dailies')
-        main_character.set_daily_IDs()
-    if not gd.character_data['habits']:
-        main_character.habits = load('habits')
-        main_character.set_habit_IDs()
-    if not gd.character_data['items']:
-        main_character.items = load('items')
-        main_character.set_item_IDs()
+    #if not gd.character_data['tasks']:
+    #    main_character.tasks = load('tasks')
+    #    main_character.set_task_IDs()
+    #if not gd.character_data['dailies']:
+    #    main_character.dailies = load('dailies')
+    #    main_character.set_daily_IDs()
+    #if not gd.character_data['habits']:
+    #    main_character.habits = load('habits')
+    #    main_character.set_habit_IDs()
+    #if not gd.character_data['items']:
+    #    main_character.items = load('items')
+    #    main_character.set_item_IDs()
     
     #Save character data
     gd.save_data(main_character)
