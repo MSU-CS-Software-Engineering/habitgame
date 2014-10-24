@@ -581,6 +581,7 @@ class GUI (Frame):
         master.geometry("{0}x{1}+0+0".format(
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
+        self.master = master
         self.initUI()
 
         # link the shop so it can call GUI's buy_item()
@@ -603,6 +604,33 @@ class GUI (Frame):
         self.rowconfigure(9, pad=7)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
+
+
+        # create menu bar with file, edit, and help drop down tabs
+        # temp_menu_func is the default command for all the menu options
+        menu = Menu(self)
+
+        file_menu = Menu(menu, tearoff=0)
+        file_menu.add_command(label="New game", command=self.temp_menu_func)
+        file_menu.add_command(label="Load game", command=self.temp_menu_func)
+        file_menu.add_command(label="Save game", command=self.temp_menu_func)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.master.destroy)
+        menu.add_cascade(label="File", menu=file_menu)
+
+        edit_menu = Menu(menu, tearoff=0)
+        edit_menu.add_command(label="Habits", command=self.temp_menu_func)
+        edit_menu.add_command(label="Dailies", command=self.temp_menu_func)
+        edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
+        menu.add_cascade(label="Edit", menu=edit_menu)
+
+        help_menu = Menu(menu, tearoff=0)
+        help_menu.add_command(label="How to play", command=self.temp_menu_func)
+        help_menu.add_command(label="About", command=self.temp_menu_func)
+        menu.add_cascade(label="Help", menu=help_menu)
+
+        #self.config(menu=menu)
+
 
         # create banner
         self.banner = Frame(self, style='banner.TFrame', padding=5)
@@ -702,6 +730,7 @@ class GUI (Frame):
         mb.menu.add_command( label="Shop", command = self.buy )
         mb.menu.add_command ( label="Game", command = self.no_where)
         mb.menu.add_command(label = "List", command = self.generic)
+        mb.menu.add_command(label = "Save Game", command = self.save_game)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
         # footer
@@ -738,7 +767,11 @@ class GUI (Frame):
         self.frames[Landing_Page] = landing_page_frame
         
         self.show_frame(Landing_Page)
-        
+
+    """ This is the default for all menu bar options, except for exit """
+    def temp_menu_func(self):
+        print("test menu")
+            
     def show_frame(self, c):
         '''
         Show a frame for the given class
@@ -813,7 +846,6 @@ class GUI (Frame):
 
     def task(self):
         self.show_frame('task')
-        
 
     def dailies(self):
         self.show_frame('daily')
@@ -821,6 +853,9 @@ class GUI (Frame):
     def buy(self):
         self.show_frame('shop')
         
+    def save_game(self):
+        messagebox.showinfo("Save", "Game Saved!")  
+    
     def generic(self):
         self.show_frame(Generic)
 

@@ -38,7 +38,7 @@ class Landing_Page (Frame):
         #progress bar
         progress = Progressbar(self, orient = 'horizontal', mode= 'determinate')
         progress.grid(row = 5, column=0, columnspan = 6, stick = 'ew', padx = 3)
-        progress.start()
+        #progress.start()
         progress.rowconfigure(5, weight =1)
         progress.columnconfigure(0, weight = 1)
 
@@ -294,10 +294,12 @@ class Landing_Page (Frame):
 
         
     def start(self):
+
         self.progress["value"] = 0
         self.max = 24
         self.progress["midnight"]=24
         self.progress["value"] = 12
+        
 
         
     def to_habits(self):
