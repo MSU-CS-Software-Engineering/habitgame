@@ -5,7 +5,7 @@
                 file_parser.py
 '''
 
-#import landing_page.py
+import sys
 import os.path
 from datetime import date #For timestamps
 from file_parser import *
@@ -273,7 +273,9 @@ class Character:
         
         try:
             item = self.items[item_ID]
-            print("Name:   " + item.name)
+            print("Title:   " + item.title)
+            print("Description: " + item.description)
+            print("Timestamp:   " + str(daily.timestamp))
             print("ID:     " + str(item.ID))
             print("Value:  " + str(item.value))
             print("Uses:   " + str(item.uses))
@@ -313,7 +315,6 @@ class Habit:
         habit_dict = {'title':self.title,
                       'desc':self.description,
                       'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
                       'value':self.value,
                       'exp':self.exp}
         
@@ -346,7 +347,6 @@ class Task:
         task_dict = {'title':self.title,
                       'desc':self.description,
                       'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
                       'value':self.value,
                       'exp':self.exp}
         
@@ -379,7 +379,6 @@ class Daily:
         daily_dict = {'title':self.title,
                       'desc':self.description,
                       'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
                       'value':self.value,
                       'exp':self.exp}
         
@@ -398,9 +397,11 @@ class Item:
         uses: Uses before item expires [-1 for infinite]  (int)
         effect: Special function that the item performs   (function)
     """
-    def __init__(self, name, image, value, uses, effect = None):
-        self.name = name
+    def __init__(self, title, desc, image, value, uses, effect = None):
+        self.title = title
         self.ID = 0
+        self.description = desc
+        self.timestamp = date.today()
         self.image = image
         self.value = value
         self.uses = uses
@@ -411,8 +412,9 @@ class Item:
         Serializes class properties to a dictionary
         which can be converted to a string
         """
-        item_dict = {'name':self.name,
+        item_dict = {'title':self.title,
                       'ID':self.ID,
+                     'desc':self.description,
                       'image':self.image,
                       'value':self.value,
                       'uses':self.uses,
@@ -423,30 +425,46 @@ class Item:
 
 class Game_Data:
     """
-    Class for main game functions
+    Class for main game data functions
     """
     def __init__(self):
         self.savefile = 'character.xml'
         self.character_data = {}
         self.token = ''
-        
+        self.parser = file_parser(self.savefile)
+
     def save_data(self, character):
         """
-        Saves the current character data to
-        Game_Data's character_data 
+        Extracts data from a character object
+        and saves it to character_data
         """
-        self.character_data = character.serialize()
-        print("Character data saved")
-        
+        try:
+            char_data = character.serialize()
+                       
+            self.character_data['name'] = char_data['name']
+            self.character_data['exp'] = char_data['exp']
+            self.character_data['level'] = char_data['level'] 
+            self.character_data['cash'] = char_data['cash']
+            self.character_data['habits'] = char_data['habits']
+            self.character_data['dailies'] = char_data['dailies']
+            self.character_data['tasks'] = char_data['tasks']
+            self.character_data['items'] = char_data['items']
+
+            print("Saved character data")
+            
+        except:
+            self.error('Failed to save character data', str(sys.exc_info()[0]))
+            
     def save_to_file(self):
         """
         Saves character_data to file
         """
         try:
-            file_parser.update_file(self.character_data)
+            self.parser.update_file(self.character_data,
+                                    self.savefile)
             
         except:
-            self.error
+            self.error("Failed to save data to file", str(sys.exc_info()[0]))
         
     def load_data(self):
         """
@@ -455,19 +473,21 @@ class Game_Data:
         character_data dict
         """
         try:
-            data = file_parser(self.savefile)
-            self.character_data['habits'] = data.parse_tasks()
-            self.character_data['dailies'] = data.parse_dailies()
-            self.character_data['name'] = data.parse_name()
-            self.token = data.parse_token()
-            self.character_data['level'] = data.parse_level()
-            self.character_data['exp'] = data.parse_exp()
-            self.character_data['cash'] = data.parse_cash()
-            
-            #return self.build_character(self.character_data)
-        
+            self.character_data['fname'] = self.parser.parse_firstname()
+            self.character_data['lname'] = self.parser.parse_lastname()
+            self.character_data['birthday'] = self.parser.parse_birthday()
+            self.character_data['name'] = self.parser.parse_name()
+            self.character_data['exp'] = self.parser.parse_exp()
+            self.character_data['level'] = self.parser.parse_level()
+            self.character_data['token'] = self.parser.parse_token()
+            self.character_data['cash'] = self.parser.parse_cash()
+            self.character_data['habits'] = self.parser.parse_habits()
+            self.character_data['dailies'] = self.parser.parse_dailies()
+            self.character_data['tasks'] = self.parser.parse_tasks()
+            self.character_data['items'] = self.parser.parse_items()
+  
         except:
-            self.error('Failed to load data')
+            self.error('Failed to load data', str(sys.exc_info()[0]))
 
 
     def build_character(self, character_data):
@@ -481,85 +501,86 @@ class Game_Data:
             new_character.exp = character_data['exp']
             new_character.cash = character_data['cash']
             
+            for task in character_data['tasks']:
+                new_task = Task(task['title'],
+                                task['desc'],
+                                task['value'],
+                                task['exp'],
+                                task['ID'])
+                                
+                            
+                new_character.add_task(new_task)
+
+            for daily in character_data['dailies']:
+                new_daily = Daily(daily['title'],
+                                  daily['desc'],
+                                  daily['value'],
+                                  daily['exp'],
+                                  daily['ID'])
+                                
+                new_character.add_daily(new_daily)
+            
             for habit in character_data['habits']:
                 new_habit = Habit(habit['title'],
-                                  habit['description'],
-                                  None,#value
-                                  None,#exp
-                                  None,#habit_type
-                                  habit['index'])
-            
+                                  habit['desc'],
+                                  habit['value'],
+                                  habit['exp'],
+                                  habit['ID'])
+                                
                 new_character.add_habit(new_habit)
-            '''
+            
+            
             for item in character_data['items']:
-                new_item = Item(item['name'],
+                new_item = Item(item['title'],
+                                item['desc'],
                                 item['image'],
                                 item['value'],
                                 item['uses'],
                                 item['effect'])
-            
+
                 new_character.add_item(new_item)
-            '''
+            
             return new_character
 
         except:
             self.error("Failed to build character from" \
-                       " default character data")
+                       " default character data", str(sys.exc_info()[0]))
     
-    def error(self, error_message):
-        print("ERROR:", error_message)
+    def error(self, error_message, error_type):
+        print("ERROR:", error_message, " ", error_type)
 
 
-def load(name):
+def load(option):
     """
     Loads a default character data configuration. 
     Used for debugging
     """
-    new_character = Character(name)
+    a_list = []
     
-    habit_1 = Habit('Read More','Read more books', 50, 10, 0)  
-    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15, 1)
-    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5, 2)
-
-    task_1 = Task('Make dinner', 'and make it delicious', 10, 10, 0)
-
-    daily_1 = Daily('Play guitar', 'hit strings in a pleasing combination', 15, 25, 0)
-
-    item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
-    item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
-    item_3 = Item('SSD', 'ssd.jpg', 6, 20)
-
-    habits = []
-    tasks = []
-    dailies = []
-    items = []
-
-    habits.append(habit_1)
-    habits.append(habit_2)
-    habits.append(habit_3)
-
-    tasks.append(task_1)
-
-    dailies.append(daily_1)
-
-    items.append(item_1)
-    items.append(item_2)
-    items.append(item_3)
-
-    for habit in habits:
-        new_character.add_habit(habit)
-
-    for task in tasks:
-        new_character.add_task(task)
-
-    for daily in dailies:
-        new_character.add_daily(daily)
-
-    for item in items:
-        new_character.add_item(item)
-
-    return new_character
-
+    if option == 'habits':
+        a_list.append(Habit('Read More','Read more books', 50, 10, 0))  
+        a_list.append(Habit('Veggies', 'Eat more veggies', 100, 15, 1))
+        a_list.append(Habit('Sleep more', 'Get more sleep', 20, 5, 2))
+        
+        
+    elif option == 'tasks':
+        a_list.append(Task('Make dinner', 'and make it delicious', 10, 10, 0))
+        a_list.append(Task('Make Lunch', 'and make it delicious', 10, 10, 0))
+        a_list.append(Task('Make Breakfast', 'and make it delicious', 10, 10, 0))
+                
+    elif option == 'dailies':
+        a_list.append(Daily('Play guitar', 'hit strings in a pleasing combination', 15, 25, 0))
+        a_list.append(Daily('Brush Teeth, twice!', 'With toothepaste', 15, 25, 0))
+        a_list.append(Daily('Watch TV', 'Only documentaries and comedies', 15, 25, 0))
+        
+        
+    else:
+        a_list.append(Item('Laptop', 'HP G62 Laptop Computer', 'laptop.jpg', 5, 1))
+        a_list.append(Item('CAT-5 Cable', 'Provides help via ethernet', 'cat5.jpg', 4, 15))
+        a_list.append(Item('SSD', 'Store information', 'ssd.jpg', 6, 20))
+        
+    return a_list
+        
 
 class GUI (Frame):
 
@@ -870,16 +891,44 @@ def main():
 
     db = authenticate.db()
 
-    main_character = load('Tester')
-   
+    gd = Game_Data()
+
+    #load data from file
+    gd.load_data()
+
+    #Build character from data
+    main_character = gd.build_character(gd.character_data)
+    #main_character.show_info()
+
+    #If tasks, habits, dailies, items are empty, load some default tasks
+    if not gd.character_data['tasks']:
+        main_character.tasks = load('tasks')
+        main_character.set_task_IDs()
+    if not gd.character_data['dailies']:
+        main_character.dailies = load('dailies')
+        main_character.set_daily_IDs()
+    if not gd.character_data['habits']:
+        main_character.habits = load('habits')
+        main_character.set_habit_IDs()
+    if not gd.character_data['items']:
+        main_character.items = load('items')
+        main_character.set_item_IDs()
+    
+    #Save character data
+    gd.save_data(main_character)
+
     #Display current character's info
     #main_character.show_info()
+
     root = Tk()
     app = GUI(root, main_character)
     
     root.mainloop()
-    
 
+    #Save data to file
+    gd.save_data(main_character)
+    gd.save_to_file()
+    
     
 
         
