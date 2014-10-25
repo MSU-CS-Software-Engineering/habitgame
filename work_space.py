@@ -4,8 +4,6 @@ from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 
-
-
 class Work_Space (Frame):
 
     def __init__(self, parent, character):
@@ -21,10 +19,12 @@ class Work_Space (Frame):
         Used for selecting tab from an element
         outside of Work_Space
         '''
-        tabs = {'task' : self.tab_tasks,
+        tabs = {
+                'task' : self.tab_tasks,
                 'daily': self.tab_dailies,
                 'habit': self.tab_habit,
-                'shop' : self.tab_shop}
+                'shop' : self.tab_shop
+               }
         try:
             self.frame.select(tabs[tab])
             
@@ -32,11 +32,9 @@ class Work_Space (Frame):
             messagebox.showerror("Error", "Couldn't change tabs")
             
     def work_window(self):
-        habit_dict = self.character.habits
-        tasks_dict = self.character.tasks
-        dailies_dict = self.character.dailies
-        #creating the workspace 
+        hack_dict = self.character.hacks
 
+        #creating the workspace 
         frame = Notebook(self, height = 200, width = 400, padding=5)
         frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4,
                    sticky = 'nesw')
@@ -56,11 +54,11 @@ class Work_Space (Frame):
         tab_dailies.pack(fill = BOTH, expand = YES)
         tab_tasks.pack(fill = BOTH, expand = YES)
         tab_shop.pack(fill = BOTH, expand = YES)
+
         #Begining of Habit Tab Code
         habit = Canvas(tab_habit, background = 'black')
         habit.grid(sticky = 'news')
 
-        
         habits = Frame(habit, style = "W.TFrame")
         habits.grid(sticky = 'news')
 
@@ -71,9 +69,9 @@ class Work_Space (Frame):
         tab_habit.rowconfigure(0, weight = 1)
         tab_habit.columnconfigure(0, weight = 1)
 
-
         habit.create_window(0,20, anchor = N + E, window = habits)
         bar_habit.grid(row = 0, column = 1, sticky = 'ns')
+
 
         def setupHabitFrame(event):
             # resets the scroll region for the frame inserted into the canvas
@@ -81,30 +79,28 @@ class Work_Space (Frame):
 
 
         habit.bind("<Configure>", setupHabitFrame)
-        for h in habit_dict:
+        for habit in [hack for hack in hack_dict if hack.h_type = 'habit']: #Gather habit-type hacks from dict
             individual_habit = Frame(habits)
             individual_habit.grid(row = habit_dict[h].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            
-
-            habit_name = Label(individual_habit, text = habit_dict[h].title)
+            habit_name = Label(individual_habit, text = habit.title)
             habit_name.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             habit_name.configure(width = 130, anchor = CENTER)
 
-            habit_description = Label(individual_habit, text = habit_dict[h].description,
+            habit_description = Label(individual_habit, text = habit.description,
                                       wraplength = 800)
             habit_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             habit_description.configure(width = 130, anchor = CENTER)
 
             habit_value = Label(individual_habit,
-                                text = "Value:     "+str(habit_dict[h].value),
+                                text = "Value:     " + str(habit.value),
                                 wraplength = 800)
             habit_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             habit_value.configure(width = 130, anchor = CENTER)
 
             habit_date = Label(individual_habit,
-                               text = "Date:     "+str(habit_dict[h].timestamp),
+                               text = "Date:     " + str(habit.timestamp),
                                wraplength = 800)
             habit_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             habit_date.configure(width = 130, anchor = CENTER)
@@ -126,7 +122,6 @@ class Work_Space (Frame):
         daily = Canvas(tab_dailies, background = 'black')
         daily.grid(sticky = 'news')
 
-        
         dailies= Frame(daily, style = "W.TFrame")
         dailies.grid(sticky = 'news')
 
@@ -137,7 +132,6 @@ class Work_Space (Frame):
         tab_dailies.rowconfigure(0, weight = 1)
         tab_dailies.columnconfigure(0, weight = 1)
 
-
         daily.create_window(0,20, anchor = N + E, window = dailies)
         bar_dailies.grid(row = 0, column = 1, sticky = 'ns')
 
@@ -147,30 +141,28 @@ class Work_Space (Frame):
 
 
         daily.bind("<Configure>", setupDailiesFrame)
-        for d in dailies_dict:
+        for daily in [hack for hack in hack_dict if hack.h_type = 'daily']:  #Gather dailies from dict
             individual_dailies = Frame(dailies)
             individual_dailies.grid(row = dailies_dict[d].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            
-
-            dailies_title = Label(individual_dailies, text = dailies_dict[d].title)
+            dailies_title = Label(individual_dailies, text = daily.title)
             dailies_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             dailies_title.configure(width = 130, anchor = CENTER)
 
-            dailies_description = Label(individual_dailies, text = dailies_dict[d].description,
+            dailies_description = Label(individual_dailies, text = daily.description,
                                       wraplength = 800)
             dailies_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             dailies_description.configure(width = 130, anchor = CENTER)
 
             dailies_value = Label(individual_dailies,
-                                  text = "Value:     "+str(dailies_dict[d].value),
+                                  text = "Value:     " + str(daily.value),
                                   wraplength = 800)
             dailies_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             dailies_value.configure(width = 130, anchor = CENTER)
 
             dailies_date = Label(individual_dailies,
-                                 text = "Date:     "+str(dailies_dict[d].timestamp),
+                                 text = "Date:     " + str(daily.timestamp),
                                  wraplength = 800)
             dailies_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             dailies_date.configure(width = 130, anchor = CENTER)
@@ -193,7 +185,6 @@ class Work_Space (Frame):
         task = Canvas(tab_tasks, background = 'black')
         task.grid(sticky = 'news')
 
-        
         tasks= Frame(task, style = "W.TFrame")
         tasks.grid(sticky = 'news')
 
@@ -202,7 +193,6 @@ class Work_Space (Frame):
 
         tab_tasks.rowconfigure(0, weight = 1)
         tab_tasks.columnconfigure(0, weight = 1)
-
 
         task.create_window(0,20, anchor = N + E, window = tasks)
         bar_tasks.grid(row = 0, column = 1, sticky = 'ns')
@@ -213,29 +203,27 @@ class Work_Space (Frame):
 
 
         task.bind("<Configure>", setupTasksFrame)
-        for t in tasks_dict:
+        for task in [hack for hack in hack_dict if hack.h_type = 'task']: #Gather tasks from dict
             individual_tasks = Frame(tasks)
             individual_tasks.grid(row = tasks_dict[t].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            
-
-            tasks_title = Label(individual_tasks, text = tasks_dict[t].title)
+            tasks_title = Label(individual_tasks, text = task.title)
             tasks_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             tasks_title.configure(width = 130, anchor = CENTER)
 
-            tasks_description = Label(individual_tasks, text = tasks_dict[t].description,
+            tasks_description = Label(individual_tasks, text = task.description,
                                       wraplength = 800)
             tasks_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             tasks_description.configure(width = 130, anchor = CENTER)
 
-            tasks_value = Label(individual_tasks, text = "Value:     "+str(tasks_dict[t].value),
+            tasks_value = Label(individual_tasks, text = "Value:     " + str(task.value),
                                       wraplength = 800)
             tasks_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             tasks_value.configure(width = 130, anchor = CENTER)
 
             tasks_date = Label(individual_tasks,
-                               text = "Date:     "+str(tasks_dict[t].timestamp),
+                               text = "Date:     " + str(task.timestamp),
                                wraplength = 800)
             tasks_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             tasks_date.configure(width = 130, anchor = CENTER)
@@ -259,13 +247,12 @@ class Work_Space (Frame):
         frame.add(tab_shop, text='Shop')
 
         add_habit_btn = Button(habit, text='Add new habit',
-                               command = self.add_habit)
+                               command = lambda: self.add_hack('habit'))
         add_task_btn = Button(task, text='Add new task',
-                              command = self.add_task)
+                               command = lambda: self.add_hack('task'))
         add_daily_btn = Button(daily, text='Add new goal',
-                               command = self.add_daily)
+                               command = lambda: self.add_hack('daily'))
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
-        
         
         habit.create_window(-675,0,window = add_habit_btn)
         daily.create_window(-675,0,window = add_daily_btn)
@@ -283,47 +270,28 @@ class Work_Space (Frame):
         self.frame.select(self.tab_shop)
         
 
-    def add_habit(self):
-        self.gather_habit_data("habit")
-
-    def add_task(self):
-        self.gather_habit_data("task")
-
-    def add_daily(self):
-        self.gather_habit_data("goal")
+    def add_hack(self, h_type):
+        #Must actually add to the hack_dict
+        self.gather_hack_data(h_type)
         
-    def delete_habit(self):
+#STOPPED HERE
+    def delete_habit(self, hack_ID):
+        #Needs hack.ID
         answer = messagebox.askokcancel("Delete Habit", "Delete habit?")
         if answer is True:
-            print("User clicked Ok")
+            #print("User clicked Ok")
         else:
-            print("User clicked Cancel")
-            
-    def delete_task(self):
-        answer = messagebox.askokcancel("Delete Task", "Delete task?")
-        if answer is True:
-            print("User clicked Ok")
-        else:
-            print("User clicked Cancel")
+            #print("User clicked Cancel")
 
-    def delete_goal(self):
-        answer = messagebox.askokcancel("Delete Goal", "Delete goal?")
-        if answer is True:
-            print("User clicked Ok")
-        else:
-            print("User clicked Cancel")
             
-    def edit_habit(self):
+    def edit_habit(self, hack_ID):
+        #Needs hack.ID
         messagebox.showinfo("Updated Habit", "Habit updated.")
 
-    def edit_task(self):
-        messagebox.showinfo("Updated Task", "Task updated.")
-
-    def edit_goal(self):
-        messagebox.showinfo("Updated Goal", "Goal updated.")
 
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
+
 
     def gather_habit_data(self, habit_type):
         #Create Window
@@ -383,6 +351,7 @@ class Work_Space (Frame):
         values = [ticket_type, ticket_name, ticket_desc, ticket_value]
         print(values)
         #return values
+
 
 def main():
     #For Testing purposes

@@ -12,12 +12,15 @@ from file_parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
+
 from work_space import *
 from landing_page import *
 from generic_list import *
 from shop import *
 import authenticate
-habit_index = 0
+
+hack_index = 0
+
 class Character:
     """
       Class for Habit character profile
@@ -33,14 +36,12 @@ class Character:
         items: Owned (soft|hard)ware  (list of Item objects)
     """
     def __init__(self, name):
-        self.habit_indx = 0
+        self.hack_index = 0
         self.name = name
         self.cash = 0
         self.exp = 0
         self.level = 1
-        self.habits = {}
-        self.tasks = {}
-        self.dailies = {}
+        self.hacks = {}
         self.items = []
 
 
@@ -53,35 +54,22 @@ class Character:
                           'cash': self.cash,
                           'exp' : self.exp,
                           'level' : self.level,
-                          'habits': None,
-                          'tasks': None,
-                          'dailies': None,
+                          'hacks': None,
                           'items': None}
 
-        habits_list = []
-        tasks_list = []
-        dailies_list = []
+        hacks_list = []
         items_list = []
         
-        for habit in self.habits:
-            habits_list.append(habit.serialize())
-
-        for task in self.tasks:
-            tasks_list.append(task.serialize())
-
-        for daily in self.dailies:
-            dailies_list.append(daily.serialize())
+        for hack in self.hacks:
+            hacks_list.append(hacks.serialize())
 
         for item in self.items:
             items_list.append(item.serialize())
 
-        character_dict['habits'] = habits_list
-        character_dict['tasks'] = tasks_list
-        character_dict['dailies'] = dailies_list
+        character_dict['hacks'] = hacks_list
         character_dict['items'] = items_list
         
         return character_dict
-
 
     def show_info(self):
         """
@@ -93,158 +81,61 @@ class Character:
         print("Cash:      $"+str(self.cash))
         print("Experience: "+str(self.exp))
         print("Level:      "+str(self.level))
-        print("\n\nHabits:\n-------")
-        self.show_habits()
-        print("\n\nTasks:\n-------")
-        self.show_tasks()
-        print("\n\nDailies:\n-------")
-        self.show_dailies()
+        print("\n\nHacks:\n-------")
+        self.show_hacks()
         print("\n\nItems:\n------")
         self.show_items()
 
+    def add_hack(self, hack):
+        self.hacks[hack.ID] = hack
+        return hack.ID
 
-    def add_habit(self, habit): 
-        
-        self.habits[habit.ID] = habit
-        
-        return habit.ID
-
-    def add_task(self, task):
-        self.tasks[task.ID] = task
-        return task.ID
-
-    def add_daily(self, daily):
-        self.dailies[daily.ID] = daily
-        return daily.ID
-
-    def remove_habit(self, habit_ID):
+    def remove_hack(self, hack_ID):
         try:
-            del self.habits[habit_ID]
+            del self.hacks[hack_ID]
             return
         except:
-            print("Invalid habit id!")
+            print("Invalid hack id!")
             return -1
 
-    def remove_task(self, task_ID):
+    def complete_hack(self, hack_ID):
+        hack = self.get_hack(hack_ID)
+        self.cash += hack.value
+        self.exp += hack.exp
+        self.remove_hack(hack_ID)
+
+    def get_hack(self, hack_ID):
         try:
-            del self.tasks[task_ID]
-            return
+            hack = self.hacks[hack_ID]
+            return hack
         except:
-            print("Invalid task id!")
-            return -1
+            print("Error: Invalid hack id")
 
-    def remove_daily(self, daily_ID):
+
+    #Shouldn't be needed with the new ID model
+
+    #def set_hack_IDs(self):     
+    #    for hack in enumerate(self.hacks):
+    #        hack[1].ID = hack[0]
+
+
+    def show_hack(self, hack_id):
         try:
-            del self.dailies[daily_ID]
-            return
-        except:
-            print("Invalid daily id!")
-            return -1
-
-    def complete_habit(self, habit_ID):
-        habit = self.get_habit(habit_ID)
-        self.cash += habit.value
-        self.exp += habit.exp
-        self.remove_habit(habit_ID)
-
-    def complete_task(self, task_ID):
-        task = self.get_task(task_ID)
-        self.cash += task.value
-        self.exp += task.exp
-        self.remove_task(task_ID)
-
-    def complete_daily(self, daily_ID):
-        daily = self.get_daily(daily_ID)
-        self.cash += daily.value
-        self.exp += daily.exp
-        self.remove_daily(daily_ID)
-
-
-    def get_habit(self, habit_ID):
-        try:
-            habit = self.habits[habit_ID]
-            return habit
-        except:
-            print("Error: Invalid habit id")
-
-    def get_task(self, task_ID):
-        try:
-            task = self.tasks[task_ID]
-            return task
-        except:
-            print("Error: Invalid task id")
-
-    def get_daily(self, daily_ID):
-        try:
-            daily = self.dailies[daily_ID]
-            return daily
-        except:
-            print("Error: Invalid daily id")
-
-
-    def set_habit_IDs(self):     
-        for habit in enumerate(self.habits):
-            habit[1].ID = habit[0]
-
-    def set_task_IDs(self):     
-        for task in enumerate(self.tasks):
-            task[1].ID = task[0]
-
-    def set_daily_IDs(self):     
-        for daily in enumerate(self.dailies):
-            daily[1].ID = daily[0]
-
-
-    def show_habit(self, habit_id):
-        try:
-            habit = self.habits[habit_id]
-            print("Title:        " + habit.title)
-            print("Description: " + habit.description)
-            print("ID:          " + str(habit.ID))
-            print("Timestamp:   " + str(habit.timestamp))
-            print("Value:       " + str(habit.value))
-            print("Exp Pts:     " + str(habit.exp))
+            hack = self.hacks[hack_id]
+            print("Type:        " + hack.h_type)
+            print("Title:       " + hack.title)
+            print("Description: " + hack.description)
+            print("ID:          " + str(hack.ID))
+            print("Timestamp:   " + str(hack.timestamp))
+            print("Value:       " + str(hack.value))
+            print("Exp Pts:     " + str(hack.exp))
 
         except:
-            print("Error: Invalid habit_id")
+            print("Error: Invalid hack_id")
 
-    def show_task(self, task_id):
-        try:
-            task = self.tasks[task_id]
-            print("Title:        " + task.title)
-            print("Description: " + task.description)
-            print("ID:          " + str(task.ID))
-            print("Timestamp:   " + str(task.timestamp))
-            print("Value:       " + str(task.value))
-            print("Exp Pts:     " + str(task.exp))
-
-        except:
-            print("Error: Invalid task_id")
-
-    def show_daily(self, daily_id):
-        try:
-            daily = self.dailies[daily_id]
-            print("Title:        " + daily.title)
-            print("Description: " + daily.description)
-            print("ID:          " + str(daily.ID))
-            print("Timestamp:   " + str(daily.timestamp))
-            print("Value:       " + str(daily.value))
-            print("Exp Pts:     " + str(daily.exp))
-
-        except:
-            print("Error: Invalid daily_id")
-
-    def show_habits(self):
-        for habit in self.habits:
-            self.show_habit(habit.ID)
-
-    def show_tasks(self):
-        for task in self.tasks:
-            self.show_task(task.ID)
-
-    def show_dailies(self):
-        for daily in self.dailies:
-            self.show_daily(daily.ID)
+    def show_hacks(self):
+        for hack in self.hacks:
+            self.show_hack(hack.ID)
 
     def add_item(self, item):
         if len(self.items) != 0:
@@ -290,25 +181,26 @@ class Character:
         for item in self.items:
             self.show_item(item.ID)
 
-
-class Habit:
+class Hack:
     """
-      Class for Individual Habits
+      Class for Individual Hacks (Habits, dailies, and goals)
 
       Variables:
-        title: Name of habit                         (string)
-        description: Short description of habit      (string) 
+        h_type: Type of hack (habit, daily, goal)    (string)
+        title: Name of hack                          (string)
+        description: Short description of hack       (string) 
         ID: Number to hold index in                  (int)
         timestamp: Last-accessed date                (date)
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, title, desc, value, exp):
-        global habit_index
+    def __init__(self, h_type, title, desc, value, exp):
+        global hack_index
+        self.h_type = h_type
         self.title = title
         self.description = desc
-        self.ID = habit_index
-        habit_index += 1
+        self.ID = hack_index
+        hack_index += 1
         self.timestamp = date.today()
         self.value = value
         self.exp = exp
@@ -318,81 +210,17 @@ class Habit:
         Serializes class properties to a dictionary 
         which can be converted to a string
         """
-        habit_dict = {'title':self.title,
+        hack_dict = {
+                      'type':self.h_type,
+                      'title':self.title,
                       'desc':self.description,
                       'ID'  :self.ID,
                       'timestamp':str(self.timestamp),
                       'value':self.value,
-                      'exp':self.exp}
+                      'exp':self.exp
+                     }
         
-        return habit_dict
-
-
-class Task:
-    """
-      Variables:
-        title: Name of habit                         (string)
-        description: Short description of habit      (string) 
-        ID: Number to hold index in                  (int)
-        timestamp: Last-accessed date                (date)
-        value: Cash reward/penalty                   (int)
-        exp: Experience point value                  (int)
-    """
-    def __init__(self, title, desc, value, exp, ID=0):
-        self.title = title
-        self.description = desc
-        self.ID = ID
-        self.timestamp = date.today()
-        self.value = value
-        self.exp = exp
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary 
-        which can be converted to a string
-        """
-        task_dict = {'title':self.title,
-                      'desc':self.description,
-                      'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
-                      'value':self.value,
-                      'exp':self.exp}
-        
-        return task_dict
-
-
-class Daily:
-    """
-      Variables:
-        title: Name of habit                         (string)
-        description: Short description of habit      (string) 
-        ID: Number to hold index in                  (int)
-        timestamp: Last-accessed date                (date)
-        value: Cash reward/penalty                   (int)
-        exp: Experience point value                  (int)
-    """
-    def __init__(self, title, desc, value, exp, ID=0):
-        self.title = title
-        self.description = desc
-        self.ID = ID
-        self.timestamp = date.today()
-        self.value = value
-        self.exp = exp
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary 
-        which can be converted to a string
-        """
-        daily_dict = {'title':self.title,
-                      'desc':self.description,
-                      'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
-                      'value':self.value,
-                      'exp':self.exp}
-        
-        return daily_dict
-
+        return hack_dict
     
 class Item:
     """
@@ -464,7 +292,7 @@ class Game_Data:
         """
         try:
             data = file_parser(self.savefile)
-            self.character_data['habits'] = data.parse_tasks()
+            self.character_data['hacks'] = data.parse_hacks()
             self.character_data['name'] = data.parse_name()
             self.token = data.parse_token()
             self.character_data['level'] = data.parse_level()
@@ -488,15 +316,15 @@ class Game_Data:
             new_character.exp = character_data['exp']
             new_character.cash = character_data['cash']
             
-            for habit in character_data['habits']:
-                new_habit = Habit(habit['title'],
-                                  habit['description'],
+            for hack in character_data['hacks']:
+                new_hack = Habit(hack['title'],
+                                  hack['description'],
                                   None,#value
                                   None,#exp
-                                  None,#habit_type
-                                  habit['index'])
+                                  None,#hack_type
+                                  hack['index'])
             
-                new_character.add_habit(new_habit)
+                new_character.add_hack(new_hack)
             '''
             for item in character_data['items']:
                 new_item = Item(item['name'],
@@ -524,43 +352,33 @@ def load(name):
     """
     new_character = Character(name)
     
-    habit_1 = Habit('Read More','Read more books', 50, 10)  
-    habit_2 = Habit('Veggies', 'Eat more veggies', 100, 15)
-    habit_3 = Habit('Sleep more', 'Get more sleep', 20, 5)
+    hack_1 = Hack('habit', 'Read More','Read more books', 50, 10)  
+    hack_2 = Hack('habit', 'Veggies', 'Eat more veggies', 100, 15)
+    hack_3 = Hack('habit', 'Sleep more', 'Get more sleep', 20, 5)
 
-    task_1 = Task('Make dinner', 'and make it delicious', 10, 10, 0)
+    hack_4 = Hack('task', 'Make dinner', 'and make it delicious', 10, 10)
 
-    daily_1 = Daily('Play guitar', 'hit strings in a pleasing combination', 15, 25, 0)
+    hack_5 = Hack('daily', 'Play guitar', 'hit strings in a pleasing combination', 15, 25)
 
     item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
     item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
     item_3 = Item('SSD', 'ssd.jpg', 6, 20)
 
-    habits = []
-    tasks = []
-    dailies = []
+    hacks = []
     items = []
 
-    habits.append(habit_1)
-    habits.append(habit_2)
-    habits.append(habit_3)
-
-    tasks.append(task_1)
-
-    dailies.append(daily_1)
+    hacks.append(hack_1)
+    hacks.append(hack_2)
+    hacks.append(hack_3)
+    hacks.append(hack_4)
+    hacks.append(hack_5)
 
     items.append(item_1)
     items.append(item_2)
     items.append(item_3)
 
-    for habit in habits:
-        new_character.add_habit(habit)
-
-    for task in tasks:
-        new_character.add_task(task)
-
-    for daily in dailies:
-        new_character.add_daily(daily)
+    for hack in hacks:
+        new_character.add_hack(hack)
 
     for item in items:
         new_character.add_item(item)
@@ -706,23 +524,6 @@ class GUI (Frame):
         self.style.configure("statsFrame.TFrame", background="#3D3D3D")
         
 
-        '''def __init__(self, name, image, value, uses, effect = None):
-        self.name = name
-        self.ID = 0
-        self.image = image
-        self.value = value
-        self.uses = uses
-        self.effect = effect'''
-        
-        '''
-        #manual test for update
-        item_test = Item('SSD', 'ssd.jpg', 6, 1)    
-        self.complete_habit(1)
-        self.buy_item(item_test)
-        self.use_item(0)
-        self.character.show_info()
-        '''
-
         mb=  Menubutton(self, text="Options")
         mb.grid(row = 0, column = 6, sticky = E)
         mb.menu  =  Menu ( mb, tearoff = 0 )
@@ -735,9 +536,9 @@ class GUI (Frame):
         mb.menu.add_command( label="Dailies", command = self.dailies )
         mb.menu.add_command( label="Tasks", command = self.task )
         mb.menu.add_command( label="Shop", command = self.buy )
-        mb.menu.add_command ( label="Game", command = self.no_where)
-        mb.menu.add_command(label = "List", command = self.generic)
-        mb.menu.add_command(label = "Save Game", command = self.save_game)
+        mb.menu.add_command( label="Game", command = self.no_where)
+        mb.menu.add_command( label = "List", command = self.generic)
+        mb.menu.add_command( label = "Save Game", command = self.save_game)
         mb.menu.add_command( label="Settings", command = self.no_where)
 
         # footer
@@ -811,15 +612,11 @@ class GUI (Frame):
                 self.current_visible_frame = frame
             
         
-        
     def toggle_geom(self,event):
         geom=self.master.winfo_geometry()
         print(geom,self._geom)
         self.master.geometry(self._geom)
         self._geom=geom
-    
-
-       
         
     def use_item(self, item_ID):
         self.character.items[item_ID].uses -= 1
@@ -843,9 +640,7 @@ class GUI (Frame):
         self.show_frame(Landing_Page)
 
     def habit(self):
-
         self.show_frame('habit')
-        
 
     def task(self):
         self.show_frame('task')
@@ -882,11 +677,6 @@ def main():
     
     root.mainloop()
 
-    
-
-    
-
         
 if __name__ == "__main__":
     main()
-

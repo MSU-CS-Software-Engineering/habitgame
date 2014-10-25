@@ -9,11 +9,11 @@ the file into a useable form, call
 
 data = parser(filepath)
 
-tasks = parse_tasks() will return a list of dicts to represent all the data
+tasks = parse_hacks() will return a list of dicts to represent all the data
 in the tasks.
 
 >>> data = parser('character.xml')
->>> tasks = data.parse_tasks()
+>>> tasks = data.parse_hacks()
 >>> sorted(tasks[0].keys())
 ['description', 'due', 'index', 'title']
 >>> name = data.parse_name()
@@ -83,24 +83,24 @@ class file_parser:
         return self.parse_simple('cash')
 
 
-    def parse_tasks(self):
+    def parse_hacks(self):
         """
-        Returns a list of dictionaries, each dict is a separate task.
+        Returns a list of dictionaries, each dict is a separate hack.
         The dictionary attribute names are determined by the tag name used
         in the XML.
 
-        Ex: to get the title of the first task, you could just
-        do tasks[0]['title']
+        Ex: to get the title of the first hack, you could just
+        do hacks[0]['title']
         """
 
-        self.task_list = self.doc.getElementsByTagName('task')
+        self.hack_list = self.doc.getElementsByTagName('hack')
 
-        tasks = list()
+        hacks = list()
         
-        for task in self.task_list:
-            task_dict = {}
+        for hack in self.hack_list:
+            hack_dict = {}
             
-            for node in task.childNodes:
+            for node in hack.childNodes:
                 if node.nodeType != node.TEXT_NODE:
                     tag_type = node.nodeName
                     inner = node.childNodes[0].data
@@ -108,68 +108,11 @@ class file_parser:
                     if tag_type in self.integer_types:
                         inner = int(inner)
                         
-                    task_dict[tag_type] = inner
+                    hack_dict[tag_type] = inner
 
-            tasks.append(task_dict)
+            hacks.append(hack_dict)
                 
-        return tasks
-
-    def parse_dailies(self):
-        """
-        Returns a list of dictionaries, each dict is a separate daily.
-        The dictionary attribute names are determined by the tag name used
-        in the XML.
-
-        Ex: to get the title of the first daily, you could just
-        do tasks[0]['title']
-        """
-
-        self.daily_list = self.doc.getElementsByTagName('daily')
-
-        dailies = list()
-        
-        for daily in self.daily_list:
-            daily_dict = {}
-            
-            for node in daily.childNodes:
-                if node.nodeType != node.TEXT_NODE:
-                    tag_type = node.nodeName
-                    inner = node.childNodes[0].data
-
-                    if tag_type in self.integer_types:
-                        inner = int(inner)
-                        
-                    daily_dict[tag_type] = inner
-
-            dailies.append(daily_dict)
-                
-        return dailies
-
-    def parse_habits(self):
-        """
-        Returns list of dictionaries for habits
-        """
-
-        self.habit_list = self.doc.getElementsByTagName('habit')
-
-        habits = list()
-        
-        for habit in self.habit_list:
-            habit_dict = {}
-            
-            for node in habit.childNodes:
-                if node.nodeType != node.TEXT_NODE:
-                    tag_type = node.nodeName
-                    inner = node.childNodes[0].data
-
-                    if tag_type in self.integer_types:
-                        inner = int(inner)
-                        
-                    habit_dict[tag_type] = inner
-
-            habits.append(habit_dict)
-                
-        return habits
+        return hacks
 
     def parse_items(self):
         """
@@ -204,36 +147,41 @@ class file_parser:
 
         node.firstChild.replaceWholeText(newText)
 
-    def create_list_node(self, doc, habit_type, habit_data):
+    def create_list_node(self, doc, hack_data):
         '''
-        Returns a (habit|task|daily) XMLNode element
+        Returns a hack XMLNode element
         '''
 
-        title = habit_data['title']
-        desc = habit_data['desc']
-        _id = habit_data['ID']
-        value = habit_data['value']
-        exp = habit_data['exp']
+        h_type = hack_data['h_type']
+        title = hack_data['title']
+        desc = hack_data['desc']
+        _id = hack_data['ID']
+        value = hack_data['value']
+        exp = hack_data['exp']
         
-        node = doc.createElement(habit_type)
+        node = doc.createElement('hack')
+        h_type_node = doc.createElement('h_type')
         title_node = doc.createElement('title')
         desc_node = doc.createElement('desc')
         id_node = doc.createElement('ID')
         value_node = doc.createElement('value')
         exp_node = doc.createElement('exp')
 
+        h_type_node_text = doc.createTextNode(h_type)
         title_node_text = doc.createTextNode(title)
         desc_node_text = doc.createTextNode(desc)
         id_node_text = doc.createTextNode(str(_id))
         value_node_text = doc.createTextNode(str(value))
         exp_node_text = doc.createTextNode(str(exp))
 
+        h_type_node.appendChild(h_type_node_text)
         title_node.appendChild(title_node_text)
         desc_node.appendChild(desc_node_text)
         id_node.appendChild(id_node_text)
         value_node.appendChild(value_node_text)
         exp_node.appendChild(exp_node_text)
 
+        node.appendChild(h_type_node)
         node.appendChild(title_node)
         node.appendChild(desc_node)
         node.appendChild(id_node)
@@ -264,10 +212,8 @@ class file_parser:
         char_cash = str(char['cash'])
         char_level = str(char['level'])
         char_exp = str(char['exp'])
-        char_habits = char['habits']
-        char_tasks = char['tasks']
+        char_hacks = char['hacks']
         char_items = char['items']
-        char_dailies = char['dailies']
 
         #Create XML Node Elements
         root_element = newdoc.createElement('data')
@@ -279,9 +225,7 @@ class file_parser:
         cash_element = newdoc.createElement('cash')
         exp_element = newdoc.createElement('exp')
         level_element = newdoc.createElement('level')
-        habits_element = newdoc.createElement('habits')
-        tasks_element = newdoc.createElement('tasks')
-        dailies_element = newdoc.createElement('dailies')
+        hacks_element = newdoc.createElement('hacks')
         items_element = newdoc.createElement('items')
            
         #Create text nodes for elements
@@ -304,20 +248,10 @@ class file_parser:
         exp_element.appendChild(exp_text)
         level_element.appendChild(level_text)
         
-        #Fill tasks, dailies, habits, items
-        for task in char_tasks:
-            node = self.create_list_node(newdoc,'task',task)
-            tasks_element.appendChild(node)
-
-        for daily in char_dailies:
-            node = self.create_list_node(newdoc,'daily',daily)
-            dailies_element.appendChild(node)
-            
-
-        for habit in char_habits:
-            node = self.create_list_node(newdoc,'habit',habit)
-            habits_element.appendChild(node)
-
+        #Fill hacks and items
+        for hack in char_hacks:
+            node = self.create_list_node(newdoc, hack)
+            hacks_element.appendChild(node)
         
         for item in char_items:
             node = newdoc.createElement('item')
@@ -364,9 +298,7 @@ class file_parser:
         root_element.appendChild(cash_element)
         root_element.appendChild(exp_element)
         root_element.appendChild(level_element)
-        root_element.appendChild(habits_element)
-        root_element.appendChild(tasks_element)
-        root_element.appendChild(dailies_element)
+        root_element.appendChild(hacks_element)
         root_element.appendChild(items_element)
         newdoc.appendChild(root_element)
         
@@ -374,9 +306,8 @@ class file_parser:
         #print(cash_node.toprettyxml())
         #print(level_node.toprettyxml())
         #print(exp_node.toprettyxml())
-        #print(habits_node.toprettyxml())
+        #print(hacks_node.toprettyxml())
         #print(items_node.toprettyxml())
-        #print(dailies_node.toprettyxml())
 
         #Write XMLDocument to file
         try:
@@ -402,4 +333,4 @@ if __name__ == "__main__":
     doctest.testmod()
     
     data = parser('character.xml')
-    tasks = data.parse_tasks()
+    tasks = data.parse_hacks()
