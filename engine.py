@@ -16,7 +16,7 @@ from work_space import *
 from landing_page import *
 from generic_list import *
 from shop import *
-#import authenticate
+import authenticate
 habit_index = 0
 class Character:
     """
@@ -140,6 +140,25 @@ class Character:
         except:
             print("Invalid daily id!")
             return -1
+
+    def complete_habit(self, habit_ID):
+        habit = self.get_habit(habit_ID)
+        self.cash += habit.value
+        self.exp += habit.exp
+        self.remove_habit(habit_ID)
+
+    def complete_task(self, task_ID):
+        task = self.get_task(task_ID)
+        self.cash += task.value
+        self.exp += task.exp
+        self.remove_task(task_ID)
+
+    def complete_daily(self, daily_ID):
+        daily = self.get_daily(daily_ID)
+        self.cash += daily.value
+        self.exp += daily.exp
+        self.remove_daily(daily_ID)
+
 
     def get_habit(self, habit_ID):
         try:
@@ -563,7 +582,7 @@ class GUI (Frame):
         self.character_level = StringVar()
         self.character_name.set(self.character.name)
         self.character_exp.set(self.character.exp)
-        self.character_cash.set(self.character.cash)
+        #self.character_cash.set(self.character.cash)
         self.character_level.set(self.character.level)
         self._geom='800x600+0+0'
         master.geometry("{0}x{1}+0+0".format(
@@ -667,14 +686,14 @@ class GUI (Frame):
         exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
         exp.configure(background="#3D3D3D", font="arial 12 bold", foreground='#6AA7E2')
 
+
         # add cash stats info
+        self.character_cash.set(self.character.cash)
         cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
         cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
-
         cash = Label(self.stats_frame, textvariable= self.character_cash)
         cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
         cash.configure(background="#3D3D3D", font="arial 12 bold", foreground='#3BB623')
-
         # add level stats info
         level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
         level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
@@ -799,14 +818,7 @@ class GUI (Frame):
         self.master.geometry(self._geom)
         self._geom=geom
     
-    def complete_habit(self, habit_ID):
-        habit = self.character.get_habit(habit_ID)
-        self.character.cash += habit.value
-        self.character.exp += habit.exp
-        self.character.remove_habit(habit_ID)
-        #self.character.set_habit_IDs()
-        self.character_exp.set(self.character.exp)
-        self.character_cash.set(self.character.cash)
+
        
         
     def use_item(self, item_ID):
@@ -837,6 +849,7 @@ class GUI (Frame):
 
     def task(self):
         self.show_frame('task')
+        main.__subclasshook__
 
     def dailies(self):
         self.show_frame('daily')
@@ -858,8 +871,7 @@ def main():
     """
       Stub for main function
     """
-
-    #db = authenticate.db()
+    db = authenticate.db()
 
     main_character = load('Tester')
    
@@ -869,6 +881,7 @@ def main():
     app = GUI(root, main_character)
     
     root.mainloop()
+
     
 
     

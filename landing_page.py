@@ -1,7 +1,6 @@
 from tkinter  import *
 from tkinter.ttk import *
 
-
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 class Landing_Page (Frame):
@@ -124,7 +123,7 @@ class Landing_Page (Frame):
    
 
                 def remove(top, habitID):
-                    self.character.remove_habit(habitID)
+                    self.character.complete_habit(habitID)
                     top.destroy()
 
                 complete_button = Button(habit_frame)
@@ -184,7 +183,7 @@ class Landing_Page (Frame):
 
 
                 def remove_d(top, taskID):
-                    self.character.remove_daily(taskID)
+                    self.character.complete_daily(taskID)
                     top.destroy()
                     
                 complete_button = Button(dailies_frame,
@@ -242,7 +241,7 @@ class Landing_Page (Frame):
 
 
                 def remove_t(top, taskID):
-                    self.character.remove_task(taskID)
+                    self.character.complete_task(taskID)
                     top.destroy()
                     
                 complete_button = Button(task_frame,
