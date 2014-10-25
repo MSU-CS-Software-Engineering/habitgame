@@ -37,10 +37,10 @@ class Generic (Frame):
     def list_window(self):
 
         
-        habit_list = self.character.habits
-        habit_length = len(habit_list)
-        tasks_list = self.character.tasks
-        dailies_list = self.character.dailies
+        habit_dict = self.character.habits
+        
+        tasks_dict = self.character.tasks
+        dailies_dict = self.character.dailies
 
         # Create canvas
         canvas = ResizingCanvas(self,width = 1350, background = 'red')
@@ -86,7 +86,7 @@ class Generic (Frame):
             label.grid(row = i, column = 0, sticky = 'nsew')
         '''
         row_number = 0
-        for habit in habit_list:
+        for h in habit_dict:
             ############
             habit_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
             habit_frame.grid(row = row_number, column = 0)
@@ -95,7 +95,7 @@ class Generic (Frame):
             canvas.addtag_all("all")
             
 
-            habit_name = Label(habit_frame, text = habit.title,
+            habit_name = Label(habit_frame, text = habit_dict[h].title,
                                background = 'gray', relief = GROOVE)
             habit_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
             habit_name.configure(anchor = CENTER)
@@ -154,7 +154,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             habit_value.pack(side = LEFT, fill = BOTH)
             
-            habit_value_value = Label(value_frame, text = habit.value, width = 4,
+            habit_value_value = Label(value_frame, text = habit_dict[h].value, width = 4,
                                background = 'white', relief = GROOVE)
             habit_value_value.pack(side = LEFT, fill = BOTH)
 
@@ -166,7 +166,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             habit_timestamp.pack(side = LEFT, fill = BOTH)
             
-            habit_timestamp_value = Label(timestamp_frame, text = habit.timestamp, width = 10,
+            habit_timestamp_value = Label(timestamp_frame, text = habit_dict[h].timestamp, width = 10,
                                background = 'white', relief = GROOVE)
             habit_timestamp_value.pack(side = LEFT, fill = BOTH)
             #Experience
@@ -177,13 +177,13 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             habit_exp.pack(side = LEFT, fill = BOTH)
             
-            habit_exp_value = Label(exp_frame, text = habit.value, width = 4,
+            habit_exp_value = Label(exp_frame, text = habit_dict[h].value, width = 4,
                                background = 'white', relief = GROOVE)
             habit_exp_value.pack(side = LEFT, fill = BOTH)
             #####################
             
 
-        for tasks in tasks_list:
+        for t in tasks_dict:
             ############
             tasks_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
             habit_frame.grid(row = row_number, column = 0)
@@ -192,7 +192,7 @@ class Generic (Frame):
             canvas.addtag_all("all")
             
 
-            habit_name = Label(tasks_frame, text = tasks.title,
+            habit_name = Label(tasks_frame, text = tasks_dict[t].title,
                                background = 'gray', relief = GROOVE)
             habit_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
             habit_name.configure(anchor = CENTER)
@@ -251,7 +251,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             tasks_value.pack(side = LEFT, fill = BOTH)
             
-            tasks_value_value = Label(value_frame, text = habit.value, width = 4,
+            tasks_value_value = Label(value_frame, text = tasks_dict[t].value, width = 4,
                                background = 'white', relief = GROOVE)
             tasks_value_value.pack(side = LEFT, fill = BOTH)
 
@@ -263,7 +263,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             tasks_timestamp.pack(side = LEFT, fill = BOTH)
             
-            tasks_timestamp_value = Label(timestamp_frame, text = habit.timestamp, width = 10,
+            tasks_timestamp_value = Label(timestamp_frame, text = tasks_dict[t].timestamp, width = 10,
                                background = 'white', relief = GROOVE)
             tasks_timestamp_value.pack(side = LEFT, fill = BOTH)
             #Experience
@@ -274,7 +274,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             tasks_exp.pack(side = LEFT, fill = BOTH)
             
-            tasks_exp_value = Label(exp_frame, text = habit.value, width = 4,
+            tasks_exp_value = Label(exp_frame, text = tasks_dict[t].value, width = 4,
                                background = 'white', relief = GROOVE)
             tasks_exp_value.pack(side = LEFT, fill = BOTH)
             #####################
@@ -297,7 +297,7 @@ class Generic (Frame):
             delete.grid(row = 2, column = 5, sticky = 'news')
 
 
-        for dailies in habit_list:
+        for d in dailies_dict:
             ############
             dailies_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
             dailies_frame.grid(row = row_number, column = 0)
@@ -306,7 +306,7 @@ class Generic (Frame):
             canvas.addtag_all("all")
             
 
-            dailies_name = Label(dailies_frame, text = habit.title,
+            dailies_name = Label(dailies_frame, text = dailies_dict[d].title,
                                background = 'gray', relief = GROOVE)
             dailies_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
             dailies_name.configure(anchor = CENTER)
@@ -365,7 +365,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             dailies_value.pack(side = LEFT, fill = BOTH)
             
-            dailies_value_value = Label(value_frame, text = habit.value, width = 4,
+            dailies_value_value = Label(value_frame, text = dailies_dict[d].value, width = 4,
                                background = 'white', relief = GROOVE)
             dailies_value_value.pack(side = LEFT, fill = BOTH)
 
@@ -377,7 +377,8 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             dailies_timestamp.pack(side = LEFT, fill = BOTH)
             
-            dailies_timestamp_value = Label(timestamp_frame, text = habit.timestamp, width = 10,
+            dailies_timestamp_value = Label(timestamp_frame, text = dailies_dict[d].timestamp,
+                                            width = 10,
                                background = 'white', relief = GROOVE)
             dailies_timestamp_value.pack(side = LEFT, fill = BOTH)
             #Experience
@@ -388,7 +389,7 @@ class Generic (Frame):
                                background = 'gray', relief = GROOVE)
             dailies_exp.pack(side = LEFT, fill = BOTH)
             
-            dailies_exp_value = Label(exp_frame, text = habit.value, width = 4,
+            dailies_exp_value = Label(exp_frame, text = dailies_dict[d].value, width = 4,
                                background = 'white', relief = GROOVE)
             dailies_exp_value.pack(side = LEFT, fill = BOTH)
             #####################

@@ -32,9 +32,9 @@ class Work_Space (Frame):
             messagebox.showerror("Error", "Couldn't change tabs")
             
     def work_window(self):
-        habit_list = self.character.habits
-        tasks_list = self.character.tasks
-        dailies_list = self.character.dailies
+        habit_dict = self.character.habits
+        tasks_dict = self.character.tasks
+        dailies_dict = self.character.dailies
         #creating the workspace 
 
         frame = Notebook(self, height = 200, width = 400, padding=5)
@@ -81,30 +81,30 @@ class Work_Space (Frame):
 
 
         habit.bind("<Configure>", setupHabitFrame)
-        for h in habit_list:
+        for h in habit_dict:
             individual_habit = Frame(habits)
-            individual_habit.grid(row = h.ID, column = 0,
+            individual_habit.grid(row = habit_dict[h].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
             
 
-            habit_name = Label(individual_habit, text = h.title)
+            habit_name = Label(individual_habit, text = habit_dict[h].title)
             habit_name.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             habit_name.configure(width = 130, anchor = CENTER)
 
-            habit_description = Label(individual_habit, text = h.description,
+            habit_description = Label(individual_habit, text = habit_dict[h].description,
                                       wraplength = 800)
             habit_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             habit_description.configure(width = 130, anchor = CENTER)
 
             habit_value = Label(individual_habit,
-                                text = "Value:     "+str(h.value),
+                                text = "Value:     "+str(habit_dict[h].value),
                                 wraplength = 800)
             habit_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             habit_value.configure(width = 130, anchor = CENTER)
 
             habit_date = Label(individual_habit,
-                               text = "Date:     "+str(h.timestamp),
+                               text = "Date:     "+str(habit_dict[h].timestamp),
                                wraplength = 800)
             habit_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             habit_date.configure(width = 130, anchor = CENTER)
@@ -147,30 +147,30 @@ class Work_Space (Frame):
 
 
         daily.bind("<Configure>", setupDailiesFrame)
-        for d in dailies_list:
+        for d in dailies_dict:
             individual_dailies = Frame(dailies)
-            individual_dailies.grid(row = d.ID, column = 0,
+            individual_dailies.grid(row = dailies_dict[d].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
             
 
-            dailies_title = Label(individual_dailies, text = d.title)
+            dailies_title = Label(individual_dailies, text = dailies_dict[d].title)
             dailies_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             dailies_title.configure(width = 130, anchor = CENTER)
 
-            dailies_description = Label(individual_dailies, text = d.description,
+            dailies_description = Label(individual_dailies, text = dailies_dict[d].description,
                                       wraplength = 800)
             dailies_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             dailies_description.configure(width = 130, anchor = CENTER)
 
             dailies_value = Label(individual_dailies,
-                                  text = "Value:     "+str(d.value),
+                                  text = "Value:     "+str(dailies_dict[d].value),
                                   wraplength = 800)
             dailies_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             dailies_value.configure(width = 130, anchor = CENTER)
 
             dailies_date = Label(individual_dailies,
-                                 text = "Date:     "+str(d.timestamp),
+                                 text = "Date:     "+str(dailies_dict[d].timestamp),
                                  wraplength = 800)
             dailies_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             dailies_date.configure(width = 130, anchor = CENTER)
@@ -213,29 +213,29 @@ class Work_Space (Frame):
 
 
         task.bind("<Configure>", setupTasksFrame)
-        for t in tasks_list:
+        for t in tasks_dict:
             individual_tasks = Frame(tasks)
-            individual_tasks.grid(row = t.ID, column = 0,
+            individual_tasks.grid(row = tasks_dict[t].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
             
 
-            tasks_title = Label(individual_tasks, text = t.title)
+            tasks_title = Label(individual_tasks, text = tasks_dict[t].title)
             tasks_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             tasks_title.configure(width = 130, anchor = CENTER)
 
-            tasks_description = Label(individual_tasks, text = t.description,
+            tasks_description = Label(individual_tasks, text = tasks_dict[t].description,
                                       wraplength = 800)
             tasks_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             tasks_description.configure(width = 130, anchor = CENTER)
 
-            tasks_value = Label(individual_tasks, text = "Value:     "+str(t.value),
+            tasks_value = Label(individual_tasks, text = "Value:     "+str(tasks_dict[t].value),
                                       wraplength = 800)
             tasks_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             tasks_value.configure(width = 130, anchor = CENTER)
 
             tasks_date = Label(individual_tasks,
-                               text = "Date:     "+str(t.timestamp),
+                               text = "Date:     "+str(tasks_dict[t].timestamp),
                                wraplength = 800)
             tasks_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             tasks_date.configure(width = 130, anchor = CENTER)

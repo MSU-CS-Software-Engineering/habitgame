@@ -123,22 +123,14 @@ class Landing_Page (Frame):
                     messagebox.showinfo("Place Holder", "go to " + args)
    
 
-                def remove(top, taskID, type, char):
-
-                    if type == 'task':
-                        char.remove_task(taskID)
-                    if type == 'habit':
-                        char.remove_habit(taskID)
-                    if type == 'daily':
-                        char.remove_daily(taskID)
-
+                def remove(top, habitID):
+                    self.character.remove_habit(habitID)
                     top.destroy()
 
                 complete_button = Button(habit_frame)
                 complete_button.configure(text='COMPLETE '+habit.title,
                                          command = lambda top = habit_frame,
-                                          habitID = habit.ID, type = 'habit',
-                                          char = self.character : remove(top, habitID, type, char))
+                                          habitID = habit.ID : remove(top, habitID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
 
                    
@@ -191,22 +183,14 @@ class Landing_Page (Frame):
                     messagebox.showinfo("Place Holder", "go to " + args)
 
 
-                def remove(top, taskID, type, char):
-
-                    if type == 'task':
-                        char.remove_task(taskID)
-                    if type == 'habit':
-                        char.remove_habit(taskID)
-                    if type == 'daily':
-                        char.remove_daily(taskID)
-
+                def remove_d(top, taskID):
+                    self.character.remove_daily(taskID)
                     top.destroy()
                     
                 complete_button = Button(dailies_frame,
                                          text='COMPLETE '+dailies.title,
                                          command = lambda top = dailies_frame,
-                                         dailyID = dailies.ID, type = 'daily',
-                                         char = self.character : remove(top, dailyID, type, char))
+                                         dailyID = dailies.ID : remove_d(top, dailyID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
              
 
@@ -257,22 +241,14 @@ class Landing_Page (Frame):
                     messagebox.showinfo("Place Holder", "go to " + args)
 
 
-                def remove(top, taskID, type, char):
-
-                    if type == 'task':
-                        char.remove_task(taskID)
-                    if type == 'habit':
-                        char.remove_habit(taskID)
-                    if type == 'daily':
-                        char.remove_daily(taskID)
-
+                def remove_t(top, taskID):
+                    self.character.remove_task(taskID)
                     top.destroy()
                     
                 complete_button = Button(task_frame,
                                          text='COMPLETE '+task.title,
                                          command = lambda top = task_frame,
-                                         taskID = task.ID, type = 'task',
-                                         char = self.character : remove(top, taskID, type, char))
+                                         taskID = task.ID : remove_t(top, taskID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
 
                     
