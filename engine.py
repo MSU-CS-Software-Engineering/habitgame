@@ -620,7 +620,7 @@ class GUI (Frame):
         file_menu = Menu(menu, tearoff=0)
         file_menu.add_command(label="New game", command=self.temp_menu_func)
         file_menu.add_command(label="Load game", command=self.temp_menu_func)
-        file_menu.add_command(label="Save game", command=self.temp_menu_func)
+        file_menu.add_command(label="Save game", command=self.save_game)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.master.destroy)
         menu.add_cascade(label="FILE", menu=file_menu)
@@ -631,6 +631,11 @@ class GUI (Frame):
         edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
         menu.add_cascade(label="EDIT", menu=edit_menu)
 
+        options_menu = Menu(menu, tearoff=0)
+        options_menu.add_command(label="Game", command=self.no_where)
+        options_menu.add_command(label="Settings", command=self.no_where)
+        menu.add_cascade(label="OPTIONS", menu=options_menu)
+         
         help_menu = Menu(menu, tearoff=0)
         help_menu.add_command(label="How to play", command=self.temp_menu_func)
         help_menu.add_command(label="About", command=self.temp_menu_func)
@@ -767,23 +772,6 @@ class GUI (Frame):
         self.use_item(0)
         self.character.show_info()
         '''
-
-        mb=  Menubutton(self, text="Options")
-        mb.grid(row = 0, column = 6, sticky = E)
-        mb.menu  =  Menu ( mb, tearoff = 0 )
-        mb["menu"]  =  mb.menu
-    
-        mayoVar  = IntVar()
-        ketchVar = IntVar()
-        mb.menu.add_command( label="Home", command = self.home)
-        mb.menu.add_command( label="Habits", command = self.habit)
-        mb.menu.add_command( label="Dailies", command = self.dailies )
-        mb.menu.add_command( label="Tasks", command = self.task )
-        mb.menu.add_command( label="Shop", command = self.buy )
-        mb.menu.add_command ( label="Game", command = self.no_where)
-        mb.menu.add_command(label = "List", command = self.generic)
-        mb.menu.add_command(label = "Save Game", command = self.save_game)
-        mb.menu.add_command( label="Settings", command = self.no_where)
 
         # footer
         footer_frame_bg = Frame(self, style='footer.TFrame', padding=3)

@@ -41,7 +41,7 @@ class Work_Space (Frame):
         frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4,
                    sticky = 'nesw')
         frame_style = Style()
-        frame_style.configure("W.TFrame", background='black',
+        frame_style.configure("W.TFrame", background='#EBEDF1',
                               pady = (10,0), padx =3)
         frame.rowconfigure(4, weight = 1)
         frame.columnconfigure(0, weight = 1)
@@ -56,8 +56,9 @@ class Work_Space (Frame):
         tab_dailies.pack(fill = BOTH, expand = YES)
         tab_tasks.pack(fill = BOTH, expand = YES)
         tab_shop.pack(fill = BOTH, expand = YES)
+        
         #Begining of Habit Tab Code
-        habit = Canvas(tab_habit, background = 'black')
+        habit = Canvas(tab_habit, background = '#EBEDF1')
         habit.grid(sticky = 'news')
 
         
@@ -82,11 +83,11 @@ class Work_Space (Frame):
 
         habit.bind("<Configure>", setupHabitFrame)
         for h in habit_dict:
-            individual_habit = Frame(habits)
+            individual_habit = Frame(habits, style='habit_f.TFrame')
             individual_habit.grid(row = habit_dict[h].ID, column = 0,
-                                  sticky = 'ew', pady = (10,0), padx = 3)
+                                  sticky = 'ew', pady = (10,0), padx = 10)
+            frame_style.configure(style='habit_f.TFrame', background='white')
 
-            
 
             habit_name = Label(individual_habit, text = habit_dict[h].title)
             habit_name.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
@@ -123,7 +124,7 @@ class Work_Space (Frame):
 
         #Begining of Dailies Tab Code
 
-        daily = Canvas(tab_dailies, background = 'black')
+        daily = Canvas(tab_dailies, background = '#EBEDF1')
         daily.grid(sticky = 'news')
 
         
@@ -190,7 +191,7 @@ class Work_Space (Frame):
         
         #Begining of Tasks Tab Code
 
-        task = Canvas(tab_tasks, background = 'black')
+        task = Canvas(tab_tasks, background = '#EBEDF1')
         task.grid(sticky = 'news')
 
         
@@ -218,7 +219,7 @@ class Work_Space (Frame):
             individual_tasks.grid(row = tasks_dict[t].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            
+
 
             tasks_title = Label(individual_tasks, text = tasks_dict[t].title)
             tasks_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)

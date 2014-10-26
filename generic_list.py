@@ -38,18 +38,16 @@ class Generic (Frame):
 
         
         habit_dict = self.character.habits
-        
         tasks_dict = self.character.tasks
         dailies_dict = self.character.dailies
 
         # Create canvas
-        canvas = ResizingCanvas(self,width = 1350, background = 'red')
+        canvas = ResizingCanvas(self,width = 1350, background = '#EBEDF1')
         #canvas = Canvas(self, background = 'gray', width = 800, height = 600)
 
-        canvas.grid(row = 4, column = 0, sticky = 'news')
+        canvas.grid(row = 4, column = 0, sticky = 'news', padx = 5, pady = 5)
         canvas.grid_rowconfigure(4, weight = 1)
         canvas.grid_columnconfigure(0, weight = 1)
-
 
 
         # Create scrollbars
@@ -65,7 +63,6 @@ class Generic (Frame):
         
         frame = Frame(canvas)
         
-
         # Attach canvas to scrollbars
         canvas.configure(yscrollcommand=yscrollbar.set)
 
@@ -88,132 +85,123 @@ class Generic (Frame):
         row_number = 0
         for h in habit_dict:
             ############
-            habit_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
-            habit_frame.grid(row = row_number, column = 0)
+            habit_frame = Frame(frame, width = 800, height = 95, style = "f.TFrame")
+            habit_frame.grid(row = row_number, column = 0, sticky = 'news')
             row_number += 1
             #habit_frame.grid_propagate(False)
+            habit_frame.columnconfigure(0, weight = 1)
             canvas.addtag_all("all")
             
 
-            habit_name = Label(habit_frame, text = habit_dict[h].title,
-                               background = 'gray', relief = GROOVE)
-            habit_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
+            habit_name = Label(habit_frame, text = habit_dict[h].title, font = 'arial 14', 
+                               padding = 5, foreground = '#64D729', background = '#323232')
+            habit_name.grid(row = 0, column = 0, columnspan = 5, sticky = 'news')
             habit_name.configure(anchor = CENTER)
    
             #Description
-
             habit_description = Frame(habit_frame, width = 400)
-            habit_description.grid(row = 1, column = 0,rowspan = 2,
+            habit_description.grid(row = 2, column = 0,rowspan = 2,
                                    sticky = 'news')
-            
 
-            scrollbar = Scrollbar(habit_description)
-            scrollbar.grid(row = 1, column = 1, sticky = 'nesw')
-            
 
             #####
-            habit_description_label = Label(habit_description, text = "Description",
-                                            background = "gray", relief = GROOVE)
+            habit_description_label = Label(habit_description, text = "Description", 
+                                            padding = 3, font = 'arial 12 bold', background = "#D5EA8A")
             
             habit_description_label.grid(row = 0, column = 0,
                                          sticky = 'nesw')
             
-            
+ 
             habit_description_label.configure(anchor = CENTER)
             #habit_description_label.grid_propagate(False)
             ####
             
             #x = habit.description
-            x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
-            habit_description_value = Text(habit_description, height = 2, width = 56,
-                                           relief = GROOVE, bd = 3)
-            habit_description_value.grid(row = 1, column = 0, sticky= 'news')
-            habit_description_value.configure(yscrollcommand = scrollbar.set)
-            scrollbar.configure(command = habit_description_value.yview)
-            habit_description_value.insert(INSERT, x)
-            #habit_description_value.grid_propagate(False)
+            x = "this needs to be fixed"
+            #x = "This is a very very very very very very very very very very very very very very very very very very very veryThis is a very very very very very very very very very very very very very very very very very very very veryThis is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
+            habit_description_value = Label(habit_description, text = x, wraplength = 700, padding = 5,
+                                            font = 'arial 12', background = '#EFE4B0')
+            habit_description_value.grid(row = 1, column = 0)
 
-
-
-            #Type
-            type_frame = Frame(habit_frame)
-            type_frame.grid(row = 1, column = 3, sticky = 'nesw')
+            # frame for list item info
+            info_frame = Frame(habit_frame, style = 'info.TFrame', padding = 3)
+            info_frame.grid(row = 1, column = 0, sticky = 'nesw')
+            frame_style.configure('info.TFrame', background = '#232323')
             
-            habit_type = Label(type_frame, text = "Type:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            #Type
+            type_frame = Frame(info_frame)
+            type_frame.grid(row = 0, column = 0, sticky = 'nesw')
+            
+            habit_type = Label(type_frame, text = "Type: ", font = 'arial 12 bold',
+                               background = '#232323', foreground = 'white')
             habit_type.pack(side = LEFT, fill = BOTH)
             
-            habit_type_value = Label(type_frame, text = "Habit", width = 10,
-                               background = 'white', relief = GROOVE)
-            habit_type_value.pack(side = LEFT, fill = BOTH)
+            habit_type_value = Label(type_frame, text = "Habit", font = 'arial 12 bold',
+                                     background = '#232323', foreground = '#36AEF5')
+            habit_type_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
+
             #Value
-            value_frame = Frame(habit_frame)
-            value_frame.grid(row = 1, column = 4, sticky = 'nesw')
+            value_frame = Frame(info_frame)
+            value_frame.grid(row = 0, column = 1, sticky = 'nesw')
             
-            habit_value = Label(value_frame, text = "Value:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            habit_value = Label(value_frame, text = "Value: ", font = 'arial 12 bold',
+                                background = '#232323', foreground = 'white')
             habit_value.pack(side = LEFT, fill = BOTH)
             
-            habit_value_value = Label(value_frame, text = habit_dict[h].value, width = 4,
-                               background = 'white', relief = GROOVE)
-            habit_value_value.pack(side = LEFT, fill = BOTH)
+            habit_value_value = Label(value_frame, text = '$' + str(habit_dict[h].value),
+                                      font = 'arial 12 bold', background = '#232323', foreground='#3BB623')
+            habit_value_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
 
-            #Date Added
-            timestamp_frame= Frame(habit_frame)
-            timestamp_frame.grid(row = 2, column = 3, sticky = 'nesw')
-            
-            habit_timestamp = Label(timestamp_frame, text = "TimeStamp:", width = 9,
-                               background = 'gray', relief = GROOVE)
-            habit_timestamp.pack(side = LEFT, fill = BOTH)
-            
-            habit_timestamp_value = Label(timestamp_frame, text = habit_dict[h].timestamp, width = 10,
-                               background = 'white', relief = GROOVE)
-            habit_timestamp_value.pack(side = LEFT, fill = BOTH)
             #Experience
-            exp_frame = Frame(habit_frame)
-            exp_frame.grid(row = 2, column = 4, sticky = 'nesw')
+            exp_frame = Frame(info_frame)
+            exp_frame.grid(row = 0, column = 2, sticky = 'nesw')
             
-            habit_exp = Label(exp_frame, text = "Experience:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            habit_exp = Label(exp_frame, text = "Experience: ", font = 'arial 12 bold',
+                              background = '#232323', foreground = 'white')
             habit_exp.pack(side = LEFT, fill = BOTH)
             
-            habit_exp_value = Label(exp_frame, text = habit_dict[h].value, width = 4,
-                               background = 'white', relief = GROOVE)
-            habit_exp_value.pack(side = LEFT, fill = BOTH)
-            #####################
+            habit_exp_value = Label(exp_frame, text = habit_dict[h].value, font = 'arial 12 bold',
+                                    background = '#232323', foreground='#C5BD25')
+            habit_exp_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
+
+            #Date Added
+            timestamp_frame= Frame(info_frame)
+            timestamp_frame.grid(row = 0, column = 3, sticky = 'nesw')
+            
+            habit_timestamp = Label(timestamp_frame, text = "TimeStamp: ", font = 'arial 12 bold',
+                                    background = '#232323', foreground='white')
+            habit_timestamp.pack(side = LEFT, fill = BOTH)
+            
+            habit_timestamp_value = Label(timestamp_frame, text = habit_dict[h].timestamp, font = 'arial 12 bold',
+                                          background = '#232323', foreground='#FF7F2A')
+            habit_timestamp_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
             
 
         for t in tasks_dict:
             ############
-            tasks_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
-            habit_frame.grid(row = row_number, column = 0)
+            tasks_frame = Frame(frame, width = 800 , height = 95, style = "f.TFrame")
+            habit_frame.grid(row = row_number, column = 0, sticky = 'news')
+            habit_frame.columnconfigure(0, weight = 1)
             row_number += 1
+            
             #habit_frame.grid_propagate(False)
             canvas.addtag_all("all")
             
 
-            habit_name = Label(tasks_frame, text = tasks_dict[t].title,
-                               background = 'gray', relief = GROOVE)
-            habit_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
-            habit_name.configure(anchor = CENTER)
+            task_name = Label(tasks_frame, text = tasks_dict[t].title, font = 'arial 14',
+                              padding = 5, foreground = '#64D729', background = '#323232')
+            task_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
+            task_name.configure(anchor = CENTER)
    
             #Description
-
             tasks_description = Frame(tasks_frame, width = 400)
-            tasks_description.grid(row = 1, column = 0,rowspan = 2,
-                                   sticky = 'news')
+            tasks_description.grid(row = 1, column = 0, rowspan = 2, sticky = 'news')
             
-
-            scrollbar = Scrollbar(tasks_description)
-            scrollbar.grid(row = 1, column = 1, sticky = 'nesw')
-            
-
             #####
-            tasks_description_label = Label(tasks_description, text = "Description",
-                                            background = "gray", relief = GROOVE)
+            tasks_description_label = Label(tasks_description, text = "Description", padding = 3,
+                                            font = 'arial 12 bold', background = "#D5EA8A")
             
-            tasks_description_label.grid(row = 0, column = 0,
-                                         sticky = 'nesw')
+            tasks_description_label.grid(row = 0, column = 0, sticky = 'nesw')
             
             
             tasks_description_label.configure(anchor = CENTER)
@@ -221,62 +209,65 @@ class Generic (Frame):
             ####
             
             #x = habit.description
-            x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
-            tasks_description_value = Text(tasks_description, height = 2, width = 56,
-                                           relief = GROOVE, bd = 3)
+            x = "this needs to be fixed"
+            #x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
+            tasks_description_value = Label(tasks_description, text = x, wraplength = 700, padding = 5,
+                                            font = 'arial 12', background = '#EFE4B0')
             tasks_description_value.grid(row = 1, column = 0, sticky= 'news')
-            tasks_description_value.configure(yscrollcommand = scrollbar.set)
-            scrollbar.configure(command = tasks_description_value.yview)
-            tasks_description_value.insert(INSERT, x)
-            #habit_description_value.grid_propagate(False)
+   
 
-
+            # frame for list item info
+            info_frame = Frame(tasks_frame, style = 'info.TFrame', padding = 3)
+            info_frame.grid(row = 1, column = 0, sticky = 'nesw')
+            frame_style.configure('info.TFrame', background = '#232323')
 
             #Type
-            type_frame = Frame(tasks_frame)
-            type_frame.grid(row = 1, column = 3, sticky = 'nesw')
+            type_frame = Frame(info_frame)
+            type_frame.grid(row = 0, column = 0, sticky = 'nesw')
             
-            tasks_type = Label(type_frame, text = "Type:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            tasks_type = Label(type_frame, text = "Type: ", font = 'arial 12 bold',
+                               background = '#232323', foreground = 'white')
             tasks_type.pack(side = LEFT, fill = BOTH)
             
-            tasks_type_value = Label(type_frame, text = "Task", width = 10,
-                               background = 'white', relief = GROOVE)
-            tasks_type_value.pack(side = LEFT, fill = BOTH)
+            tasks_type_value = Label(type_frame, text = "Task", font = 'arial 12 bold',
+                                     background = '#232323', foreground = '#36AEF5')
+            tasks_type_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
+            
             #Value
             value_frame = Frame(tasks_frame)
-            value_frame.grid(row = 1, column = 4, sticky = 'nesw')
+            value_frame.grid(row = 0, column = 1, sticky = 'nesw')
             
-            tasks_value = Label(value_frame, text = "Value:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            tasks_value = Label(value_frame, text = "Value: ", font = 'arial 12 bold',
+                                background = '#232323', foreground = 'white')
             tasks_value.pack(side = LEFT, fill = BOTH)
             
-            tasks_value_value = Label(value_frame, text = tasks_dict[t].value, width = 4,
-                               background = 'white', relief = GROOVE)
-            tasks_value_value.pack(side = LEFT, fill = BOTH)
+            tasks_value_value = Label(value_frame, text = '$' + str(tasks_dict[t].value),
+                                      font = 'arial 12 bold', background = '#232323', foreground='#3BB623')
+            tasks_value_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
+
+            #Experience
+            exp_frame = Frame(tasks_frame)
+            exp_frame.grid(row = 0, column = 2, sticky = 'nesw')
+            
+            tasks_exp = Label(exp_frame, text = "Experience: ", font = 'arial 12 bold',
+                              background = '#232323', foreground = 'white')
+            tasks_exp.pack(side = LEFT, fill = BOTH)
+            
+            tasks_exp_value = Label(exp_frame, text = tasks_dict[t].value, font = 'arial 12 bold',
+                                    background = '#232323', foreground='#C5BD25')
+            tasks_exp_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
 
             #Date Added
             timestamp_frame= Frame(tasks_frame)
-            timestamp_frame.grid(row = 2, column = 3, sticky = 'nesw')
+            timestamp_frame.grid(row = 0, column = 3, sticky = 'nesw')
             
-            tasks_timestamp = Label(timestamp_frame, text = "TimeStamp:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            tasks_timestamp = Label(timestamp_frame, text = "TimeStamp: ", font = 'arial 12 bold',
+                                    background = '#232323', foreground='white')
             tasks_timestamp.pack(side = LEFT, fill = BOTH)
             
-            tasks_timestamp_value = Label(timestamp_frame, text = tasks_dict[t].timestamp, width = 10,
-                               background = 'white', relief = GROOVE)
-            tasks_timestamp_value.pack(side = LEFT, fill = BOTH)
-            #Experience
-            exp_frame = Frame(tasks_frame)
-            exp_frame.grid(row = 2, column = 4, sticky = 'nesw')
-            
-            tasks_exp = Label(exp_frame, text = "Experience:", width = 9,
-                               background = 'gray', relief = GROOVE)
-            tasks_exp.pack(side = LEFT, fill = BOTH)
-            
-            tasks_exp_value = Label(exp_frame, text = tasks_dict[t].value, width = 4,
-                               background = 'white', relief = GROOVE)
-            tasks_exp_value.pack(side = LEFT, fill = BOTH)
+            tasks_timestamp_value = Label(timestamp_frame, text = tasks_dict[t].timestamp, font = 'arial 12 bold',
+                                          background = '#232323', foreground='#FF7F2A')
+            tasks_timestamp_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
             #####################
 
 
@@ -299,35 +290,29 @@ class Generic (Frame):
 
         for d in dailies_dict:
             ############
-            dailies_frame = Frame(frame, width = 800 , height = 95,style = "f.TFrame")
-            dailies_frame.grid(row = row_number, column = 0)
+            dailies_frame = Frame(frame, width = 800, height = 95, style = "f.TFrame")
+            dailies_frame.grid(row = row_number, column = 0, sticky = 'news')
+            dailies_frame.columnconfigure(0, weight = 1)
             row_number += 1
             #habit_frame.grid_propagate(False)
             canvas.addtag_all("all")
             
 
-            dailies_name = Label(dailies_frame, text = dailies_dict[d].title,
-                               background = 'gray', relief = GROOVE)
-            dailies_name.grid(row =0, column = 0, columnspan = 5,sticky = 'news')
+            dailies_name = Label(dailies_frame, text = dailies_dict[d].title, font = 'arial 14',
+                                 padding = 5, foreground = '#64D729', background = '#323232')
+            dailies_name.grid(row = 0, column = 0, columnspan = 5, sticky = 'news')
             dailies_name.configure(anchor = CENTER)
-   
-            #Description
 
+            #Description
             dailies_description = Frame(dailies_frame, width = 400)
-            dailies_description.grid(row = 1, column = 0,rowspan = 2,
+            dailies_description.grid(row = 2, column = 0, columnspan = 5,
                                    sticky = 'news')
             
-
-            scrollbar = Scrollbar(dailies_description)
-            scrollbar.grid(row = 1, column = 1, sticky = 'nesw')
-            
-
             #####
-            dailies_description_label = Label(dailies_description, text = "Description",
-                                            background = "gray", relief = GROOVE)
+            dailies_description_label = Label(dailies_description, text = "Description", padding = 3,
+                                              font = 'arial 12 bold', background = "#D5EA8A")
             
-            dailies_description_label.grid(row = 0, column = 0,
-                                         sticky = 'nesw')
+            dailies_description_label.grid(row = 0, column = 0, sticky = 'nesw')
             
             
             dailies_description_label.configure(anchor = CENTER)
@@ -335,63 +320,66 @@ class Generic (Frame):
             ####
             
             #x = habit.description
-            x = "This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
-            dailies_description_value = Text(dailies_description, height = 2, width = 56,
-                                           relief = GROOVE, bd = 3)
+            x = "This is a very very very very very very very very very very very very very very very very very very very veryThis is a very very very very very very very very very very very very very very very very very very very veryThis is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
+            #x += "This is a very very very very very very very very very very very very very very very very very very very veryThis is a very very very very very very very very very very very very very very very very very very very veryThis is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long sentence"
+
+            dailies_description_value = Label(dailies_description, text = x, wraplength = 700, padding = 5,
+                                             font = 'arial 12', background = '#EFE4B0')
             dailies_description_value.grid(row = 1, column = 0, sticky= 'news')
-            dailies_description_value.configure(yscrollcommand = scrollbar.set)
-            scrollbar.configure(command = habit_description_value.yview)
-            dailies_description_value.insert(INSERT, x)
-            #habit_description_value.grid_propagate(False)
 
 
-
-            #Type
-            type_frame = Frame(dailies_frame)
-            type_frame.grid(row = 1, column = 3, sticky = 'nesw')
+            # frame for list item info
+            info_frame = Frame(dailies_frame, style = 'info.TFrame', padding = 3)
+            info_frame.grid(row = 1, column = 0, sticky = 'nesw')
+            frame_style.configure('info.TFrame', background = '#232323')
             
-            dailies_type = Label(type_frame, text = "Type:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            #Type
+            type_frame = Frame(info_frame)
+            type_frame.grid(row = 0, column = 0, sticky = 'nesw')
+            
+            dailies_type = Label(type_frame, text = "Type: ", font = 'arial 12 bold',
+                                 background = '#232323', foreground = 'white')
             dailies_type.pack(side = LEFT, fill = BOTH)
             
-            dailies_type_value = Label(type_frame, text = "Daily", width = 10,
-                               background = 'white', relief = GROOVE)
-            dailies_type_value.pack(side = LEFT, fill = BOTH)
-            #Value
-            value_frame = Frame(dailies_frame)
-            value_frame.grid(row = 1, column = 4, sticky = 'nesw')
+            dailies_type_value = Label(type_frame, text = "Daily", font = 'arial 12 bold',
+                                       background = '#232323', foreground = '#36AEF5')
+            dailies_type_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
             
-            dailies_value = Label(value_frame, text = "Value:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            #Value
+            value_frame = Frame(info_frame)
+            value_frame.grid(row = 0, column = 1, sticky = 'nesw')
+            
+            dailies_value = Label(value_frame, text = "Value: ", font = 'arial 12 bold',
+                                  background = '#232323', foreground = 'white')
             dailies_value.pack(side = LEFT, fill = BOTH)
             
-            dailies_value_value = Label(value_frame, text = dailies_dict[d].value, width = 4,
-                               background = 'white', relief = GROOVE)
-            dailies_value_value.pack(side = LEFT, fill = BOTH)
+            dailies_value_value = Label(value_frame, text = '$' + str(dailies_dict[d].value),
+                                        font = 'arial 12 bold', background = '#232323', foreground='#3BB623')
+            dailies_value_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
 
-            #Date Added
-            timestamp_frame= Frame(dailies_frame)
-            timestamp_frame.grid(row = 2, column = 3, sticky = 'nesw')
-            
-            dailies_timestamp = Label(timestamp_frame, text = "TimeStamp:", width = 9,
-                               background = 'gray', relief = GROOVE)
-            dailies_timestamp.pack(side = LEFT, fill = BOTH)
-            
-            dailies_timestamp_value = Label(timestamp_frame, text = dailies_dict[d].timestamp,
-                                            width = 10,
-                               background = 'white', relief = GROOVE)
-            dailies_timestamp_value.pack(side = LEFT, fill = BOTH)
             #Experience
-            exp_frame = Frame(dailies_frame)
-            exp_frame.grid(row = 2, column = 4, sticky = 'nesw')
+            exp_frame = Frame(info_frame)
+            exp_frame.grid(row = 0, column = 2, sticky = 'nesw')
             
-            dailies_exp = Label(exp_frame, text = "Experience:", width = 9,
-                               background = 'gray', relief = GROOVE)
+            dailies_exp = Label(exp_frame, text = "Experience: ", font = 'arial 12 bold',
+                                background = '#232323', foreground = 'white')
             dailies_exp.pack(side = LEFT, fill = BOTH)
             
-            dailies_exp_value = Label(exp_frame, text = dailies_dict[d].value, width = 4,
-                               background = 'white', relief = GROOVE)
-            dailies_exp_value.pack(side = LEFT, fill = BOTH)
+            dailies_exp_value = Label(exp_frame, text = dailies_dict[d].value, font = 'arial 12 bold',
+                                      background = '#232323', foreground='#C5BD25')
+            dailies_exp_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
+            
+            #Date Added
+            timestamp_frame= Frame(info_frame)
+            timestamp_frame.grid(row = 0, column = 3, sticky = 'nesw')
+            
+            dailies_timestamp = Label(timestamp_frame, text = "TimeStamp: ", font = 'arial 12 bold',
+                                      background = '#232323', foreground='white')
+            dailies_timestamp.pack(side = LEFT, fill = BOTH)
+            
+            dailies_timestamp_value = Label(timestamp_frame, text = dailies_dict[d].timestamp, font = 'arial 12 bold',
+                                            background = '#232323', foreground='#FF7F2A')
+            dailies_timestamp_value.pack(side = LEFT, fill = BOTH, ipadx = 7)
             #####################
 
 

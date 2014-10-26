@@ -33,7 +33,7 @@ class Landing_Page (Frame):
         
         
         #label above progress bar
-        progress_label = Label(self, text="Daily Progress", padding=10)
+        progress_label = Label(self, text="Daily Progress", padding=0)
         progress_label.grid(row = 4, column =2 ,sticky='ew', pady=4, padx=5)
         progress_label.configure(anchor = CENTER, font='arial 18 italic')
         progress_label.rowconfigure(4, weight =1)

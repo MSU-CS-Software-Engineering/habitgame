@@ -66,7 +66,7 @@ class Shop():
         # store all items that can be bought in this list
         self.items = []
 
-        # used for highlighting an item when the mouse hovers over it
+        # used for highlighting an item when the mouse hovers an item
         self.border_frames = []
         
         # store an engine.Item object for each shop item.
@@ -234,7 +234,7 @@ class Shop():
             
         self.border_frames[i].config(style='b.TFrame')
         if enter: # mouse enter
-            self.style.configure('b.TFrame', background='#0053A6')
+            self.style.configure('b.TFrame', background='#26507D')
         else: # mouse leave
             self.style.configure('b.TFrame', background='#EBEDF1')
         
@@ -254,7 +254,7 @@ class Shop():
 
             
             #create frame border for item data
-            border_frame = Frame(self.shopFrame, padding=1, cursor='hand2', style='c.TFrame')
+            border_frame = Frame(self.shopFrame, padding=2, cursor='hand2', style='c.TFrame')
             border_frame.grid(row=self.items[i].getRow(), column=self.items[i].getColumn(),
                               padx=7, pady=7, sticky='wn')
             self.style.configure('c.TFrame', background='#EBEDF1')
