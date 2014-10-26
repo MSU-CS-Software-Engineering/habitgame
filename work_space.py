@@ -75,13 +75,22 @@ class Work_Space (Frame):
 
         habit.create_window(0,20, anchor = N + E, window = habits)
         bar_habit.grid(row = 0, column = 1, sticky = 'ns')
-
+        
         def setupHabitFrame(event):
             # resets the scroll region for the frame inserted into the canvas
             habit.configure(scrollregion=habit.bbox("all"))
 
+        def scroll_habit(event):
+            """ allows for mouse wheel scrolling """
+            try:
+                habit.yview_scroll(-1 * int(event.delta/120), "units")
+            except:
+                pass
 
+        habit.bind("<MouseWheel>", lambda e: scroll_habit(e))
+        
         habit.bind("<Configure>", setupHabitFrame)
+        
         for h in habit_dict:
             individual_habit = Frame(habits, style='habit_f.TFrame')
             individual_habit.grid(row = habit_dict[h].ID, column = 0,
@@ -146,8 +155,17 @@ class Work_Space (Frame):
             # resets the scroll region for the frame inserted into the canvas
             daily.configure(scrollregion=daily.bbox("all"))
 
+        def scroll_daily(event):
+            """ allows for mouse wheel scrolling """
+            try:
+                daily.yview_scroll(-1 * int(event.delta/120), "units")
+            except:
+                pass
 
+        daily.bind("<MouseWheel>", lambda e: scroll_daily(e))
+        
         daily.bind("<Configure>", setupDailiesFrame)
+        
         for d in dailies_dict:
             individual_dailies = Frame(dailies)
             individual_dailies.grid(row = dailies_dict[d].ID, column = 0,
@@ -214,6 +232,16 @@ class Work_Space (Frame):
 
 
         task.bind("<Configure>", setupTasksFrame)
+        
+        def scroll_task(event):
+            """ allows for mouse wheel scrolling """
+            try:
+                task.yview_scroll(-1 * int(event.delta/120), "units")
+            except:
+                pass
+
+        task.bind("<MouseWheel>", lambda e: scroll_task(e))
+        
         for t in tasks_dict:
             individual_tasks = Frame(tasks)
             individual_tasks.grid(row = tasks_dict[t].ID, column = 0,

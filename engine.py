@@ -567,7 +567,7 @@ def load(name):
 
     return new_character
 
-
+            
 class GUI (Frame):
 
     def __init__(self, master, character):
@@ -593,7 +593,7 @@ class GUI (Frame):
 
         # link the shop so it can call GUI's buy_item()
         MyShop.setApp(self)
-        
+
     def initUI(self):
         self.grid()
         self.current_visible_frame = None

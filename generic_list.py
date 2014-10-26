@@ -59,7 +59,7 @@ class Generic (Frame):
         # Create frame inside canvas
         frame_style = Style()
         
-        frame_style.configure("f.TFrame", background = 'black')
+        frame_style.configure("f.TFrame", background = '#EBEDF1')
         
         frame = Frame(canvas)
         
@@ -69,10 +69,19 @@ class Generic (Frame):
         #Scrollbar function and bindings
         def set_scrollregion(event):
             canvas.configure(scrollregion=canvas.bbox('all'))
-        
             
         canvas.bind('<Configure>', set_scrollregion)
 
+        # enable mouse wheel scrolling
+        def scroll_mouse(event):
+            """ allows for mouse wheel scrolling """
+            try:
+                canvas.yview_scroll(-1 * int(event.delta/120), "units")
+            except:
+                pass
+
+        canvas.bind("<MouseWheel>", lambda e: scroll_mouse(e))
+        
         canvas.addtag_all("all")
         '''
         for i in range(150):
@@ -85,7 +94,7 @@ class Generic (Frame):
         row_number = 0
         for h in habit_dict:
             ############
-            habit_frame = Frame(frame, width = 800, height = 95, style = "f.TFrame")
+            habit_frame = Frame(frame, width = 800, height = 95, style = "f.TFrame", padding = 5)
             habit_frame.grid(row = row_number, column = 0, sticky = 'news')
             row_number += 1
             #habit_frame.grid_propagate(False)
@@ -179,7 +188,7 @@ class Generic (Frame):
 
         for t in tasks_dict:
             ############
-            tasks_frame = Frame(frame, width = 800 , height = 95, style = "f.TFrame")
+            tasks_frame = Frame(frame, width = 800 , height = 95, style = "f.TFrame", padding = 5)
             habit_frame.grid(row = row_number, column = 0, sticky = 'news')
             habit_frame.columnconfigure(0, weight = 1)
             row_number += 1
@@ -290,7 +299,7 @@ class Generic (Frame):
 
         for d in dailies_dict:
             ############
-            dailies_frame = Frame(frame, width = 800, height = 95, style = "f.TFrame")
+            dailies_frame = Frame(frame, width = 800, height = 95, style = "f.TFrame", padding = 5)
             dailies_frame.grid(row = row_number, column = 0, sticky = 'news')
             dailies_frame.columnconfigure(0, weight = 1)
             row_number += 1

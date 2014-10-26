@@ -46,7 +46,7 @@ class SetItem():
 class MyShop():
     app = None
     my_shop = None
-
+    
     # called in work_space.py
     def setShop(shop_frm):
         MyShop.my_shop = Shop(shop_frm)
@@ -138,28 +138,42 @@ class Shop():
 
 
         # create a canvas to allow for scrolling of the shop Frame
-        self.canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='#EBEDF1')
-        self.canvas.grid(sticky='news')
-        
+        sh_canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='#EBEDF1')
+        sh_canvas.grid(sticky='news')
+
+
         # create the shop frame and place it inside the canvas
-        self.shopFrame = Frame(self.canvas, borderwidth=0, style='shopFrame.TFrame', padding=10) 
+        self.shopFrame = Frame(sh_canvas, borderwidth=0, style='shopFrame.TFrame', padding=10) 
         self.shopFrame.grid(sticky='news')
         
-        self.scrollBar = Scrollbar(shop_plugin_frame, orient="vertical", command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.scrollBar.set)
+        self.scrollBar = Scrollbar(shop_plugin_frame, orient="vertical", command=sh_canvas.yview)
+        sh_canvas.configure(yscrollcommand=self.scrollBar.set)
         
         shop_plugin_frame.grid_columnconfigure(0, weight=1)
         shop_plugin_frame.grid_rowconfigure(0, weight=1)
         
-        self.canvas.create_window((0,0), window=self.shopFrame, anchor='nw', tags='self.shopFrame')
+        sh_canvas.create_window((0,0), window=self.shopFrame, anchor='nw', tags='self.shopFrame')
         self.scrollBar.grid(row=0, column=1, sticky='ns')
-        
-        self.shopFrame.bind("<Configure>", self.setupCanvasFrame)
+
+        def setupCanvasFrame(event):
+            # resets the scroll region for the frame inserted into the canvas
+            sh_canvas.configure(scrollregion=sh_canvas.bbox("all"))
+            
+        self.shopFrame.bind("<Configure>", setupCanvasFrame)
 
         self.style = Style()
         self.style.configure('shopFrame.TFrame', background='#EBEDF1')
 
+        def scroll_m(event):
+            """ allows for mouse wheel scrolling """
+            try:
+                sh_canvas.yview_scroll(-1 * int(event.delta/120), "units")
+            except:
+                pass
 
+        sh_canvas.bind("<MouseWheel>", lambda e: scroll_m(e))
+
+        
         # shop divider labels
         components = Label(self.shopFrame, text="Components", padding=3)
         components.grid(row=0, column=0, columnspan = 4, sticky='news')
@@ -210,7 +224,7 @@ class Shop():
                             #cost = t_cost, : self.setItemInfo(name, descript, cost))
         # populate store with items
         self.createItems()
-
+            
     def buyItem(self):
         MyShop.app.buy_item(self.live_items[self.buy_item_id])
         
@@ -311,7 +325,4 @@ class Shop():
             # user clicks on the cost label
             new_cost.bind('<1>', lambda e, name=t_name, descript = t_descript,
                             cost=t_cost, item_id=i : self.setItemInfo(name, descript, cost, item_id))
-        
-    def setupCanvasFrame(self, event):
-        # resets the scroll region for the frame inserted into the canvas
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
