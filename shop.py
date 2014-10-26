@@ -66,6 +66,9 @@ class Shop():
         # store all items that can be bought in this list
         self.items = []
 
+        # used for highlighting an item when the mouse hovers over it
+        self.border_frames = []
+        
         # store an engine.Item object for each shop item.
         #Object will be used as parameter for the GUI buy_item function
         self.live_items = []
@@ -135,7 +138,7 @@ class Shop():
 
 
         # create a canvas to allow for scrolling of the shop Frame
-        self.canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='white')
+        self.canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='#EBEDF1')
         self.canvas.grid(sticky='news')
         
         # create the shop frame and place it inside the canvas
@@ -154,7 +157,7 @@ class Shop():
         self.shopFrame.bind("<Configure>", self.setupCanvasFrame)
 
         self.style = Style()
-        self.style.configure('shopFrame.TFrame', background='white')
+        self.style.configure('shopFrame.TFrame', background='#EBEDF1')
 
 
         # shop divider labels
@@ -180,28 +183,29 @@ class Shop():
         
         
         # selected item's name
-        self.itemSelect = Label(shop_plugin_frame, text='name', padding=5)
+        self.itemSelect = Label(shop_plugin_frame, text='name', padding='10 5 5 5')
         self.itemSelect.grid(sticky='news', row=1, columnspan=2)
-        self.itemSelect.configure(font='arial 14 bold')
+        self.itemSelect.configure(font='arial 14 bold', foreground='white', background='#1E1E1E')
         
         # selected item's description
-        self.descriptSelect = Label(shop_plugin_frame, text='description', padding=5)
+        self.descriptSelect = Label(shop_plugin_frame, text='description', padding='10 5 5 5')
         self.descriptSelect.grid(sticky='news', row=2, columnspan=2)
-        self.descriptSelect.configure(font='arial 12 bold')
+        self.descriptSelect.configure(font='arial 12 bold', foreground='white', background='#444444')
         
         # selected item's cost
-        self.costSelect = Label(shop_plugin_frame, text='cost', padding=5)
+        self.costSelect = Label(shop_plugin_frame, text='cost', padding='10 5 5 5')
         self.costSelect.grid(sticky='news', row=3, columnspan=2)
-        self.costSelect.configure(font='arial 12 bold')
+        self.costSelect.configure(font='arial 12 bold', foreground='white', background='#444444')
         
         
         # create a 'buy' label to act as a button
-        buy = Label(shop_plugin_frame, text='Buy', style='buy.TLabel', anchor='center', padding=5)
+        buy = Label(shop_plugin_frame, text='Buy', style='buy.TLabel', anchor='center',
+                    padding=5, cursor='hand2')
         buy.grid(sticky='news', row=4, columnspan=2)
-        buy.bind('<Enter>', lambda e: self.style.configure('buy.TLabel', background='#0086D3'))
-        buy.bind('<Leave>', lambda e: self.style.configure('buy.TLabel', background='#0086BF'))
+        buy.bind('<Enter>', lambda e: self.style.configure('buy.TLabel', background='#B6DE61'))
+        buy.bind('<Leave>', lambda e: self.style.configure('buy.TLabel', background='#82AE24'))
         buy.bind('<1>', lambda e: self.buyItem()) 
-        self.style.configure('buy.TLabel', background='#0086BF', font='arial 14 bold')
+        self.style.configure('buy.TLabel', background='#82AE24', font='arial 14 bold')
         #item_frame.bind('<1>', lambda e, name=t_name, descript=t_descript,
                             #cost = t_cost, : self.setItemInfo(name, descript, cost))
         # populate store with items
@@ -215,7 +219,6 @@ class Shop():
         information frame, right above the buy button
     """
     def setItemInfo(self, name, descript, cost, item_id):
-        name = "Item: " + name
         self.itemSelect.configure(text=name)
         descript = "Info: " + descript
         self.descriptSelect.configure(text=descript)
@@ -223,7 +226,19 @@ class Shop():
         self.costSelect.configure(text=cost)
         self.buy_item_id = item_id
 
-    def createItems(self):
+    def highlight(self, i, enter):
+        # this loop is needed to prevent all item border frames from becoming highlighted
+        for j in range(len(self.border_frames)):
+            self.border_frames[j].config(style='a.TFrame')
+            self.style.configure('a.TFrame', background='#EBEDF1')
+            
+        self.border_frames[i].config(style='b.TFrame')
+        if enter: # mouse enter
+            self.style.configure('b.TFrame', background='#0053A6')
+        else: # mouse leave
+            self.style.configure('b.TFrame', background='#EBEDF1')
+        
+    def createItems(self):  
         # loops through the list of items that need to be created and shown in the shop
         for i in range(len(self.items)):
             # prep appropriate data for when the user clicks on a item
@@ -236,40 +251,62 @@ class Shop():
             
             t_descript = self.items[i].getDescription()
             t_cost = self.items[i].getCost()
+
             
+            #create frame border for item data
+            border_frame = Frame(self.shopFrame, padding=1, cursor='hand2', style='c.TFrame')
+            border_frame.grid(row=self.items[i].getRow(), column=self.items[i].getColumn(),
+                              padx=7, pady=7, sticky='wn')
+            self.style.configure('c.TFrame', background='#EBEDF1')
+            
+            # user clicks on the frame border
+            border_frame.bind('<1>', lambda e, name=t_name, descript=t_descript,
+                            cost=t_cost, item_id=i : self.setItemInfo(name, descript, cost, item_id))
+            self.border_frames.append(border_frame)
+            
+
             #create frame for item data
-            item_frame = Frame(self.shopFrame, style='itemFrame.TFrame', padding=10)
-            item_frame.grid(row=self.items[i].getRow(), column=self.items[i].getColumn(), sticky='wn')
-            self.style.configure('itemFrame.TFrame', background='white')
+            item_frame = Frame(border_frame, style='itemFrame.TFrame', padding=4, cursor='hand2')
+            item_frame.grid(sticky='wn')
+            self.style.configure('itemFrame.TFrame', background='#EBEDF1')
             # user clicks on the frame containing all of the item's info
             item_frame.bind('<1>', lambda e, name=t_name, descript=t_descript,
                             cost=t_cost, item_id=i : self.setItemInfo(name, descript, cost, item_id))
+            item_frame.bind('<Enter>', lambda e, _i=i:
+                            self.highlight(_i, True))
+            item_frame.bind('<Leave>', lambda e, _i=i:
+                            self.highlight(_i, False))
 
+            
             #create label to hold the item's name
-            new_desc = Label(item_frame, text=self.items[i].getName(), style='name.TLabel', padding=3)
+            new_desc = Label(item_frame, text=self.items[i].getName(), style='name.TLabel',
+                             padding=3, cursor='hand2')
             new_desc.grid(row=0, column=0)
-            self.style.configure('name.TLabel', font='arial 12 bold', background='white')
+            self.style.configure('name.TLabel', font='arial 12 bold', background='#EBEDF1')
             temp_str = self.items[i].getFile()
             new_desc.bind('<1>', lambda e, tstr=temp_str: self.itemSelect.configure(text=tstr))
             # user clicks on the label to hold the item's name
             new_desc.bind('<1>', lambda e, name=t_name, descript=t_descript,
                             cost=t_cost, item_id=i : self.setItemInfo(name, descript, cost, item_id))
+
             
             #create label to hold the item's image
             img = PhotoImage(file=self.items[i].getFile())
-            new_item = Label(item_frame, image=img, style='item.TLabel')
+            new_item = Label(item_frame, image=img, style='item.TLabel', cursor='hand2')
             new_item.grid(row=1, column=0)
             new_item.image = img
-            self.style.configure('item.TLabel', background='white')
+            self.style.configure('item.TLabel', background='#EBEDF1')
             temp_str = self.items[i].getFile()
             # user clicks on the image of the item
             new_item.bind('<1>', lambda e, name=t_name, descript = t_descript,
                             cost=t_cost, item_id=i : self.setItemInfo(name, descript, cost, item_id))        
 
+
             #create label to hold the item's cost
-            new_cost = Label(item_frame, text='$'+str(self.items[i].getCost()), style='cost.TLabel', padding=3)
+            new_cost = Label(item_frame, text='$'+str(self.items[i].getCost()), style='cost.TLabel',
+                             padding=3, cursor='hand2')
             new_cost.grid(row=2, column=0)
-            self.style.configure('cost.TLabel', font='arial 14', foreground='green', background='white')
+            self.style.configure('cost.TLabel', font='arial 14', foreground='green', background='#EBEDF1')
             temp_str = self.items[i].getFile()
             # user clicks on the cost label
             new_cost.bind('<1>', lambda e, name=t_name, descript = t_descript,

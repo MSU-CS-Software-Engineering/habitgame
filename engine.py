@@ -623,32 +623,77 @@ class GUI (Frame):
         file_menu.add_command(label="Save game", command=self.temp_menu_func)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.master.destroy)
-        menu.add_cascade(label="File", menu=file_menu)
+        menu.add_cascade(label="FILE", menu=file_menu)
 
         edit_menu = Menu(menu, tearoff=0)
         edit_menu.add_command(label="Habits", command=self.temp_menu_func)
         edit_menu.add_command(label="Dailies", command=self.temp_menu_func)
         edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
-        menu.add_cascade(label="Edit", menu=edit_menu)
+        menu.add_cascade(label="EDIT", menu=edit_menu)
 
         help_menu = Menu(menu, tearoff=0)
         help_menu.add_command(label="How to play", command=self.temp_menu_func)
         help_menu.add_command(label="About", command=self.temp_menu_func)
-        menu.add_cascade(label="Help", menu=help_menu)
+        menu.add_cascade(label="HELP", menu=help_menu)
 
-        #self.config(menu=menu)
+        self.master.config(menu=menu)
 
 
         # create banner
-        self.banner = Frame(self, style='banner.TFrame', padding=5)
+        self.banner = Frame(self, style='banner.TFrame', padding=0)
         self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
         self.style.configure('banner.TFrame', background='black')
 
         logo_img = PhotoImage(file=os.path.join("assets", "art", "logo.gif"))
-        logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel')
-        logo_image.grid(row=0, column=3,sticky='e')
+        logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel', padding='7 7 7 6', cursor="hand2")
+        logo_image.grid(row=0, column=0, sticky='e', padx=(0,30))
         logo_image.image = logo_img
+        logo_image.bind('<Enter>', lambda e: logo_image.configure(background='#0F0F0F'))
+        logo_image.bind('<Leave>', lambda e: logo_image.configure(background='black')) 
+        logo_image.bind('<1>', lambda e: self.home()) 
         self.style.configure('hack_logo.TLabel', background='black')
+
+        home_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Home')
+        home_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        home_title.bind('<Enter>', lambda e: home_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        home_title.bind('<Leave>', lambda e: home_title.configure(background='black', foreground='#EBEBEB'))
+        home_title.bind('<1>', lambda e: self.home()) 
+        home_title.grid(row=0, column=1, sticky='e')
+        
+        habit_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Habits')
+        habit_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        habit_title.bind('<Enter>', lambda e: habit_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        habit_title.bind('<Leave>', lambda e: habit_title.configure(background='black', foreground='#EBEBEB'))
+        habit_title.bind('<1>', lambda e: self.habit()) 
+        habit_title.grid(row=0, column=2, sticky='e')
+
+        tasks_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Tasks')
+        tasks_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        tasks_title.bind('<Enter>', lambda e: tasks_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        tasks_title.bind('<Leave>', lambda e: tasks_title.configure(background='black', foreground='#EBEBEB'))
+        tasks_title.bind('<1>', lambda e: self.task()) 
+        tasks_title.grid(row=0, column=3, sticky='e')
+        
+        dailies_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Dailies')
+        dailies_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        dailies_title.bind('<Enter>', lambda e: dailies_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        dailies_title.bind('<Leave>', lambda e: dailies_title.configure(background='black', foreground='#EBEBEB'))
+        dailies_title.bind('<1>', lambda e: self.dailies()) 
+        dailies_title.grid(row=0, column=4, sticky='e')
+
+        list_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='List')
+        list_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        list_title.bind('<Enter>', lambda e: list_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        list_title.bind('<Leave>', lambda e: list_title.configure(background='black', foreground='#EBEBEB'))
+        list_title.bind('<1>', lambda e: self.generic()) 
+        list_title.grid(row=0, column=5, sticky='e')
+
+        shop_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Shop')
+        shop_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        shop_title.bind('<Enter>', lambda e: shop_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        shop_title.bind('<Leave>', lambda e: shop_title.configure(background='black', foreground='#EBEBEB'))
+        shop_title.bind('<1>', lambda e: self.buy()) 
+        shop_title.grid(row=0, column=6, sticky='e')
 
         
         # create character data frame
@@ -684,8 +729,7 @@ class GUI (Frame):
         
         exp = Label(self.stats_frame, textvariable = self.character_exp)
         exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
-        exp.configure(background="#3D3D3D", font="arial 12 bold", foreground='#6AA7E2')
-
+        exp.configure(background="#283D57", font="arial 12 bold", foreground='#C5BD25')
 
         # add cash stats info
         self.character_cash.set(self.character.cash)
@@ -693,17 +737,18 @@ class GUI (Frame):
         cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
         cash = Label(self.stats_frame, textvariable= self.character_cash)
         cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
-        cash.configure(background="#3D3D3D", font="arial 12 bold", foreground='#3BB623')
+        cash.configure(background="#283D57", font="arial 12 bold", foreground='#3BB623')
+        
         # add level stats info
         level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
         level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
 
         level = Label(self.stats_frame, textvariable = self.character_level)
         level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
-        level.configure(background="#3D3D3D", font="arial 12 bold", foreground='#FF7F2A')
+        level.configure(background="#283D57", font="arial 12 bold", foreground='#FF7F2A')
         
-        self.style.configure("statsLabel.TLabel", background="#3D3D3D", font="arial 12 bold", foreground='white')
-        self.style.configure("statsFrame.TFrame", background="#3D3D3D")
+        self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
+        self.style.configure("statsFrame.TFrame", background="#283D57")
         
 
         '''def __init__(self, name, image, value, uses, effect = None):
@@ -843,10 +888,8 @@ class GUI (Frame):
         self.show_frame(Landing_Page)
 
     def habit(self):
-
         self.show_frame('habit')
         
-
     def task(self):
         self.show_frame('task')
         main.__subclasshook__
