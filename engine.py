@@ -19,7 +19,6 @@ from generic_list import *
 from shop import *
 import authenticate
 
-hack_index = 0
 
 class Character:
     """
@@ -87,8 +86,18 @@ class Character:
         self.show_items()
 
     def add_hack(self, hack):
+        hack.ID = self.hack_index
         self.hacks[hack.ID] = hack
+        self.hack_index = max(self.hacks.keys()) + 1
         return hack.ID
+
+    def edit_hack(self, hack_ID, hack):
+        try:
+            self.remove_hack(hack_ID)
+            self.add_hack(hack)
+        except:
+            print("Edit failed!")
+            return False
 
     def remove_hack(self, hack_ID):
         try:
@@ -96,7 +105,7 @@ class Character:
             return
         except:
             print("Invalid hack id!")
-            return -1
+            return False
 
     def complete_hack(self, hack_ID):
         hack = self.get_hack(hack_ID)
@@ -151,7 +160,7 @@ class Character:
             return item_id
         except:
             print("Invalid item id!")
-            return -1
+            return False
 
     def get_item(self, item_ID):
         try:
@@ -194,16 +203,14 @@ class Hack:
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, h_type, title, desc, value, exp):
-        global hack_index
+    def __init__(self, h_type, title, desc, value, exp = 100 ):
         self.h_type = h_type
         self.title = title
         self.description = desc
-        self.ID = hack_index
-        hack_index += 1
+        self.ID = -1
         self.timestamp = date.today()
         self.value = value
-        self.exp = exp
+        self.exp = exp    #Temporarily defaults to 100.
 
     def serialize(self):
         """
@@ -316,6 +323,7 @@ class Game_Data:
             new_character.exp = character_data['exp']
             new_character.cash = character_data['cash']
             
+            # REVISIT THIS -D
             for hack in character_data['hacks']:
                 new_hack = Habit(hack['title'],
                                   hack['description'],
@@ -335,6 +343,9 @@ class Game_Data:
             
                 new_character.add_item(new_item)
             '''
+            #Resynchronize hack index
+            new_character.hack_index = max(new_character.hacks.keys())
+
             return new_character
 
         except:

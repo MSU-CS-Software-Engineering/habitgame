@@ -79,42 +79,42 @@ class Work_Space (Frame):
 
 
         habit.bind("<Configure>", setupHabitFrame)
-        for habit in [hack for hack in hack_dict if hack.h_type = 'habit']: #Gather habit-type hacks from dict
+        for h in [hack for hack in hack_dict if hack_dict[hack].h_type == 'habit']: #Gather habit-type hacks from dict
             individual_habit = Frame(habits)
-            individual_habit.grid(row = habit_dict[h].ID, column = 0,
+            individual_habit.grid(row = hack_dict[h].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            habit_name = Label(individual_habit, text = habit.title)
+            habit_name = Label(individual_habit, text = hack_dict[h].title)
             habit_name.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             habit_name.configure(width = 130, anchor = CENTER)
 
-            habit_description = Label(individual_habit, text = habit.description,
+            habit_description = Label(individual_habit, text = hack_dict[h].description,
                                       wraplength = 800)
             habit_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             habit_description.configure(width = 130, anchor = CENTER)
 
             habit_value = Label(individual_habit,
-                                text = "Value:     " + str(habit.value),
+                                text = "Value:     " + str(hack_dict[h].value),
                                 wraplength = 800)
             habit_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             habit_value.configure(width = 130, anchor = CENTER)
 
             habit_date = Label(individual_habit,
-                               text = "Date:     " + str(habit.timestamp),
+                               text = "Date:     " + str(hack_dict[h].timestamp),
                                wraplength = 800)
             habit_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             habit_date.configure(width = 130, anchor = CENTER)
 
             delete_habit_btn = Button(individual_habit, text='Delete habit',
-                                      command = self.delete_habit)
+                                      command = lambda: self.delete_hack(h))
             delete_habit_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_habit_btn = Button(individual_habit, text='Edit habit',
-                                    command = self.edit_habit)
+                                      command = lambda: self.edit_hack(h) )
             edit_habit_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_habit_btn = Button(individual_habit, text='Complete habit',
-                                    command = self.edit_habit)
+                                      command = self.edit_hack(h)) #FIX ME -D
             edit_habit_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         #Begining of Dailies Tab Code
@@ -141,42 +141,42 @@ class Work_Space (Frame):
 
 
         daily.bind("<Configure>", setupDailiesFrame)
-        for daily in [hack for hack in hack_dict if hack.h_type = 'daily']:  #Gather dailies from dict
+        for d in [hack for hack in hack_dict if hack_dict[hack].h_type == 'daily']:  #Gather dailies from dict
             individual_dailies = Frame(dailies)
-            individual_dailies.grid(row = dailies_dict[d].ID, column = 0,
+            individual_dailies.grid(row = hack_dict[d].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            dailies_title = Label(individual_dailies, text = daily.title)
+            dailies_title = Label(individual_dailies, text = hack_dict[d].title)
             dailies_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             dailies_title.configure(width = 130, anchor = CENTER)
 
-            dailies_description = Label(individual_dailies, text = daily.description,
+            dailies_description = Label(individual_dailies, text = hack_dict[d].description,
                                       wraplength = 800)
             dailies_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             dailies_description.configure(width = 130, anchor = CENTER)
 
             dailies_value = Label(individual_dailies,
-                                  text = "Value:     " + str(daily.value),
+                                  text = "Value:     " + str(hack_dict[d].value),
                                   wraplength = 800)
             dailies_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             dailies_value.configure(width = 130, anchor = CENTER)
 
             dailies_date = Label(individual_dailies,
-                                 text = "Date:     " + str(daily.timestamp),
+                                 text = "Date:     " + str(hack_dict[d].timestamp),
                                  wraplength = 800)
             dailies_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             dailies_date.configure(width = 130, anchor = CENTER)
 
             delete_dailies_btn = Button(individual_dailies, text='Delete Daily',
-                                      command = self.delete_habit)
+                                      command = lambda: self.delete_hack(d))
             delete_dailies_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_dailies_btn = Button(individual_dailies, text='Edit Daily',
-                                      command = self.edit_habit)
+                                      command = lambda: self.edit_hack(d))
             edit_dailies_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_dailies_btn = Button(individual_dailies, text='Complete Daily',
-                                      command = self.edit_habit)
+                                      command = self.edit_hack(d)) #FIX ME -D
             edit_dailies_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         
@@ -203,41 +203,41 @@ class Work_Space (Frame):
 
 
         task.bind("<Configure>", setupTasksFrame)
-        for task in [hack for hack in hack_dict if hack.h_type = 'task']: #Gather tasks from dict
+        for t in [hack for hack in hack_dict if hack_dict[hack].h_type == 'task']: #Gather tasks from dict
             individual_tasks = Frame(tasks)
-            individual_tasks.grid(row = tasks_dict[t].ID, column = 0,
+            individual_tasks.grid(row = hack_dict[t].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            tasks_title = Label(individual_tasks, text = task.title)
+            tasks_title = Label(individual_tasks, text = hack_dict[t].title)
             tasks_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             tasks_title.configure(width = 130, anchor = CENTER)
 
-            tasks_description = Label(individual_tasks, text = task.description,
+            tasks_description = Label(individual_tasks, text = hack_dict[t].description,
                                       wraplength = 800)
             tasks_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             tasks_description.configure(width = 130, anchor = CENTER)
 
-            tasks_value = Label(individual_tasks, text = "Value:     " + str(task.value),
+            tasks_value = Label(individual_tasks, text = "Value:     " + str(hack_dict[t].value),
                                       wraplength = 800)
             tasks_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             tasks_value.configure(width = 130, anchor = CENTER)
 
             tasks_date = Label(individual_tasks,
-                               text = "Date:     " + str(task.timestamp),
+                               text = "Date:     " + str(hack_dict[t].timestamp),
                                wraplength = 800)
             tasks_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             tasks_date.configure(width = 130, anchor = CENTER)
 
             delete_tasks_btn = Button(individual_tasks, text='Delete Task',
-                                      command = self.delete_habit)
+                                      command = self.delete_hack(t))
             delete_tasks_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_tasks_btn = Button(individual_tasks, text='Edit Task',
-                                    command = self.edit_habit)
+                                      command = self.edit_hack(t))
             edit_tasks_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_tasks_btn = Button(individual_tasks, text='Complete Task',
-                                    command = self.edit_habit)
+                                      command = self.edit_hack(t)) #FIX ME -D
             edit_tasks_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
 
@@ -250,14 +250,14 @@ class Work_Space (Frame):
                                command = lambda: self.add_hack('habit'))
         add_task_btn = Button(task, text='Add new task',
                                command = lambda: self.add_hack('task'))
-        add_daily_btn = Button(daily, text='Add new goal',
+        add_daily_btn = Button(daily, text='Add new daily',
                                command = lambda: self.add_hack('daily'))
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
         
-        habit.create_window(-675,0,window = add_habit_btn)
-        daily.create_window(-675,0,window = add_daily_btn)
-        task.create_window(-675,0,window = add_task_btn)
-    
+        habit.create_window(-675, 0, window  =  add_habit_btn)
+        daily.create_window(-675, 0, window  =  add_daily_btn)
+        task.create_window(-675,  0, window  =  add_task_btn)
+
         #Set self.frame as local variable 'frame'
         self.frame = frame
         
@@ -271,34 +271,33 @@ class Work_Space (Frame):
         
 
     def add_hack(self, h_type):
-        #Must actually add to the hack_dict
-        self.gather_hack_data(h_type)
+        ''' Calls input window; Adds result to hack list '''
+        new_hack = self.input_hack_data(h_type)
+        self.character.add_hack(new_hack)
         
-#STOPPED HERE
-    def delete_habit(self, hack_ID):
-        #Needs hack.ID
+    def delete_hack(self, hack_ID):
         answer = messagebox.askokcancel("Delete Habit", "Delete habit?")
         if answer is True:
-            #print("User clicked Ok")
+            self.character.remove_hack(hack_ID)
+           
         else:
             #print("User clicked Cancel")
+            return False
 
             
-    def edit_habit(self, hack_ID):
-        #Needs hack.ID
-        messagebox.showinfo("Updated Habit", "Habit updated.")
+    def edit_hack(self, hack_ID):
+        try:
+            hack_data = self.character.get_hack(hack_ID)
+            input_hack_data(hack_data.h_type, hack_data)
+        except:
+            print("Failed to pass hack to input_hack_data")
 
 
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
 
 
-    def gather_habit_data(self, habit_type):
-        #Create Window
-        #Take information
-        #Check for info if 'save' is clicked. Discard if 'cancel' is clicked.
-        #Add habit/Daily/Task to list
-
+    def input_hack_data(self, h_type, hack_data):
         data_window = Toplevel(self)
 
         #Name of habit\daily\task
@@ -340,17 +339,29 @@ class Work_Space (Frame):
                               command=data_window.destroy)
         cancelButton.pack(side="left")
 
-        confirmButton = Button(button_frame, text="Save",
-                               command=lambda: self.output_window_vals(habit_type,
-                                                                       ticket_name.get(),
-                                                                       ticket_desc.get(1.0, END).strip('\t\n'),
-                                                                       ticket_value.get()))
-        confirmButton.pack(side="right")
+        if hack_data == None:
+            confirmButton = Button(button_frame, text="Save",
+                command=lambda: 
+                    self.character.add_hack(Hack(
+                                                 h_type,
+                                                 ticket_name.get(),
+                                                 ticket_desc.get(1.0, END).strip('\t\n'),
+                                                 ticket_value.get())))
+        else:
 
-    def output_window_vals(self, ticket_type, ticket_name, ticket_desc, ticket_value):
-        values = [ticket_type, ticket_name, ticket_desc, ticket_value]
-        print(values)
-        #return values
+            ticket_name.set(hack_data.title)
+            ticket_desc.set(hack_data.desc)
+            ticket_value.set(hack_data.value)
+
+            confirmButton = Button(button_frame, text="Save",
+                command=lambda: 
+                    self.character.edit_hack(hack_data.ID, Hack(
+                                                 h_type,
+                                                 ticket_name.get(),
+                                                 ticket_desc.get(1.0, END).strip('\t\n'),
+                                                 ticket_value.get())))
+
+        confirmButton.pack(side="right")
 
 
 def main():
