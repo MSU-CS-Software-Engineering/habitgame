@@ -14,13 +14,13 @@ class characterTestCase(unittest.TestCase):
         self.root = Tk()
         self.testCharacter = Character("Tom")
 
-        self.hack_1 = Hack('Read More', 'Read more books', 50, 10)
-        self.hack_2 = Hack('Veggies', 'Eat more veggies', 100, 15)
-        self.hack_3 = Hack('Sleep more', 'Get more sleep', 20, 5)
+        self.hack_1 =  Hack('habit', 'Read More', 'Read more books', 50, 10)
+        self.hack_2 =  Hack('habit', 'Veggies', 'Eat more veggies', 100, 15)
+        self.hack_3 =  Hack('habit', 'Sleep more', 'Get more sleep', 20, 5)
 
-        self.task_1 =  Hack('Make dinner', 'and make it delicious', 10, 10)
+        self.task_1 =  Hack('task', 'Make dinner', 'and make it delicious', 10, 10)
 
-        self.daily_1 = Hack('Play guitar', 'hit strings in a pleasing combination', 15, 25)
+        self.daily_1 = Hack('daily', 'Play guitar', 'hit strings in a pleasing combination', 15, 25)
 
         self.item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
         self.item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
@@ -40,25 +40,14 @@ class engine_testCase(characterTestCase):
         for index in range(len(self.testCharacter.hacks)):
             self.assertIsInstance(self.testCharacter.get_hack(index), Hack, "{} is not of type Hack!".format(index))
 
-        self.assertEqual(self.testCharacter.remove_hack(1), 1, "Failed to remove hack with ID of 1")
-        self.assertEqual(self.testCharacter.remove_hack(100), -1, "Remove_hack did not throw invalid ID exception!")
+        self.assertTrue(self.testCharacter.remove_hack(1), "Failed to remove hack with ID of 1")
+        self.assertFalse(self.testCharacter.remove_hack(100), "Remove_hack did not throw invalid ID exception!")
         self.assertEqual(len(self.testCharacter.hacks), 2, "Post-removal hack count mismatch!")
 
-        #Tasks
-        self.assertEqual(self.testCharacter.add_task(self.task_1), 0, "Task ID mismatch!")
-        self.assertEqual(len(self.testCharacter.tasks), 1, "Post-add task count mismatch!")
+        new_hack = Hack('habit', 'test_hack', 'Testing Hack', 20, 20)
 
-        self.assertEqual(self.testCharacter.remove_task(0), 0, "Failed to remove task with ID of 0")
-        self.assertEqual(self.testCharacter.remove_task(100), -1, "Remove_task did not throw invalid ID exception!")
-        self.assertEqual(len(self.testCharacter.tasks), 0, "Post-removal task count mismatch!")
-
-        #Dailies
-        self.assertEqual(self.testCharacter.add_daily(self.daily_1), 0, "Daily ID mismatch!")
-        self.assertEqual(len(self.testCharacter.dailies), 1, "Post-add daily count mismatch!")
-
-        self.assertEqual(self.testCharacter.remove_daily(0), 0, "Failed to remove daily with ID of 0")
-        self.assertEqual(self.testCharacter.remove_daily(100), -1, "Remove_daily did not throw invalid ID exception!")
-        self.assertEqual(len(self.testCharacter.dailies), 0, "Post-removal daily count mismatch!")
+        self.assertTrue(self.testCharacter.edit_hack(2, new_hack), "Failed to edit hack with ID of 2!")
+        self.assertEqual(len(self.testCharacter.hacks), 2, "Hack dict changed unexpectedly!")
 
         #Items
         self.assertEqual(self.testCharacter.add_item(self.item_1), 0, "Hack ID mismatch!")
@@ -70,7 +59,7 @@ class engine_testCase(characterTestCase):
             self.assertIsInstance(self.testCharacter.get_item(index), Item, "{} is not of type Item!".format(index))
 
         self.assertEqual(self.testCharacter.remove_item(1), 1, "Failed to remove item with ID of 1")
-        self.assertEqual(self.testCharacter.remove_item(100), -1, "Remove_item did not throw invalid ID exception!")
+        self.assertFalse(self.testCharacter.remove_item(100), "Remove_item did not throw invalid ID exception!")
         self.assertEqual(len(self.testCharacter.items), 2, "Post-removal item count mismatch!")
 
         
@@ -80,8 +69,8 @@ class engine_testCase(characterTestCase):
         self.testCharacter.add_hack(self.hack_3)
         self.app = GUI(self.root, self.testCharacter)
 
-        for index in range(len(self.testCharacter.hacks)):
-            self.app.complete_hack(0) #Pop each hack from the list
+        for key in [x for x in self.testCharacter.hacks.keys()]:
+            self.testCharacter.complete_hack(key) #Pop each hack from the list
 
         self.assertEqual(self.app.character.cash, 170, "Cash not adding correctly!")
         self.assertEqual(self.app.character.exp, 30, "Experience points not adding correctly!")

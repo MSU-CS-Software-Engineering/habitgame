@@ -1,5 +1,7 @@
 from tkinter  import *
 from tkinter.ttk import *
+
+from engine import Hack
 from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
@@ -106,15 +108,15 @@ class Work_Space (Frame):
             habit_date.configure(width = 130, anchor = CENTER)
 
             delete_habit_btn = Button(individual_habit, text='Delete habit',
-                                      command = lambda: self.delete_hack(h))
+                command = lambda h=h: self.delete_hack(h))
             delete_habit_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_habit_btn = Button(individual_habit, text='Edit habit',
-                                      command = lambda: self.edit_hack(h) )
+                command = lambda h=h: self.edit_hack(h) )
             edit_habit_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_habit_btn = Button(individual_habit, text='Complete habit',
-                                      command = self.edit_hack(h)) #FIX ME -D
+                command = lambda h=h: self.edit_hack(h)) #FIX ME -D
             edit_habit_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         #Begining of Dailies Tab Code
@@ -168,15 +170,15 @@ class Work_Space (Frame):
             dailies_date.configure(width = 130, anchor = CENTER)
 
             delete_dailies_btn = Button(individual_dailies, text='Delete Daily',
-                                      command = lambda: self.delete_hack(d))
+                command = lambda d=d: self.delete_hack(d))
             delete_dailies_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_dailies_btn = Button(individual_dailies, text='Edit Daily',
-                                      command = lambda: self.edit_hack(d))
+                command = lambda d=d: self.edit_hack(d))
             edit_dailies_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_dailies_btn = Button(individual_dailies, text='Complete Daily',
-                                      command = self.edit_hack(d)) #FIX ME -D
+                command = lambda d=d: self.edit_hack(d)) #FIX ME -D
             edit_dailies_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         
@@ -229,15 +231,15 @@ class Work_Space (Frame):
             tasks_date.configure(width = 130, anchor = CENTER)
 
             delete_tasks_btn = Button(individual_tasks, text='Delete Task',
-                                      command = self.delete_hack(t))
+                command = lambda t=t: self.delete_hack(t))
             delete_tasks_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_tasks_btn = Button(individual_tasks, text='Edit Task',
-                                      command = self.edit_hack(t))
+                command = lambda t=t: self.edit_hack(t))
             edit_tasks_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_tasks_btn = Button(individual_tasks, text='Complete Task',
-                                      command = self.edit_hack(t)) #FIX ME -D
+                command =lambda t=t: self.edit_hack(t)) #FIX ME -D
             edit_tasks_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
 
@@ -274,12 +276,14 @@ class Work_Space (Frame):
         ''' Calls input window; Adds result to hack list '''
         new_hack = self.input_hack_data(h_type)
         self.character.add_hack(new_hack)
+        #REBUILD_HACK_LIST_ON_GUI
         
     def delete_hack(self, hack_ID):
-        answer = messagebox.askokcancel("Delete Habit", "Delete habit?")
+        answer = messagebox.askokcancel("Delete Hack", "Delete hack?")
         if answer is True:
+            print("Deleting ", hack_ID, "...")  #TEST PLEASE REMOVE
             self.character.remove_hack(hack_ID)
-           
+            #REBUILD_HACK_LIST_ON_GUI() 
         else:
             #print("User clicked Cancel")
             return False
@@ -288,7 +292,8 @@ class Work_Space (Frame):
     def edit_hack(self, hack_ID):
         try:
             hack_data = self.character.get_hack(hack_ID)
-            input_hack_data(hack_data.h_type, hack_data)
+            self.input_hack_data(hack_data.h_type, hack_data)
+            #REBUILD_HACK_LIST_ON_GUI()
         except:
             print("Failed to pass hack to input_hack_data")
 
@@ -297,7 +302,7 @@ class Work_Space (Frame):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
 
 
-    def input_hack_data(self, h_type, hack_data):
+    def input_hack_data(self, h_type, hack_data = None):
         data_window = Toplevel(self)
 
         #Name of habit\daily\task
@@ -307,7 +312,7 @@ class Work_Space (Frame):
         name_label = Label(name_frame, text="Name")
         name_label.pack(side="top", padx=10, pady=10)
 
-        ticket_name = Entry(name_frame)
+        ticket_name = Entry(name_frame, justify=CENTER)
         ticket_name.pack(side="bottom", pady=10)
 
         #Description
@@ -318,6 +323,7 @@ class Work_Space (Frame):
         desc_label.pack(side="top", padx=10)
 
         ticket_desc = Text(desc_frame, width=40, height=4)
+        ticket_desc.insert(INSERT, hack_data.description)
         ticket_desc.pack(side="bottom", padx=10, pady=10)
 
         #Value
@@ -327,7 +333,7 @@ class Work_Space (Frame):
         value_label = Label(value_frame, text="Reward Value")
         value_label.pack(side="top", padx=10, pady=10)
 
-        ticket_value = Entry(value_frame)
+        ticket_value = Entry(value_frame, justify=CENTER)
         ticket_value.pack(side="bottom")
 
         #Buttons
@@ -342,27 +348,34 @@ class Work_Space (Frame):
         if hack_data == None:
             confirmButton = Button(button_frame, text="Save",
                 command=lambda: 
-                    self.character.add_hack(Hack(
-                                                 h_type,
-                                                 ticket_name.get(),
-                                                 ticket_desc.get(1.0, END).strip('\t\n'),
-                                                 ticket_value.get())))
+                    self.save_new_hack(data_window, Hack(
+                                            h_type,
+                                            ticket_name.get(),
+                                            ticket_desc.get(1.0, END).strip('\t\n'),
+                                            ticket_value.get())))
         else:
 
-            ticket_name.set(hack_data.title)
-            ticket_desc.set(hack_data.desc)
-            ticket_value.set(hack_data.value)
+            ticket_name.insert(INSERT, hack_data.title)
+            ticket_value.insert(INSERT, str(hack_data.value))
 
             confirmButton = Button(button_frame, text="Save",
                 command=lambda: 
-                    self.character.edit_hack(hack_data.ID, Hack(
-                                                 h_type,
-                                                 ticket_name.get(),
-                                                 ticket_desc.get(1.0, END).strip('\t\n'),
-                                                 ticket_value.get())))
+                    self.save_edited_hack(data_window, hack_data.ID, Hack(
+                                          h_type,
+                                          ticket_name.get(),
+                                          ticket_desc.get(1.0, END).strip('\t\n'),
+                                          ticket_value.get())))
 
         confirmButton.pack(side="right")
 
+    #Helper functions for input_hack_data
+    def save_new_hack(self, window, hack_data):
+        self.character.add_hack(hack_data)
+        window.destroy()
+
+    def save_edited_hack(self, window, hack_ID, hack_data):
+        self.character.edit_hack(hack_ID, hack_data)
+        window.destroy()
 
 def main():
     #For Testing purposes

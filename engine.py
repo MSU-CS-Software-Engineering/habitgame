@@ -13,10 +13,8 @@ from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 
-from work_space import *
 from landing_page import *
 from generic_list import *
-from shop import *
 import authenticate
 
 
@@ -86,7 +84,8 @@ class Character:
         self.show_items()
 
     def add_hack(self, hack):
-        hack.ID = self.hack_index
+        if hack.ID == -1:
+            hack.ID = self.hack_index
         self.hacks[hack.ID] = hack
         self.hack_index = max(self.hacks.keys()) + 1
         return hack.ID
@@ -94,7 +93,9 @@ class Character:
     def edit_hack(self, hack_ID, hack):
         try:
             self.remove_hack(hack_ID)
+            hack.ID = hack_ID
             self.add_hack(hack)
+            return True
         except:
             print("Edit failed!")
             return False
@@ -102,7 +103,7 @@ class Character:
     def remove_hack(self, hack_ID):
         try:
             del self.hacks[hack_ID]
-            return
+            return True
         except:
             print("Invalid hack id!")
             return False
@@ -396,6 +397,9 @@ def load(name):
 
     return new_character
 
+# Placed here to resolve import loop issues with work_space, engine, and
+# shop.
+from work_space import *
 
 class GUI (Frame):
 
@@ -691,3 +695,7 @@ def main():
         
 if __name__ == "__main__":
     main()
+
+# These imports have been moved to resolve import loops between
+# shop, work_space, and engine over the Item class.
+from shop import *
