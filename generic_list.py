@@ -36,10 +36,16 @@ class Generic (Frame):
 
     def list_window(self):
 
-        
-        habit_dict = self.character.habits
-        tasks_dict = self.character.tasks
-        dailies_dict = self.character.dailies
+        habit_dict =   {k:self.character.hacks[k] 
+                        for k in self.character.hacks 
+                          if self.character.hacks[k].h_type == 'habit'}
+        dailies_dict = {k:self.character.hacks[k] 
+                        for k in self.character.hacks 
+                          if self.character.hacks[k].h_type == 'daily'}
+        tasks_dict =   {k:self.character.hacks[k] 
+                        for k in self.character.hacks 
+                          if self.character.hacks[k].h_type == 'task'}
+
 
         # Create canvas
         canvas = ResizingCanvas(self,width = 1350, background = '#EBEDF1')

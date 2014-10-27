@@ -1,9 +1,9 @@
 from tkinter  import *
 from tkinter.ttk import *
+
+from engine import Hack
 from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
-
-
 
 
 class Work_Space (Frame):
@@ -21,10 +21,12 @@ class Work_Space (Frame):
         Used for selecting tab from an element
         outside of Work_Space
         '''
-        tabs = {'task' : self.tab_tasks,
+        tabs = {
+                'task' : self.tab_tasks,
                 'daily': self.tab_dailies,
                 'habit': self.tab_habit,
-                'shop' : self.tab_shop}
+                'shop' : self.tab_shop
+               }
         try:
             self.frame.select(tabs[tab])
             
@@ -32,11 +34,9 @@ class Work_Space (Frame):
             messagebox.showerror("Error", "Couldn't change tabs")
             
     def work_window(self):
-        habit_dict = self.character.habits
-        tasks_dict = self.character.tasks
-        dailies_dict = self.character.dailies
-        #creating the workspace 
+        hack_dict = self.character.hacks
 
+        #creating the workspace 
         frame = Notebook(self, height = 200, width = 400, padding=5)
         frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4,
                    sticky = 'nesw')
@@ -56,12 +56,12 @@ class Work_Space (Frame):
         tab_dailies.pack(fill = BOTH, expand = YES)
         tab_tasks.pack(fill = BOTH, expand = YES)
         tab_shop.pack(fill = BOTH, expand = YES)
-        
+
+
         #Begining of Habit Tab Code
         habit = Canvas(tab_habit, background = '#EBEDF1')
         habit.grid(sticky = 'news')
 
-        
         habits = Frame(habit, style = "W.TFrame")
         habits.grid(sticky = 'news')
 
@@ -72,10 +72,10 @@ class Work_Space (Frame):
         tab_habit.rowconfigure(0, weight = 1)
         tab_habit.columnconfigure(0, weight = 1)
 
-
         habit.create_window(0,20, anchor = N + E, window = habits)
         bar_habit.grid(row = 0, column = 1, sticky = 'ns')
-        
+
+
         def setupHabitFrame(event):
             # resets the scroll region for the frame inserted into the canvas
             habit.configure(scrollregion=habit.bbox("all"))
@@ -90,45 +90,43 @@ class Work_Space (Frame):
         habit.bind("<MouseWheel>", lambda e: scroll_habit(e))
         
         habit.bind("<Configure>", setupHabitFrame)
-        
-        for h in habit_dict:
-            individual_habit = Frame(habits, style='habit_f.TFrame')
-            individual_habit.grid(row = habit_dict[h].ID, column = 0,
-                                  sticky = 'ew', pady = (10,0), padx = 10)
-            frame_style.configure(style='habit_f.TFrame', background='white')
 
+        for h in [hack for hack in hack_dict if hack_dict[hack].h_type == 'habit']: #Gather habit-type hacks from dict
+            individual_habit = Frame(habits)
+            individual_habit.grid(row = hack_dict[h].ID, column = 0,
+                                  sticky = 'ew', pady = (10,0), padx = 3)
 
-            habit_name = Label(individual_habit, text = habit_dict[h].title)
+            habit_name = Label(individual_habit, text = hack_dict[h].title)
             habit_name.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             habit_name.configure(width = 130, anchor = CENTER)
 
-            habit_description = Label(individual_habit, text = habit_dict[h].description,
+            habit_description = Label(individual_habit, text = hack_dict[h].description,
                                       wraplength = 800)
             habit_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             habit_description.configure(width = 130, anchor = CENTER)
 
             habit_value = Label(individual_habit,
-                                text = "Value:     "+str(habit_dict[h].value),
+                                text = "Value:     " + str(hack_dict[h].value),
                                 wraplength = 800)
             habit_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             habit_value.configure(width = 130, anchor = CENTER)
 
             habit_date = Label(individual_habit,
-                               text = "Date:     "+str(habit_dict[h].timestamp),
+                               text = "Date:     " + str(hack_dict[h].timestamp),
                                wraplength = 800)
             habit_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             habit_date.configure(width = 130, anchor = CENTER)
 
             delete_habit_btn = Button(individual_habit, text='Delete habit',
-                                      command = self.delete_habit)
+                command = lambda h=h: self.delete_hack(h))
             delete_habit_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_habit_btn = Button(individual_habit, text='Edit habit',
-                                    command = self.edit_habit)
+                command = lambda h=h: self.edit_hack(h) )
             edit_habit_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_habit_btn = Button(individual_habit, text='Complete habit',
-                                    command = self.edit_habit)
+                command = lambda h=h: self.edit_hack(h)) #FIX ME -D
             edit_habit_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         #Begining of Dailies Tab Code
@@ -136,7 +134,6 @@ class Work_Space (Frame):
         daily = Canvas(tab_dailies, background = '#EBEDF1')
         daily.grid(sticky = 'news')
 
-        
         dailies= Frame(daily, style = "W.TFrame")
         dailies.grid(sticky = 'news')
 
@@ -146,7 +143,6 @@ class Work_Space (Frame):
 
         tab_dailies.rowconfigure(0, weight = 1)
         tab_dailies.columnconfigure(0, weight = 1)
-
 
         daily.create_window(0,20, anchor = N + E, window = dailies)
         bar_dailies.grid(row = 0, column = 1, sticky = 'ns')
@@ -165,45 +161,43 @@ class Work_Space (Frame):
         daily.bind("<MouseWheel>", lambda e: scroll_daily(e))
         
         daily.bind("<Configure>", setupDailiesFrame)
-        
-        for d in dailies_dict:
+
+        for d in [hack for hack in hack_dict if hack_dict[hack].h_type == 'daily']:  #Gather dailies from dict
             individual_dailies = Frame(dailies)
-            individual_dailies.grid(row = dailies_dict[d].ID, column = 0,
+            individual_dailies.grid(row = hack_dict[d].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
-            
-
-            dailies_title = Label(individual_dailies, text = dailies_dict[d].title)
+            dailies_title = Label(individual_dailies, text = hack_dict[d].title)
             dailies_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             dailies_title.configure(width = 130, anchor = CENTER)
 
-            dailies_description = Label(individual_dailies, text = dailies_dict[d].description,
+            dailies_description = Label(individual_dailies, text = hack_dict[d].description,
                                       wraplength = 800)
             dailies_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             dailies_description.configure(width = 130, anchor = CENTER)
 
             dailies_value = Label(individual_dailies,
-                                  text = "Value:     "+str(dailies_dict[d].value),
+                                  text = "Value:     " + str(hack_dict[d].value),
                                   wraplength = 800)
             dailies_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             dailies_value.configure(width = 130, anchor = CENTER)
 
             dailies_date = Label(individual_dailies,
-                                 text = "Date:     "+str(dailies_dict[d].timestamp),
+                                 text = "Date:     " + str(hack_dict[d].timestamp),
                                  wraplength = 800)
             dailies_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             dailies_date.configure(width = 130, anchor = CENTER)
 
             delete_dailies_btn = Button(individual_dailies, text='Delete Daily',
-                                      command = self.delete_habit)
+                command = lambda d=d: self.delete_hack(d))
             delete_dailies_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_dailies_btn = Button(individual_dailies, text='Edit Daily',
-                                      command = self.edit_habit)
+                command = lambda d=d: self.edit_hack(d))
             edit_dailies_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_dailies_btn = Button(individual_dailies, text='Complete Daily',
-                                      command = self.edit_habit)
+                command = lambda d=d: self.edit_hack(d)) #FIX ME -D
             edit_dailies_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
         
@@ -212,7 +206,6 @@ class Work_Space (Frame):
         task = Canvas(tab_tasks, background = '#EBEDF1')
         task.grid(sticky = 'news')
 
-        
         tasks= Frame(task, style = "W.TFrame")
         tasks.grid(sticky = 'news')
 
@@ -221,7 +214,6 @@ class Work_Space (Frame):
 
         tab_tasks.rowconfigure(0, weight = 1)
         tab_tasks.columnconfigure(0, weight = 1)
-
 
         task.create_window(0,20, anchor = N + E, window = tasks)
         bar_tasks.grid(row = 0, column = 1, sticky = 'ns')
@@ -232,6 +224,7 @@ class Work_Space (Frame):
 
 
         task.bind("<Configure>", setupTasksFrame)
+
         
         def scroll_task(event):
             """ allows for mouse wheel scrolling """
@@ -242,43 +235,42 @@ class Work_Space (Frame):
 
         task.bind("<MouseWheel>", lambda e: scroll_task(e))
         
-        for t in tasks_dict:
+        for t in [hack for hack in hack_dict if hack_dict[hack].h_type == 'task']: #Gather tasks from dict
             individual_tasks = Frame(tasks)
-            individual_tasks.grid(row = tasks_dict[t].ID, column = 0,
+            individual_tasks.grid(row = hack_dict[t].ID, column = 0,
                                   sticky = 'ew', pady = (10,0), padx = 3)
 
 
-
-            tasks_title = Label(individual_tasks, text = tasks_dict[t].title)
+            tasks_title = Label(individual_tasks, text = hack_dict[t].title)
             tasks_title.grid(row = 0, column = 0, sticky = 'ew', pady = 5)
             tasks_title.configure(width = 130, anchor = CENTER)
 
-            tasks_description = Label(individual_tasks, text = tasks_dict[t].description,
+            tasks_description = Label(individual_tasks, text = hack_dict[t].description,
                                       wraplength = 800)
             tasks_description.grid(row = 1, column = 0, sticky = 'ew', pady = 5)
             tasks_description.configure(width = 130, anchor = CENTER)
 
-            tasks_value = Label(individual_tasks, text = "Value:     "+str(tasks_dict[t].value),
+            tasks_value = Label(individual_tasks, text = "Value:     " + str(hack_dict[t].value),
                                       wraplength = 800)
             tasks_value.grid(row = 2, column = 0, sticky = 'ew', pady = 5)
             tasks_value.configure(width = 130, anchor = CENTER)
 
             tasks_date = Label(individual_tasks,
-                               text = "Date:     "+str(tasks_dict[t].timestamp),
+                               text = "Date:     " + str(hack_dict[t].timestamp),
                                wraplength = 800)
             tasks_date.grid(row = 3, column = 0, sticky = 'ew', pady = 5)
             tasks_date.configure(width = 130, anchor = CENTER)
 
             delete_tasks_btn = Button(individual_tasks, text='Delete Task',
-                                      command = self.delete_habit)
+                command = lambda t=t: self.delete_hack(t))
             delete_tasks_btn.grid(row = 1, column = 1,sticky = 'news', pady = 5)
 
             edit_tasks_btn = Button(individual_tasks, text='Edit Task',
-                                    command = self.edit_habit)
+                command = lambda t=t: self.edit_hack(t))
             edit_tasks_btn.grid (row = 2, column = 1,sticky = 'news', pady = 5)
             
             edit_tasks_btn = Button(individual_tasks, text='Complete Task',
-                                    command = self.edit_habit)
+                command =lambda t=t: self.edit_hack(t)) #FIX ME -D
             edit_tasks_btn.grid (row = 0, column = 1,sticky = 'news', pady = 5)
 
 
@@ -288,18 +280,17 @@ class Work_Space (Frame):
         frame.add(tab_shop, text='Shop')
 
         add_habit_btn = Button(habit, text='Add new habit',
-                               command = self.add_habit)
+                               command = lambda: self.add_hack('habit'))
         add_task_btn = Button(task, text='Add new task',
-                              command = self.add_task)
-        add_daily_btn = Button(daily, text='Add new goal',
-                               command = self.add_daily)
+                               command = lambda: self.add_hack('task'))
+        add_daily_btn = Button(daily, text='Add new daily',
+                               command = lambda: self.add_hack('daily'))
         add_buy_btn = Button(tab_shop, text='Buy', command = self.buy)
         
-        
-        habit.create_window(-675,0,window = add_habit_btn)
-        daily.create_window(-675,0,window = add_daily_btn)
-        task.create_window(-675,0,window = add_task_btn)
-    
+        habit.create_window(-675, 0, window  =  add_habit_btn)
+        daily.create_window(-675, 0, window  =  add_daily_btn)
+        task.create_window(-675,  0, window  =  add_task_btn)
+
         #Set self.frame as local variable 'frame'
         self.frame = frame
         
@@ -312,54 +303,37 @@ class Work_Space (Frame):
         self.frame.select(self.tab_shop)
         
 
-    def add_habit(self):
-        self.gather_habit_data("habit")
-
-    def add_task(self):
-        self.gather_habit_data("task")
-
-    def add_daily(self):
-        self.gather_habit_data("goal")
+    def add_hack(self, h_type):
+        ''' Calls input window; Adds result to hack list '''
+        new_hack = self.input_hack_data(h_type)
+        self.character.add_hack(new_hack)
+        #REBUILD_HACK_LIST_ON_GUI
         
-    def delete_habit(self):
-        answer = messagebox.askokcancel("Delete Habit", "Delete habit?")
+    def delete_hack(self, hack_ID):
+        answer = messagebox.askokcancel("Delete Hack", "Delete hack?")
         if answer is True:
-            print("User clicked Ok")
+            print("Deleting ", hack_ID, "...")  #TEST PLEASE REMOVE
+            self.character.remove_hack(hack_ID)
+            #REBUILD_HACK_LIST_ON_GUI() 
         else:
-            print("User clicked Cancel")
+            #print("User clicked Cancel")
+            return False
+
             
-    def delete_task(self):
-        answer = messagebox.askokcancel("Delete Task", "Delete task?")
-        if answer is True:
-            print("User clicked Ok")
-        else:
-            print("User clicked Cancel")
+    def edit_hack(self, hack_ID):
+        try:
+            hack_data = self.character.get_hack(hack_ID)
+            self.input_hack_data(hack_data.h_type, hack_data)
+            #REBUILD_HACK_LIST_ON_GUI()
+        except:
+            print("Failed to pass hack to input_hack_data")
 
-    def delete_goal(self):
-        answer = messagebox.askokcancel("Delete Goal", "Delete goal?")
-        if answer is True:
-            print("User clicked Ok")
-        else:
-            print("User clicked Cancel")
-            
-    def edit_habit(self):
-        messagebox.showinfo("Updated Habit", "Habit updated.")
-
-    def edit_task(self):
-        messagebox.showinfo("Updated Task", "Task updated.")
-
-    def edit_goal(self):
-        messagebox.showinfo("Updated Goal", "Goal updated.")
 
     def buy(self):
         messagebox.showinfo("Placeholder", "I'm a buy stub!")             
 
-    def gather_habit_data(self, habit_type):
-        #Create Window
-        #Take information
-        #Check for info if 'save' is clicked. Discard if 'cancel' is clicked.
-        #Add habit/Daily/Task to list
 
+    def input_hack_data(self, h_type, hack_data = None):
         data_window = Toplevel(self)
 
         #Name of habit\daily\task
@@ -369,7 +343,7 @@ class Work_Space (Frame):
         name_label = Label(name_frame, text="Name")
         name_label.pack(side="top", padx=10, pady=10)
 
-        ticket_name = Entry(name_frame)
+        ticket_name = Entry(name_frame, justify=CENTER)
         ticket_name.pack(side="bottom", pady=10)
 
         #Description
@@ -380,6 +354,7 @@ class Work_Space (Frame):
         desc_label.pack(side="top", padx=10)
 
         ticket_desc = Text(desc_frame, width=40, height=4)
+        ticket_desc.insert(INSERT, hack_data.description)
         ticket_desc.pack(side="bottom", padx=10, pady=10)
 
         #Value
@@ -389,7 +364,7 @@ class Work_Space (Frame):
         value_label = Label(value_frame, text="Reward Value")
         value_label.pack(side="top", padx=10, pady=10)
 
-        ticket_value = Entry(value_frame)
+        ticket_value = Entry(value_frame, justify=CENTER)
         ticket_value.pack(side="bottom")
 
         #Buttons
@@ -401,17 +376,37 @@ class Work_Space (Frame):
                               command=data_window.destroy)
         cancelButton.pack(side="left")
 
-        confirmButton = Button(button_frame, text="Save",
-                               command=lambda: self.output_window_vals(habit_type,
-                                                                       ticket_name.get(),
-                                                                       ticket_desc.get(1.0, END).strip('\t\n'),
-                                                                       ticket_value.get()))
+        if hack_data == None:
+            confirmButton = Button(button_frame, text="Save",
+                command=lambda: 
+                    self.save_new_hack(data_window, Hack(
+                                            h_type,
+                                            ticket_name.get(),
+                                            ticket_desc.get(1.0, END).strip('\t\n'),
+                                            ticket_value.get())))
+        else:
+
+            ticket_name.insert(INSERT, hack_data.title)
+            ticket_value.insert(INSERT, str(hack_data.value))
+
+            confirmButton = Button(button_frame, text="Save",
+                command=lambda: 
+                    self.save_edited_hack(data_window, hack_data.ID, Hack(
+                                          h_type,
+                                          ticket_name.get(),
+                                          ticket_desc.get(1.0, END).strip('\t\n'),
+                                          ticket_value.get())))
+
         confirmButton.pack(side="right")
 
-    def output_window_vals(self, ticket_type, ticket_name, ticket_desc, ticket_value):
-        values = [ticket_type, ticket_name, ticket_desc, ticket_value]
-        print(values)
-        #return values
+    #Helper functions for input_hack_data
+    def save_new_hack(self, window, hack_data):
+        self.character.add_hack(hack_data)
+        window.destroy()
+
+    def save_edited_hack(self, window, hack_ID, hack_data):
+        self.character.edit_hack(hack_ID, hack_data)
+        window.destroy()
 
 def main():
     #For Testing purposes
