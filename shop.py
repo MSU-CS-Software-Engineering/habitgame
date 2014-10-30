@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from enum import Enum
-from engine import Item
+from hack_classes import Item
 import os.path
 
 # simple enum class for determining the Item type
