@@ -1,7 +1,7 @@
 from tkinter  import *
 from tkinter.ttk import *
 
-from engine import Hack
+from hack_classes import Hack
 from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
@@ -306,7 +306,6 @@ class Work_Space (Frame):
     def add_hack(self, h_type):
         ''' Calls input window; Adds result to hack list '''
         new_hack = self.input_hack_data(h_type)
-        self.character.add_hack(new_hack)
         #REBUILD_HACK_LIST_ON_GUI
         
     def delete_hack(self, hack_ID):
@@ -354,7 +353,10 @@ class Work_Space (Frame):
         desc_label.pack(side="top", padx=10)
 
         ticket_desc = Text(desc_frame, width=40, height=4)
-        ticket_desc.insert(INSERT, hack_data.description)
+
+        if hack_data != None:
+            ticket_desc.insert(INSERT, hack_data.description)
+
         ticket_desc.pack(side="bottom", padx=10, pady=10)
 
         #Value
@@ -363,6 +365,10 @@ class Work_Space (Frame):
 
         value_label = Label(value_frame, text="Reward Value")
         value_label.pack(side="top", padx=10, pady=10)
+
+        value_warning_label = Label(value_frame, text = "Value must be a number!", foreground = "red", state = DISABLED)
+        value_warning_label.pack(side="top", padx = 10, pady=10)
+        value_warning_label.pack_forget() #Start invisible
 
         ticket_value = Entry(value_frame, justify=CENTER)
         ticket_value.pack(side="bottom")
@@ -398,6 +404,8 @@ class Work_Space (Frame):
                                           ticket_value.get())))
 
         confirmButton.pack(side="right")
+        ticket_value.bind('<FocusOut>', lambda event: self.check_input_validity(
+                                                value_warning_label, ticket_value.get(), confirmButton)) 
 
     #Helper functions for input_hack_data
     def save_new_hack(self, window, hack_data):
@@ -407,6 +415,15 @@ class Work_Space (Frame):
     def save_edited_hack(self, window, hack_ID, hack_data):
         self.character.edit_hack(hack_ID, hack_data)
         window.destroy()
+
+    def check_input_validity(self, warn_label, value_string, confirmButton):
+        try:
+            int(value_string)
+            warn_label.pack_forget()
+            confirmButton.config(state = 'normal')
+        except:
+            warn_label.pack()
+            confirmButton.config(state = 'disabled')
 
 def main():
     #For Testing purposes
