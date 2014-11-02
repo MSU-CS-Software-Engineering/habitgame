@@ -5,9 +5,9 @@
    <lastname>Doe</lastname>
    <username>Hacker_Man</username>
    <birthday>01-01-01</birthday>
-   <cash>0</cash>
+   <cash>20000</cash>
    <exp>0</exp>
-   <level>0</level>
+   <level>1</level>
    <habits/>
    <tasks/>
    <dailies/>

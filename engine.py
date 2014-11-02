@@ -79,7 +79,6 @@ class Game_Data:
             new_character.exp = character_data['exp']
             new_character.cash = character_data['cash']
             
-            # REVISIT THIS -D
             for hack in character_data['hacks']:
                 new_hack = Habit(hack['title'],
                                   hack['description'],
@@ -152,9 +151,6 @@ def load(name):
 
     return new_character
 
-
-# Placed here to resolve import loop issues with work_space, engine, and
-# shop.
 
 class GUI (Frame):
 
@@ -434,7 +430,6 @@ class GUI (Frame):
     def habit(self):
         self.show_frame('habit')
 
-
     def task(self):
         self.show_frame('task')
         main.__subclasshook__
@@ -466,7 +461,6 @@ def main():
     main_character = load('Tester')
    
     #Display current character's info
-    #main_character.show_info()
     root = Tk()
     app = GUI(root, main_character)
     
@@ -475,7 +469,3 @@ def main():
         
 if __name__ == "__main__":
     main()
-
-# These imports have been moved to resolve import loops between
-# shop, work_space, and engine over the Item class.
-from shop import *

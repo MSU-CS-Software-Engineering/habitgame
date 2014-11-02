@@ -50,21 +50,6 @@ class Character:
         
         return character_dict
 
-    def show_info(self):
-        """
-        Displays the characters current information:
-        Cash, name, experience, level, habits, and items
-        """
-        print("Player Info:")
-        print("Name:       "+self.name)
-        print("Cash:      $"+str(self.cash))
-        print("Experience: "+str(self.exp))
-        print("Level:      "+str(self.level))
-        print("\n\nHacks:\n-------")
-        self.show_hacks()
-        print("\n\nItems:\n------")
-        self.show_items()
-
     def add_hack(self, hack):
         if hack.ID == -1:
             hack.ID = self.hack_index
@@ -103,28 +88,6 @@ class Character:
         except:
             print("Error: Invalid hack id")
 
-
-    #Shouldn't be needed with the new ID model
-
-    #def set_hack_IDs(self):     
-    #    for hack in enumerate(self.hacks):
-    #        hack[1].ID = hack[0]
-
-
-    def show_hack(self, hack_id):
-        try:
-            hack = self.hacks[hack_id]
-            print("Type:        " + hack.h_type)
-            print("Title:       " + hack.title)
-            print("Description: " + hack.description)
-            print("ID:          " + str(hack.ID))
-            print("Timestamp:   " + str(hack.timestamp))
-            print("Value:       " + str(hack.value))
-            print("Exp Pts:     " + str(hack.exp))
-
-        except:
-            print("Error: Invalid hack_id")
-
     def show_hacks(self):
         for hack in self.hacks:
             self.show_hack(hack.ID)
@@ -152,23 +115,10 @@ class Character:
         except:
             print("Error: Invalid item ID")
 
-
     def set_item_IDs(self):
         for item in enumerate(self.items):
             item[1].ID = item[0]
-
  
-    def show_item(self, item_ID):
-        
-        try:
-            item = self.items[item_ID]
-            print("Name:   " + item.name)
-            print("ID:     " + str(item.ID))
-            print("Value:  " + str(item.value))
-            print("Uses:   " + str(item.uses))
-        except:
-            print("Error: Invalid item ID")
-
     def show_items(self):
         for item in self.items:
             self.show_item(item.ID)
@@ -245,4 +195,3 @@ class Item:
                       'effect':self.effect}
         
         return item_dict
-

@@ -378,7 +378,6 @@ class Work_Space (Frame):
     def delete_hack(self, hack_ID):
         answer = messagebox.askokcancel("Delete Hack", "Delete hack?")
         if answer is True:
-            print("Deleting ", hack_ID, "...")  #TEST PLEASE REMOVE
             self.character.remove_hack(hack_ID)
             #REBUILD_HACK_LIST_ON_GUI() 
         else:
