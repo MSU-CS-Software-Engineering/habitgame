@@ -1,3 +1,4 @@
+import os.path
 from tkinter  import *
 from tkinter.ttk import *
 
@@ -58,7 +59,11 @@ class Work_Space (Frame):
         tab_tasks.pack(fill = BOTH, expand = YES)
         tab_shop.pack(fill = BOTH, expand = YES)
 
-        
+        # load images for complete, edit, delete buttons
+        delete_img = PhotoImage(file=os.path.join("assets", "art", "minus.gif"))
+        edit_img = PhotoImage(file=os.path.join("assets", "art", "pencil.gif"))
+        complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
+            
         #Begining of Habit Tab Code
         habit_canvas = Canvas(tab_habit, highlightthickness = 0, background = '#EBEDF1')
         habit_canvas.grid(row = 1, column = 0, sticky = 'news')
@@ -124,18 +129,23 @@ class Work_Space (Frame):
             habit_btn_frame = Frame(individual_habit)
             habit_btn_frame.grid(row = 3, column = 0)
             
-            delete_habit_btn = Button(habit_btn_frame, text='Delete habit', style = 'delete.TButton',
-                                      cursor = 'hand2', command = lambda h=h: self.delete_hack(h))
+            delete_habit_btn = Button(habit_btn_frame, text='Delete habit', image=delete_img, compound="left",
+                                      style = 'delete.TButton', cursor = 'hand2',
+                                      command = lambda h=h: self.delete_hack(h))
             delete_habit_btn.grid(row = 0, column = 0, sticky = 'news')
-            
-            edit_habit_btn = Button(habit_btn_frame, text='Edit habit', style = 'edit.TButton',
-                                    cursor = 'hand2', command = lambda h=h: self.edit_hack(h))
-            edit_habit_btn.grid(row = 0, column = 1, sticky = 'news')
-            
-            complete_habit_btn = Button(habit_btn_frame, text='Complete habit', style = 'complete.TButton',
-                                        cursor = 'hand2', command = lambda h=h: self.edit_hack(h)) #FIX ME -D
-            complete_habit_btn.grid(row = 0, column = 2, sticky = 'news')
+            delete_habit_btn.image = delete_img
 
+            edit_habit_btn = Button(habit_btn_frame, text='Edit habit', image=edit_img, compound="left",
+                                    style = 'edit.TButton', cursor = 'hand2',
+                                    command = lambda h=h: self.edit_hack(h))
+            edit_habit_btn.grid(row = 0, column = 1, sticky = 'news')
+            edit_habit_btn.image = edit_img
+
+            complete_habit_btn = Button(habit_btn_frame, text='Complete habit', image=complete_img,
+                                        compound="left", style = 'complete.TButton', cursor = 'hand2',
+                                        command = lambda h=h: self.edit_hack(h)) #FIX ME -D
+            complete_habit_btn.grid(row = 0, column = 2, sticky = 'news')
+            complete_habit_btn.image = complete_img
  
         #Begining of Dailies Tab Code
         daily = Canvas(tab_dailies, highlightthickness = 0, background = '#EBEDF1')
@@ -201,19 +211,24 @@ class Work_Space (Frame):
 
             dailies_btn_frame = Frame(individual_dailies)
             dailies_btn_frame.grid(row = 3, column = 0)
-            
-            delete_dailies_btn = Button(dailies_btn_frame, text = 'Delete Daily', style = 'delete.TButton',
-                                        cursor = 'hand2', command = lambda d=d: self.delete_hack(d))
+
+            delete_dailies_btn = Button(dailies_btn_frame, text = 'Delete Daily', image=delete_img, compound="left",
+                                        style = 'delete.TButton', cursor = 'hand2',
+                                        command = lambda d=d: self.delete_hack(d))
             delete_dailies_btn.grid(row = 0, column = 0, sticky = 'news')
-
-            edit_dailies_btn = Button(dailies_btn_frame, text = 'Edit Daily', style = 'edit.TButton',
-                                      cursor = 'hand2', command = lambda d=d: self.edit_hack(d))
-            edit_dailies_btn.grid(row = 0, column = 1, sticky = 'news')
+            delete_dailies_btn.image = delete_img
             
-            complete_dailies_btn = Button(dailies_btn_frame, text = 'Complete Daily', style = 'complete.TButton',
-                                          cursor = 'hand2', command = lambda d=d: self.edit_hack(d)) #FIX ME -D
+            edit_dailies_btn = Button(dailies_btn_frame, text = 'Edit Daily', image=edit_img, compound="left",
+                                      style = 'edit.TButton', cursor = 'hand2',
+                                      command = lambda d=d: self.edit_hack(d))
+            edit_dailies_btn.grid(row = 0, column = 1, sticky = 'news')
+            edit_dailies_btn.image = edit_img
+            
+            complete_dailies_btn = Button(dailies_btn_frame, text = 'Complete Daily', image=complete_img,
+                                          compound="left", style = 'complete.TButton', cursor = 'hand2',
+                                          command = lambda d=d: self.edit_hack(d)) #FIX ME -D
             complete_dailies_btn.grid(row = 0, column = 2, sticky = 'news')
-
+            complete_dailies_btn.image = complete_img
 
         #Begining of Tasks Tab Code
         task = Canvas(tab_tasks, highlightthickness = 0, background = '#EBEDF1')
@@ -280,35 +295,48 @@ class Work_Space (Frame):
             tasks_btn_frame = Frame(individual_tasks)
             tasks_btn_frame.grid(row = 3, column = 0)
             
-            delete_tasks_btn = Button(tasks_btn_frame, text = 'Delete Task', style = 'delete.TButton',
-                                      cursor = 'hand2', command = lambda t=t: self.delete_hack(t))
+            delete_tasks_btn = Button(tasks_btn_frame, text = 'Delete Task', image=delete_img, compound="left",
+                                      style = 'delete.TButton', cursor = 'hand2',
+                                      command = lambda t=t: self.delete_hack(t))
             delete_tasks_btn.grid(row = 0, column = 0, sticky = 'news')
-
-            edit_tasks_btn = Button(tasks_btn_frame, text = 'Edit Task', style = 'edit.TButton',
-                                    cursor = 'hand2', command = lambda t=t: self.edit_hack(t))
-            edit_tasks_btn.grid(row = 0, column = 1, sticky = 'news')
+            delete_tasks_btn.image = delete_img
             
-            complete_tasks_btn = Button(tasks_btn_frame, text = 'Complete Task', style = 'complete.TButton',
-                                        cursor = 'hand2', command =lambda t=t: self.edit_hack(t)) #FIX ME -D
+            edit_tasks_btn = Button(tasks_btn_frame, text = 'Edit Task', image=edit_img, compound="left",
+                                    style = 'edit.TButton', cursor = 'hand2',
+                                    command = lambda t=t: self.edit_hack(t))
+            edit_tasks_btn.grid(row = 0, column = 1, sticky = 'news')
+            edit_tasks_btn.image = edit_img
+            
+            complete_tasks_btn = Button(tasks_btn_frame, text = 'Complete Task', image=complete_img,
+                                        compound="left", style = 'complete.TButton', cursor = 'hand2',
+                                        command =lambda t=t: self.edit_hack(t)) #FIX ME -D
             complete_tasks_btn.grid(row = 0, column = 2, sticky = 'news')
-
+            complete_tasks_btn.image = complete_img
+            
         frame.add(tab_habit, text='Habits')
         frame.add(tab_tasks, text='Tasks')
         frame.add(tab_dailies, text='Dailies')
         frame.add(tab_shop, text='Shop')
 
-        add_habit_btn = Button(tab_habit, text = 'Add new habit', style = 'add_habit.TButton',
-                               cursor = 'hand2', command = lambda: self.add_hack('habit'))
+        plus_img = PhotoImage(file=os.path.join("assets", "art", "plus.gif"))
+        
+        add_habit_btn = Button(tab_habit, text = 'Add new habit', image=plus_img, compound="left",
+                               style = 'add_habit.TButton', cursor = 'hand2',
+                               command = lambda: self.add_hack('habit'))
         add_habit_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
+        add_habit_btn.image = plus_img
         
-        add_task_btn = Button(tab_tasks, text = 'Add new task', style = 'add_task.TButton',
-                              cursor = 'hand2', command = lambda: self.add_hack('task'))
+        add_task_btn = Button(tab_tasks, text = 'Add new task', image=plus_img, compound="left",
+                              style = 'add_task.TButton', cursor = 'hand2',
+                              command = lambda: self.add_hack('task'))
         add_task_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
+        add_task_btn.image = plus_img
         
-        add_daily_btn = Button(tab_dailies, text = 'Add new daily', style = 'add_daily.TButton',
-                               cursor = 'hand2', command = lambda: self.add_hack('daily'))
+        add_daily_btn = Button(tab_dailies, text = 'Add new daily', image=plus_img, compound="left",
+                               style = 'add_daily.TButton', cursor = 'hand2',
+                               command = lambda: self.add_hack('daily'))
         add_daily_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
-        
+        add_daily_btn.image = plus_img
         
         # style delete, edit, and complete buttons for habits, dailies, and tasks tabs
         frame_style.configure('delete.TButton', font = 'arial 14 bold', relief = 'flat',
