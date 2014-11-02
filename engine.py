@@ -17,7 +17,7 @@ from landing_page import *
 from generic_list import *
 from work_space import *
 import authenticate
-
+from tkinter import filedialog # open/save file
 
 
 class Game_Data:
@@ -246,49 +246,21 @@ class GUI (Frame):
         logo_image.bind('<1>', lambda e: self.home()) 
         self.style.configure('hack_logo.TLabel', background='black')
 
-        home_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Home')
-        home_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        home_title.bind('<Enter>', lambda e: home_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        home_title.bind('<Leave>', lambda e: home_title.configure(background='black', foreground='#EBEBEB'))
-        home_title.bind('<1>', lambda e: self.home()) 
-        home_title.grid(row=0, column=1, sticky='e')
-        
-        habit_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Habits')
-        habit_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        habit_title.bind('<Enter>', lambda e: habit_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        habit_title.bind('<Leave>', lambda e: habit_title.configure(background='black', foreground='#EBEBEB'))
-        habit_title.bind('<1>', lambda e: self.habit()) 
-        habit_title.grid(row=0, column=2, sticky='e')
+        # make common 'menu bar' links
+        def make_menu(col_number, name, function):
+            menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=name)
+            menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+            menu_title.bind('<Enter>', lambda e: menu_title.configure(background='#0F0F0F', foreground='#FFD237'))
+            menu_title.bind('<Leave>', lambda e: menu_title.configure(background='black', foreground='#EBEBEB'))
+            menu_title.bind('<1>', lambda e: function()) 
+            menu_title.grid(row=0, column=col_number+1, sticky='e')
 
-        tasks_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Tasks')
-        tasks_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        tasks_title.bind('<Enter>', lambda e: tasks_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        tasks_title.bind('<Leave>', lambda e: tasks_title.configure(background='black', foreground='#EBEBEB'))
-        tasks_title.bind('<1>', lambda e: self.task()) 
-        tasks_title.grid(row=0, column=3, sticky='e')
-        
-        dailies_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Dailies')
-        dailies_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        dailies_title.bind('<Enter>', lambda e: dailies_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        dailies_title.bind('<Leave>', lambda e: dailies_title.configure(background='black', foreground='#EBEBEB'))
-        dailies_title.bind('<1>', lambda e: self.dailies()) 
-        dailies_title.grid(row=0, column=4, sticky='e')
-
-        list_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='List')
-        list_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        list_title.bind('<Enter>', lambda e: list_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        list_title.bind('<Leave>', lambda e: list_title.configure(background='black', foreground='#EBEBEB'))
-        list_title.bind('<1>', lambda e: self.generic()) 
-        list_title.grid(row=0, column=5, sticky='e')
-
-        shop_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Shop')
-        shop_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        shop_title.bind('<Enter>', lambda e: shop_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        shop_title.bind('<Leave>', lambda e: shop_title.configure(background='black', foreground='#EBEBEB'))
-        shop_title.bind('<1>', lambda e: self.buy()) 
-        shop_title.grid(row=0, column=6, sticky='e')
-
-        
+        menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop']
+        menu_functions = [self.home, self.habit, self.task, self.dailies, self.generic, self.buy]
+        for i in range(6):
+            make_menu(i, menu_titles[i], menu_functions[i])
+            
+      
         # create character data frame
         self.char_frame = Frame(self)
         self.char_frame.grid(row=2, column=0, sticky='news')
@@ -474,7 +446,9 @@ class GUI (Frame):
         self.show_frame('shop')
         
     def save_game(self):
-        messagebox.showinfo("Save", "Game Saved!")  
+        saved_path = filedialog.asksaveasfilename()
+        if saved_path != '':
+            messagebox.showinfo("Save", "game save at: " + saved_path)  
     
     def generic(self):
         self.show_frame(Generic)

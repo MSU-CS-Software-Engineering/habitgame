@@ -39,7 +39,7 @@ class Landing_Page (Frame):
         
         #label above progress bar
         progress_label = Label(self, text="Daily Progress", padding=0)
-        progress_label.grid(row = 4, column =2 ,sticky='ew', pady=4, padx=5)
+        progress_label.grid(row = 4, column = 0, columnspan = 5, sticky='ew', pady=4, padx=5)
         progress_label.configure(anchor = CENTER, font='arial 18 italic')
         progress_label.rowconfigure(4, weight =1)
         progress_label.columnconfigure(3, weight = 1)
@@ -57,7 +57,7 @@ class Landing_Page (Frame):
         landing_frame_style.configure("lf.TFrame", background = '#EBEDF1')
 
         habit_frame_style = Style()
-        habit_frame_style.configure("hf.TFrame", background = 'red', height = 100)
+        habit_frame_style.configure("hf.TFrame", height = 100)
 
         area1 = Frame(self, style = "lf.TFrame")
         area1.grid(row = 6, column = 0, columnspan = 2, rowspan = 4, 
@@ -68,8 +68,8 @@ class Landing_Page (Frame):
 
         counter = 0
 
-        habit_header = Label(area1, text = "HABITS", anchor = CENTER,
-                             font = "Veranda 18 bold", foreground = 'black', background = '#70A53A')
+        habit_header = Label(area1, text = "HABITS", anchor = CENTER, font = "Veranda 18 bold",
+                             foreground = 'black', background = '#D95B5B')
         habit_header.grid(row = 0, column = 0, sticky = 'new',pady = (3,0), padx = 3)
 
         area2 = Frame(self, style = "lf.TFrame")
@@ -79,8 +79,8 @@ class Landing_Page (Frame):
         area2.columnconfigure(2, weight = 1)
         area2.grid_propagate(False)
 
-        dailies_header = Label(area2, text = "DAILIES", anchor = CENTER,
-                               font = "Veranda 18 bold", foreground = 'black', background = '#70A53A')
+        dailies_header = Label(area2, text = "DAILIES", anchor = CENTER, font = "Veranda 18 bold",
+                               foreground = 'black', background = '#9AD95B')
         dailies_header.grid(row = 0, column = 2, sticky = 'new',pady = (3,0), padx = 3)
 
         area3 = Frame(self, style = "lf.TFrame")
@@ -90,8 +90,8 @@ class Landing_Page (Frame):
         area3.columnconfigure(4, weight = 1)
         area3.grid_propagate(False)
 
-        tasks_header = Label(area3, text = "TASKS", anchor = CENTER,
-                             font = "Veranda 18 bold", foreground = 'black', background = '#70A53A')
+        tasks_header = Label(area3, text = "TASKS", anchor = CENTER, font = "Veranda 18 bold",
+                             foreground = 'black', background = '#5BADD9')
         tasks_header.grid(row = 0, column = 4, sticky = 'new',pady = (3,0), padx = 3)
 
         #Habits Code Area
