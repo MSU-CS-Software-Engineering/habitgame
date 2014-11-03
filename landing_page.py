@@ -1,3 +1,4 @@
+import os.path
 from tkinter  import *
 from tkinter.ttk import *
 
@@ -35,7 +36,9 @@ class Landing_Page (Frame):
         tasks_dict =   {k:self.character.hacks[k] 
                         for k in self.character.hacks 
                           if self.character.hacks[k].h_type == 'task'}
-        
+
+        # apply this to all completion buttons
+        complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
         
         #label above progress bar
         progress_label = Label(self, text="Daily Progress", padding=0)
@@ -136,15 +139,17 @@ class Landing_Page (Frame):
                     messagebox.showinfo("Place Holder", "go to " + args)
 
                 def remove(top, habitID):
-                    self.character.complete_habit(habitID)
+                    self.character.complete_hack(habitID)
                     top.destroy()
 
-                complete_button = Button(habit_frame)
-                complete_button.configure(text = 'COMPLETE ' + habit.title,
-                                         command = lambda top = habit_frame,
+                complete_button = Button(habit_frame, style = 'complete_habit.TButton')
+                complete_button.configure(text = 'COMPLETE ' + habit.title, image = complete_img,
+                                          compound="left", cursor = 'hand2',
+                                          command = lambda top = habit_frame,
                                           habitID = habit.ID : remove(top, habitID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
-
+                complete_button.image = complete_img
+                
 
         #Dailies landing area
         if len(dailies_dict) > 4:
@@ -162,7 +167,6 @@ class Landing_Page (Frame):
             number = len(dailies_dict)
 
         if number != 0:
-
             for x in dailies_dict.keys():
                 dailies = dailies_dict[x]
                 dailies_frame = Frame(area2, style = "hf.TFrame", height = 100)
@@ -173,7 +177,7 @@ class Landing_Page (Frame):
                                      anchor = CENTER, font = "Veranda 16 bold")
                 dailies_name.pack(fill = X, expand = True)
 
-                dailies_description = Label (dailies_frame, text = "Note: " + dailies.description, 
+                dailies_description = Label(dailies_frame, text = "Note: " + dailies.description, 
                                              wraplength = 375, font = "arial 12", padding = 5, background = "#EFE4B0",
                                              justify = LEFT)
                 dailies_description.pack(fill = X, expand = True)
@@ -190,15 +194,17 @@ class Landing_Page (Frame):
                     messagebox.showinfo("Place Holder", "go to " + args)
 
                 def remove_d(top, taskID):
-                    self.character.complete_daily(taskID)
+                    self.character.complete_hack(taskID)
                     top.destroy()
                     
-                complete_button = Button(dailies_frame,
-                                         text = 'COMPLETE ' + dailies.title,
+                complete_button = Button(dailies_frame, style = 'complete_dailies.TButton',
+                                         cursor = 'hand2', text = 'COMPLETE ' + dailies.title,
+                                         image = complete_img, compound="left",
                                          command = lambda top = dailies_frame,
                                          dailyID = dailies.ID : remove_d(top, dailyID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
-
+                complete_button.image = complete_img
+                
 
         #Tasks
         if len(tasks_dict) > 4:
@@ -232,7 +238,8 @@ class Landing_Page (Frame):
                     "very very very very very very very very long sentence")
 
                 task_description = Label(task_frame, text = "Note: " + x, wraplength = 375,
-                                        font = "arial 12", padding = 5, background = "#EFE4B0", justify = LEFT)
+                                         font = "arial 12", padding = 5,
+                                         background = "#EFE4B0", justify = LEFT)
                 task_description.pack(fill = X, expand = True)
 
 
@@ -247,25 +254,47 @@ class Landing_Page (Frame):
                     messagebox.showinfo("Place Holder", "go to " + args)
 
                 def remove_t(top, taskID):
-                    self.character.complete_task(taskID)
+                    self.character.complete_hack(taskID)
                     top.destroy()
                     
-                complete_button = Button(task_frame,
-                                         text='COMPLETE ' + task.title,
+                complete_button = Button(task_frame, style = 'complete_task.TButton',
+                                         cursor = 'hand2', text='COMPLETE ' + task.title,
+                                         image = complete_img, compound="left",
                                          command = lambda top = task_frame,
                                          taskID = task.ID : remove_t(top, taskID))
                 complete_button.pack(fill = X, expand = True, side = BOTTOM)
-
+                complete_button.image = complete_img
+                
         #Bottom go to buttons
-        go_to_habits = Button(area1, text = 'GO TO HABITS', command = self.to_habits)
-        go_to_dailies = Button(area2, text = 'GO TO DAILIES', command = self.to_tasks)
-        go_to_tasks = Button(area3, text='GO TO TASKS', command = self.to_dailies)
+        go_to_habits = Button(area1, text = 'GO TO HABITS', style = 'go_habits.TButton',
+                              cursor = 'hand2', command = self.to_habits)
+        go_to_dailies = Button(area2, text = 'GO TO DAILIES', style = 'go_dailies.TButton',
+                               cursor = 'hand2', command = self.to_tasks)
+        go_to_tasks = Button(area3, text='GO TO TASKS', style = 'go_tasks.TButton',
+                             cursor = 'hand2', command = self.to_dailies)
+        
         go_to_habits.grid(row = 10, column = 0, sticky = 'ews')
         #go_to_habits.pack(fill = X, side = 'bottom', expand = True, anchor = S)
         go_to_dailies.pack(fill = X, side = 'bottom', expand = True, anchor = S)
         go_to_tasks.pack(fill = X, side = 'bottom', expand = True, anchor = S)
 
+        # style completion buttons for habits, dailies, and tasks
+        landing_frame_style.configure('complete_habit.TButton', font = 'arial 12 bold', relief = 'flat',
+                                      padding = '0 3 0 3', foreground = 'black', background = '#C6E29A')
+        landing_frame_style.configure('complete_dailies.TButton', font = 'arial 12 bold', relief = 'flat',
+                                      padding = '0 3 0 3', foreground = 'black', background = '#C6E29A')
+        landing_frame_style.configure('complete_task.TButton', font = 'arial 12 bold', relief = 'flat',
+                                      padding = '0 3 0 3', foreground = 'black', background = '#C6E29A')
         
+        # style the go to buttons; habits, dailies, and tasks
+        landing_frame_style.configure('go_habits.TButton', font = 'arial 14 bold', relief = 'flat',
+                                      padding = 5, foreground = '#54C9EB', background = '#283D57')
+        landing_frame_style.configure('go_dailies.TButton', font = 'arial 14 bold', relief = 'flat',
+                                      padding = 5, foreground = '#54C9EB', background = '#283D57')
+        landing_frame_style.configure('go_tasks.TButton', font = 'arial 14 bold', relief = 'flat',
+                                      padding = 5, foreground = '#54C9EB', background = '#283D57')
+
+
     def start(self):
 
         self.progress["value"] = 0
