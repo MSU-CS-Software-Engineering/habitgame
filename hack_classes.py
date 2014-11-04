@@ -162,6 +162,9 @@ class Hack:
         
         return hack_dict
     
+    def get_hack_type(self):
+        return self.h_type
+    
 class Item:
     """
       Class for purchasable software/hardware
