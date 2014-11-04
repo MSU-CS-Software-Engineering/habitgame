@@ -11,13 +11,14 @@ class \hyperlink{classauthenticate_1_1db}{db}
 \subsection{Detailed Description}
 \begin{DoxyVerb}This class handles authorization and sync for the dropbox storage. How to use:
 When we start the program, instantiate the class and assign it to a variable (we
-need to have a copy of the dropbox client to pass later).
+need to have a copy of the dropbox client to sync files).
   
-client = db()
+db = db()
   
-client.dropbox_start() will start the process. If there's already a token in a
-local file, it simply created the dropbox client.
+The __init__ function below starts the authentication process. If there is a local
+character data file it will simply make the client from the data inside with no
+login window necessary. If there is no local file, it opens the dropbox site and
+our login page to finish the process of authentication.
   
-client.sync_files(file_name) will sync between local and remote files.
-\end{DoxyVerb}
+db.sync_files(file_name) will sync between local and remote files.\end{DoxyVerb}
  

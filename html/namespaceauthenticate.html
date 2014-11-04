@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.3.1"/>
-<title>My Project: authenticate Namespace Reference</title>
+<title>Daily Hack: authenticate Namespace Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">Daily Hack
    </div>
   </td>
  </tr>
@@ -95,18 +95,19 @@ Classes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><pre class="fragment">This class handles authorization and sync for the dropbox storage. How to use:
 When we start the program, instantiate the class and assign it to a variable (we
-need to have a copy of the dropbox client to pass later).
+need to have a copy of the dropbox client to sync files).
   
-client = db()
+db = db()
   
-client.dropbox_start() will start the process. If there's already a token in a
-local file, it simply created the dropbox client.
+The __init__ function below starts the authentication process. If there is a local
+character data file it will simply make the client from the data inside with no
+login window necessary. If there is no local file, it opens the dropbox site and
+our login page to finish the process of authentication.
   
-client.sync_files(file_name) will sync between local and remote files.
-</pre> </div></div><!-- contents -->
+db.sync_files(file_name) will sync between local and remote files.</pre> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 17 2014 13:26:38 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 4 2014 13:07:22 for Daily Hack by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
