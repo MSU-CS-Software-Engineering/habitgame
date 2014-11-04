@@ -329,7 +329,7 @@ class Game_Data:
         for hack in character_data['hacks']:
             new_hack = Hack(hack['h_type'],
                             hack['title'],
-                            hack['description'],
+                            hack['desc'],
                             hack['value'],
                             hack['exp'])
            

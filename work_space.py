@@ -142,7 +142,7 @@ class Work_Space (Frame):
             edit_habit_btn.image = edit_img
 
             complete_habit_btn = Button(habit_btn_frame, text='Complete habit', image=complete_img,
-                                        compound="left", style = 'complete.TButton', cursor = 'hand2',
+                                        compound="left", style = 'complete_task.TButton', cursor = 'hand2',
                                         command = lambda h=h: self.edit_hack(h)) #FIX ME -D
             complete_habit_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_habit_btn.image = complete_img
@@ -225,7 +225,7 @@ class Work_Space (Frame):
             edit_dailies_btn.image = edit_img
             
             complete_dailies_btn = Button(dailies_btn_frame, text = 'Complete Daily', image=complete_img,
-                                          compound="left", style = 'complete.TButton', cursor = 'hand2',
+                                          compound="left", style = 'complete_task.TButton', cursor = 'hand2',
                                           command = lambda d=d: self.edit_hack(d)) #FIX ME -D
             complete_dailies_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_dailies_btn.image = complete_img
@@ -308,7 +308,7 @@ class Work_Space (Frame):
             edit_tasks_btn.image = edit_img
             
             complete_tasks_btn = Button(tasks_btn_frame, text = 'Complete Task', image=complete_img,
-                                        compound="left", style = 'complete.TButton', cursor = 'hand2',
+                                        compound="left", style = 'complete_task.TButton', cursor = 'hand2',
                                         command =lambda t=t: self.edit_hack(t)) #FIX ME -D
             complete_tasks_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_tasks_btn.image = complete_img
@@ -343,7 +343,7 @@ class Work_Space (Frame):
                               padding = 5, foreground = 'black', background = '#FF3C3C')
         frame_style.configure('edit.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#59AEE1')
-        frame_style.configure('complete.TButton', font = 'arial 14 bold', relief = 'flat',
+        frame_style.configure('complete_task.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#87DC5F')
         
         frame_style.configure('add_habit.TButton', font = 'arial 14 bold', relief = 'flat',

@@ -1,3 +1,4 @@
+import os.path
 from tkinter  import *
 from tkinter.ttk import *
 
@@ -10,7 +11,7 @@ class Hack_Frame(Frame):
         self.parent = parent
         self.ID = ID
         self.hack_type = hack_type
-
+        
         self.name_label = Label(self,
                                 text = '',
                                 anchor = CENTER,
@@ -40,16 +41,32 @@ class Hack_Frame(Frame):
                                      background = "#EFE4B0")
         self.date_time_label.pack(fill = X, expand = True)
 
+        # apply this to all completion buttons
+        self.complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
+        
         if empty == 0:
             messagebox.showinfo("Info", "non-empty")
-            self.complete_button = Button(self)
-            self.complete_button.configure(text = 'Complete',
+            self.complete_button = Button(self, style = 'complete.TButton')
+            self.complete_button.configure(cursor = 'hand2',
+                                           text = 'Complete',
+                                           image = self.complete_img,
+                                           compound = 'left',
                                            command = self.remove)
                                        
             self.complete_button.pack(fill = X, expand = True,
                                       side = BOTTOM)
 
-        self.set_style('frame_style.TFrame', 'white', 100)
+            self.complete_button.image = self.complete_img
+
+            style = Style()
+            style.configure('complete.TButton',
+                            font = 'arial 12 bold',
+                            relief = 'flat',
+                            padding = '0 3 0 3',
+                            foreground = 'black',
+                            background = '#C6E29A')
+            
+        self.set_style('frame_style.TFrame', '#EBEDF1', 100)
 
     def remove(self):
         #Pass the data to the top-level(parent->parent->parent)
@@ -107,12 +124,12 @@ class Landing_Area_Frame(Frame):
         
         self.configure(style = 'frame_style.TFrame')
 
-    def set_header(self, text):
+    def set_header(self, text, color):
         self.header = Label(self, text = text,
                             anchor = CENTER,
                             font = "Veranda 18 bold",
                             foreground = 'black',
-                            background = '#70A53A')
+                            background = color)
 
         self.header.grid(row = 0, column = self.column, sticky = 'new',
                          pady = (3,0), padx = 3)
@@ -137,7 +154,7 @@ class Landing_Area_Frame(Frame):
             self.number_of_frames = 0
             
             hack_frame = Hack_Frame(self, 0, self.hack_type, 1)
-            hack_frame.grid(row = 1, column = self.column, sticky = 'news',pady = (3,0), padx = 3)
+            hack_frame.grid(row = 1, column = self.column, sticky = 'news', pady = (3,0), padx = 3)
 
             if self.hack_type == 'daily':
                 label_string = 'dailies'
@@ -213,7 +230,7 @@ class Landing_Page (Frame):
         #three areas for adding dailies, task, habit widgets
         
         self.habit_area = Landing_Area_Frame(self, 'habit')
-        self.habit_area.set_header('HABITS')
+        self.habit_area.set_header('HABITS', '#D95B5B')
         self.habit_area.set_frames(self.habit_dict)
         self.habit_area.grid(row = 6, column = 0,
                              columnspan = 2, rowspan = 4,
@@ -225,7 +242,7 @@ class Landing_Page (Frame):
 
                 
         self.daily_area = Landing_Area_Frame(self, 'daily')
-        self.daily_area.set_header('DAILIES')
+        self.daily_area.set_header('DAILIES', '#9AD95B')
         self.daily_area.set_frames(self.dailies_dict)
         self.daily_area.grid(row = 6, column = 2, columnspan = 2,
                              rowspan = 4, padx = 5, sticky = 'enws')
@@ -235,7 +252,7 @@ class Landing_Page (Frame):
                 
         
         self.task_area = Landing_Area_Frame(self, 'task')
-        self.task_area.set_header('TASKS')
+        self.task_area.set_header('TASKS', '#5BADD9')
         self.task_area.set_frames(self.tasks_dict)
         self.task_area.grid(row = 6, column = 4, columnspan = 2,
                             rowspan = 4, padx = 5, sticky = 'news')
@@ -245,9 +262,16 @@ class Landing_Page (Frame):
 
         
         #Bottom go to buttons
-        self.go_to_habits_button = Button(self.habit_area, text = 'GO TO HABITS', command = self.button_default)
-        self.go_to_dailies_button = Button(self.daily_area, text = 'GO TO DAILIES', command = self.button_default)
-        self.go_to_tasks_button = Button(self.task_area, text='GO TO TASKS', command = self.button_default)
+        self.go_to_habits_button = Button(self.habit_area, style = 'go_to.TButton', cursor = 'hand2',
+                                          text = 'GO TO HABITS', command = self.button_default)
+        self.go_to_dailies_button = Button(self.daily_area, style = 'go_to.TButton', cursor = 'hand2',
+                                           text = 'GO TO DAILIES', command = self.button_default)
+        self.go_to_tasks_button = Button(self.task_area, style = 'go_to.TButton', cursor = 'hand2',
+                                         text='GO TO TASKS', command = self.button_default)
+        
+        Style().configure('go_to.TButton',font = 'arial 14 bold', relief = 'flat',
+                          padding = 5, foreground = '#54C9EB', background = '#283D57')
+        
         self.go_to_habits_button.grid(row = 10, column = 0, sticky = 'ews')
         #go_to_habits.pack(fill = X, side = 'bottom', expand = True, anchor = S)
         self.go_to_dailies_button.pack(fill = X, side = 'bottom', expand = True, anchor = S)
