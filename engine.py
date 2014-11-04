@@ -298,6 +298,8 @@ class GUI(Frame):
         menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
                           self.go_to_dailies, self.go_to_generic, self.go_to_shop]
 
+        self.menu_link_buttons = []
+        
         for i in range(6):
             self.make_menu(i, menu_titles[i], menu_functions[i])
 
@@ -378,14 +380,43 @@ class GUI(Frame):
         footer.grid(row=0, column=1, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
 
-    def make_menu(self, col_number, name, function):
-        # make common 'menu bar' links
-        menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=name)
+    def make_menu(self, col_number, menu_title, go_to_page):
+        """
+        Make's common menu links. When the mouse hovers over the link, the foreground/background changes color.
+        When a link is clicked on, the foreground/background color stays the same as the hover over color and
+        it does not change until a new link is selected. Note: other links can still be hovered over and they will
+        highlight independently regardless of which link is currently selected.
+        """    
+        self.button_selected = False
+        self.select_id = 0
+        
+        def mouse_leave():
+            if not self.button_selected or col_number != self.select_id:
+                menu_title.configure(background='black', foreground='#EBEBEB')
+
+        def mouse_enter():
+            if self.select_id != col_number:
+                menu_title.configure(background='#0F0F0F', foreground='#FFD237')
+
+        def go_to():
+            self.button_selected = True
+            self.select_id = col_number
+            for i in range(len(self.menu_link_buttons)):
+                if i != col_number:
+                    self.menu_link_buttons[i].configure(background='black', foreground='#EBEBEB')
+
+            menu_title.configure(background='#283D57', foreground='#79DB44')
+            go_to_page()
+            
+        menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=menu_title)
         menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        menu_title.bind('<Enter>', lambda e: menu_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        menu_title.bind('<Leave>', lambda e: menu_title.configure(background='black', foreground='#EBEBEB'))
-        menu_title.bind('<1>', lambda e: function()) 
+
+        menu_title.bind('<Enter>', lambda e: mouse_enter())
+        menu_title.bind('<Leave>', lambda e: mouse_leave())
+        menu_title.bind('<1>', lambda e: go_to())
+        
         menu_title.grid(row=0, column=col_number+1, sticky='e')
+        self.menu_link_buttons.append(menu_title)
         
     def bind_buttons(self):
         #Navigation Buttons
