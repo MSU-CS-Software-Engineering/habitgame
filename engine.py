@@ -406,7 +406,7 @@ class GUI(Frame):
         #messagebox.showinfo("Hack Info", "Hack:"+hack_type+" "+str(ID))
         self.character.remove_hack(ID)
         self.redraw()
-    '''    
+        
     def page_navigator(self, page):
         if page == 'habit':
             self.show_frame('habit')
@@ -419,7 +419,7 @@ class GUI(Frame):
             
         else:
             pass
-    '''
+    
     def redraw(self):
         """
         Redraws each area of the GUI after data is modified
