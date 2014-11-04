@@ -124,12 +124,12 @@ class Landing_Area_Frame(Frame):
         
         self.configure(style = 'frame_style.TFrame')
 
-    def set_header(self, text):
+    def set_header(self, text, color):
         self.header = Label(self, text = text,
                             anchor = CENTER,
                             font = "Veranda 18 bold",
                             foreground = 'black',
-                            background = '#70A53A')
+                            background = color)
 
         self.header.grid(row = 0, column = self.column, sticky = 'new',
                          pady = (3,0), padx = 3)
@@ -254,9 +254,9 @@ class Landing_Page (Frame):
         #progress.columnconfigure(0, weight = 1)
 
         #three areas for adding dailies, task, habit widgets
-        
+ 
         self.habit_area = Landing_Area_Frame(self, 'habit')
-        self.habit_area.set_header('HABITS')
+        self.habit_area.set_header('HABITS', '#D95B5B')
         self.habit_area.set_frames(self.habit_dict)
         self.habit_area.grid(row = 6, column = 0,
                              columnspan = 2, rowspan = 4,
@@ -266,19 +266,19 @@ class Landing_Page (Frame):
         self.habit_area.rowconfigure(6, weight = 1)
         self.habit_area.columnconfigure(0, weight = 1)
 
-                
+
         self.daily_area = Landing_Area_Frame(self, 'daily')
-        self.daily_area.set_header('DAILIES')
+        self.daily_area.set_header('DAILIES', '#9AD95B')
         self.daily_area.set_frames(self.dailies_dict)
         self.daily_area.grid(row = 6, column = 2, columnspan = 2,
                              rowspan = 4, padx = 5, sticky = 'enws')
         self.daily_area.rowconfigure(6, weight = 1)
         self.daily_area.columnconfigure(2, weight = 1)
         self.daily_area.grid_propagate(False)
-                
+        
         
         self.task_area = Landing_Area_Frame(self, 'task')
-        self.task_area.set_header('TASKS')
+        self.task_area.set_header('TASKS', '#5BADD9')
         self.task_area.set_frames(self.tasks_dict)
         self.task_area.grid(row = 6, column = 4, columnspan = 2,
                             rowspan = 4, padx = 5, sticky = 'news')
