@@ -225,9 +225,28 @@ class GUI(Frame):
         self.rowconfigure(5, weight=1)
         self.rowconfigure(4, pad=7)
 
+        self.make_menu_bar()
+        self.make_banner()
+        self.make_stats_banner()
+        self.make_character_frame()
+        self.make_footer()
+ 
+        self.frames = {}
+        
+        work_space_frame = Work_Space(self, self.character)
+        generic_frame = Generic(self, self.character)
+        landing_page_frame = Landing_Page(self, self.character)
 
-        # create menu bar with file, edit, and help drop down tabs
-        # temp_menu_func is the default command for all the menu options
+        self.frames['Work_Space'] = work_space_frame
+        self.frames['Generic'] = generic_frame
+        self.frames['Landing_Page'] = landing_page_frame
+        self.show_frame('Landing_Page')
+        
+    def make_menu_bar(self):
+        """
+        create menu bar with file, edit, and help drop down tabs
+        temp_menu_func is the default command for all the menu options
+        """
         self.menu = Menu(self)
 
         self.file_menu = Menu(self.menu, tearoff=0)
@@ -256,7 +275,12 @@ class GUI(Frame):
 
         self.master.config(menu=self.menu)
 
-        # create banner
+    def make_banner(self):
+        """
+        create banner, includes the Daily Hack logo and common links to
+        habits, tasks, dailies, etc.
+        """
+        
         self.banner = Frame(self, style='banner.TFrame', padding=0)
         self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
         self.style.configure('banner.TFrame', background='black')
@@ -270,26 +294,49 @@ class GUI(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home()) 
         self.style.configure('hack_logo.TLabel', background='black')
 
-        # make common 'menu bar' links
-        def make_menu(col_number, name, function):
-            menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=name)
-            menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-            menu_title.bind('<Enter>', lambda e: menu_title.configure(background='#0F0F0F', foreground='#FFD237'))
-            menu_title.bind('<Leave>', lambda e: menu_title.configure(background='black', foreground='#EBEBEB'))
-            menu_title.bind('<1>', lambda e: function())
-            menu_title.grid(row=0, column=col_number+1, sticky='e')
-
         menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop']
-        menu_functions = [self.go_to_home,
-                          self.go_to_habits,
-                          self.go_to_tasks,
-                          self.go_to_dailies,
-                          self.go_to_generic,
-                          self.go_to_shop]
+        menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
+                          self.go_to_dailies, self.go_to_generic, self.go_to_shop]
 
         for i in range(6):
-            make_menu(i, menu_titles[i], menu_functions[i])
+            self.make_menu(i, menu_titles[i], menu_functions[i])
+
+    def make_stats_banner(self):
+        # create stats frame; embedded in the character frame
+        statsBg = Frame(self, style="statsFrame.TFrame")
+        statsBg.grid(row=1, column=0, columnspan=9, sticky='we')
+        statsBg.columnconfigure(0, weight=1)
         
+        self.stats_frame = Frame(statsBg, style="statsFrame.TFrame")
+        self.stats_frame.grid(row=0, column=0)
+
+        # add experience stats info
+        exp_label = Label(self.stats_frame, text="exp:", style="statsLabel.TLabel")
+        exp_label.grid(row=0, column=0, sticky='nesw', pady=4, padx=5)
+        
+        exp = Label(self.stats_frame, textvariable = self.character_exp)
+        exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
+        exp.configure(background="#283D57", font="arial 12 bold", foreground='#C5BD25')
+
+        # add cash stats info
+        cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
+        cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
+        cash = Label(self.stats_frame, textvariable= self.character_cash)
+        cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
+        cash.configure(background="#283D57", font="arial 12 bold", foreground='#3BB623')
+        
+        # add level stats info
+        level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
+        level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
+
+        level = Label(self.stats_frame, textvariable = self.character_level)
+        level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
+        level.configure(background="#283D57", font="arial 12 bold", foreground='#FF7F2A')
+        
+        self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
+        self.style.configure("statsFrame.TFrame", background="#283D57")
+        
+    def make_character_frame(self):
         # create character data frame
         self.char_frame = Frame(self)
         self.char_frame.grid(row=2, column=0, sticky='news')
@@ -308,43 +355,7 @@ class GUI(Frame):
         character_image.grid(row=1, column=0, stick=W, padx=5)
         character_image.image = char_img
 
-
-        # create stats frame; embedded in the character frame
-        statsBg = Frame(self, style="statsFrame.TFrame")
-        statsBg.grid(row=1, column=0, columnspan=9, sticky='we')
-        statsBg.columnconfigure(0, weight=1)
-        
-        self.stats_frame = Frame(statsBg, style="statsFrame.TFrame")
-        self.stats_frame.grid(row=0, column=0)
-
-        # add experience stats info
-        exp_label = Label(self.stats_frame, text="exp:", style="statsLabel.TLabel")
-        exp_label.grid(row=0, column=0, sticky='nesw', pady=4, padx=5)
-        
-        exp = Label(self.stats_frame, textvariable = self.character_exp)
-        exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
-        exp.configure(background="#283D57", font="arial 12 bold", foreground='#C5BD25')
-
-        # add cash stats info
-        
-        cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
-        cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
-        cash = Label(self.stats_frame, textvariable= self.character_cash)
-        cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
-        cash.configure(background="#283D57", font="arial 12 bold", foreground='#3BB623')
-        
-        # add level stats info
-        level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
-        level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
-
-        level = Label(self.stats_frame, textvariable = self.character_level)
-        level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
-        level.configure(background="#283D57", font="arial 12 bold", foreground='#FF7F2A')
-        
-        self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
-        self.style.configure("statsFrame.TFrame", background="#283D57")
-        
-        
+    def make_footer(self):
         # footer
         footer_frame_bg = Frame(self, style='footer.TFrame', padding=3)
         footer_frame_bg.grid(row=10, column=0, columnspan=7, sticky= (W, E))
@@ -367,20 +378,15 @@ class GUI(Frame):
         footer.grid(row=0, column=1, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
 
- 
-        self.frames = {}
+    def make_menu(self, col_number, name, function):
+        # make common 'menu bar' links
+        menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=name)
+        menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        menu_title.bind('<Enter>', lambda e: menu_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        menu_title.bind('<Leave>', lambda e: menu_title.configure(background='black', foreground='#EBEBEB'))
+        menu_title.bind('<1>', lambda e: function()) 
+        menu_title.grid(row=0, column=col_number+1, sticky='e')
         
-        
-        work_space_frame = Work_Space(self, self.character)
-        generic_frame = Generic(self, self.character)
-        landing_page_frame = Landing_Page(self, self.character)
-
-        self.frames['Work_Space'] = work_space_frame
-        self.frames['Generic'] = generic_frame
-        self.frames['Landing_Page'] = landing_page_frame
-        self.show_frame('Landing_Page')
-        
-
     def bind_buttons(self):
         #Navigation Buttons
         landing_page = self.frames['Landing_Page']

@@ -40,19 +40,23 @@ class Hack_Frame(Frame):
                                      padding = 5,
                                      background = "#EFE4B0")
         self.date_time_label.pack(fill = X, expand = True)
-
+ 
         if empty == 0:
             self.complete_button = Button(self)
             self.complete_button.configure(text = 'Complete',
-                                           style = 'complete_task.TButton', command = self.remove)
+                                           style = 'complete.TButton',
+                                           image = self.parent.parent.complete_button_image,
+                                           compound = 'left',
+                                           cursor = 'hand2',
+                                           command = self.remove)
 
             complete_button_style = Style()
-            complete_button_style.configure('complete_task.TButton',
+            complete_button_style.configure('complete.TButton',
                                             font = 'arial 12 bold',
                                             relief = 'flat',
                                             padding = '0 3 0 3',
-                                            fg = 'black',
-                                            bg = '#C6E29A')
+                                            foreground = 'black',
+                                            background = '#C6E29A')
             
             self.complete_button.image = self.parent.parent.complete_button_image
 
@@ -60,7 +64,7 @@ class Hack_Frame(Frame):
                                       expand = True,
                                       side = BOTTOM)
             
-        self.set_style('frame_style.TFrame', 'white', 100)
+        self.set_style('frame_style.TFrame', '#EBEDF1', 100)
 
     def remove(self):
         #Pass the data to the top-level(parent->parent->parent)
@@ -304,14 +308,14 @@ class Landing_Page (Frame):
                                          cursor = 'hand2',
                                          style = 'go_to_button.TButton')
                                         
-
+        
         go_to_button_style = Style()
 
         go_to_button_style.configure('go_to_button.TButton',
                                      font = 'arial 14 bold',
                                      relief = 'flat',
                                      padding = 5,
-                                     foregronud ='#54C9EB',
+                                     foreground ='#54C9EB',
                                      background = '#283D57')
         
         self.go_to_habits_button.grid(row = 10, column = 0, sticky = 'ews')
