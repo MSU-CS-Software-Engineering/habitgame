@@ -7,17 +7,262 @@
 
 #import landing_page.py
 import os.path
+from datetime import date #For timestamps
 from file_parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 
-from hack_classes import *
 from landing_page import *
 from generic_list import *
-from work_space import *
-import authenticate
-from tkinter import filedialog # open/save file
+import authenticate     
+
+        
+class Character:
+    """
+      Class for Habit character profile
+
+      Variables:
+        name: Name of character       (string)
+        cash: Total currency          (int)
+        exp: Total experience points  (int)
+        level: Current level          (int)
+        habits: Current habits        (list of Habit objects)
+        tasks:                        (list of Task objects)
+        dailies:                      (list of Daily objects)
+        items: Owned (soft|hard)ware  (list of Item objects)
+    """
+    def __init__(self, name):
+        self.hack_index = 0
+        self.name = name
+        self.cash = 0
+        self.exp = 0
+        self.level = 1
+        self.hacks = {}
+        self.items = []
+
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary 
+        which can then be converted to a string
+        """
+        character_dict = {'name': self.name,
+                          'cash': self.cash,
+                          'exp' : self.exp,
+                          'level' : self.level,
+                          'hacks': None,
+                          'items': None}
+
+        hacks_list = []
+        items_list = []
+        
+        for hack in self.hacks:
+            hacks_list.append(hacks.serialize())
+
+        for item in self.items:
+            items_list.append(item.serialize())
+
+        character_dict['hacks'] = hacks_list
+        character_dict['items'] = items_list
+        
+        return character_dict
+
+    def show_info(self):
+        """
+        Displays the characters current information:
+        Cash, name, experience, level, habits, and items
+        """
+        print("Player Info:")
+        print("Name:       "+self.name)
+        print("Cash:      $"+str(self.cash))
+        print("Experience: "+str(self.exp))
+        print("Level:      "+str(self.level))
+        print("\n\nHacks:\n-------")
+        self.show_hacks()
+        print("\n\nItems:\n------")
+        self.show_items()
+
+    def add_hack(self, hack):
+        if hack.ID == -1:
+            hack.ID = self.hack_index
+        self.hacks[hack.ID] = hack
+        self.hack_index = max(self.hacks.keys()) + 1
+        return hack.ID
+
+    def edit_hack(self, hack_ID, hack):
+        try:
+            self.remove_hack(hack_ID)
+            hack.ID = hack_ID
+            self.add_hack(hack)
+            return True
+        except:
+            print("Edit failed!")
+            return False
+
+    def remove_hack(self, hack_ID):
+        try:
+            del self.hacks[hack_ID]
+            return True
+        except:
+            print("Invalid hack id!")
+            return False
+
+    def complete_hack(self, hack_ID):
+        hack = self.get_hack(hack_ID)
+        self.cash += hack.value
+        self.exp += hack.exp
+        self.remove_hack(hack_ID)
+
+    def get_hack(self, hack_ID):
+        try:
+            hack = self.hacks[hack_ID]
+            return hack
+        except:
+            print("Error: Invalid hack id")
+
+
+    #Shouldn't be needed with the new ID model
+
+    #def set_hack_IDs(self):     
+    #    for hack in enumerate(self.hacks):
+    #        hack[1].ID = hack[0]
+
+
+    def show_hack(self, hack_id):
+        try:
+            hack = self.hacks[hack_id]
+            print("Type:        " + hack.h_type)
+            print("Title:       " + hack.title)
+            print("Description: " + hack.description)
+            print("ID:          " + str(hack.ID))
+            print("Timestamp:   " + str(hack.timestamp))
+            print("Value:       " + str(hack.value))
+            print("Exp Pts:     " + str(hack.exp))
+
+        except:
+            print("Error: Invalid hack_id")
+
+    def show_hacks(self):
+        for hack in self.hacks:
+            self.show_hack(hack.ID)
+
+    def add_item(self, item):
+        if len(self.items) != 0:
+            item.ID = len(self.items)
+        
+        self.items.append(item)
+        return item.ID
+
+    def remove_item(self, item_ID):
+        try:
+            item_id = self.items.pop(item_ID).ID
+            self.set_item_IDs()
+            return item_id
+        except:
+            print("Invalid item id!")
+            return False
+
+    def get_item(self, item_ID):
+        try:
+            item = self.items[item_ID]
+            return self.items[item_ID]
+        except:
+            print("Error: Invalid item ID")
+
+
+    def set_item_IDs(self):
+        for item in enumerate(self.items):
+            item[1].ID = item[0]
+
+ 
+    def show_item(self, item_ID):
+        
+        try:
+            item = self.items[item_ID]
+            print("Name:   " + item.name)
+            print("ID:     " + str(item.ID))
+            print("Value:  " + str(item.value))
+            print("Uses:   " + str(item.uses))
+        except:
+            print("Error: Invalid item ID")
+
+    def show_items(self):
+        for item in self.items:
+            self.show_item(item.ID)
+
+class Hack:
+    """
+      Class for Individual Hacks (Habits, dailies, and goals)
+
+      Variables:
+        h_type: Type of hack (habit, daily, goal)    (string)
+        title: Name of hack                          (string)
+        description: Short description of hack       (string) 
+        ID: Number to hold index in                  (int)
+        timestamp: Last-accessed date                (date)
+        value: Cash reward/penalty                   (int)
+        exp: Experience point value                  (int)
+    """
+    def __init__(self, h_type, title, desc, value, exp = 100 ):
+        self.h_type = h_type
+        self.title = title
+        self.description = desc
+        self.ID = -1
+        self.timestamp = date.today()
+        self.value = value
+        self.exp = exp    #Temporarily defaults to 100.
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary 
+        which can be converted to a string
+        """
+        hack_dict = {
+                      'type':self.h_type,
+                      'title':self.title,
+                      'desc':self.description,
+                      'ID'  :self.ID,
+                      'timestamp':str(self.timestamp),
+                      'value':self.value,
+                      'exp':self.exp
+                     }
+        
+        return hack_dict
+    
+class Item:
+    """
+      Class for purchasable software/hardware
+
+      Variables:
+        name: Name of item                                (string)
+        ID: Number to hold index in itemlist              (int)
+        image: Name of accompanying image                 (string)
+        value: Currency value of item                     (int)
+        uses: Uses before item expires [-1 for infinite]  (int)
+        effect: Special function that the item performs   (function)
+    """
+    def __init__(self, name, image, value, uses, effect = None):
+        self.name = name
+        self.ID = 0
+        self.image = image
+        self.value = value
+        self.uses = uses
+        self.effect = effect
+
+    def serialize(self):
+        """
+        Serializes class properties to a dictionary
+        which can be converted to a string
+        """
+        item_dict = {'name':self.name,
+                      'ID':self.ID,
+                      'image':self.image,
+                      'value':self.value,
+                      'uses':self.uses,
+                      'effect':self.effect}
+        
+        return item_dict
 
 
 class Game_Data:
@@ -45,7 +290,7 @@ class Game_Data:
             file_parser.update_file(self.character_data)
             
         except:
-            self.error
+            self.error('Failed to write to file')
         
     def load_data(self):
         """
@@ -61,51 +306,53 @@ class Game_Data:
             self.character_data['level'] = data.parse_level()
             self.character_data['exp'] = data.parse_exp()
             self.character_data['cash'] = data.parse_cash()
-            
+            self.character_data['items'] = data.parse_items()
             #return self.build_character(self.character_data)
         
         except:
             self.error('Failed to load data')
 
 
-    def build_character(self, character_data):
+    def build_character(self):
         """
         Builds a character object from the Game_Data's 
         character_data. 
         """
-        try:
-            new_character = Character(character_data['name'])
-            new_character.level = character_data['level']
-            new_character.exp = character_data['exp']
-            new_character.cash = character_data['cash']
+        #try:
+        character_data = self.character_data
+        new_character = Character(character_data['name'])
+        new_character.level = character_data['level']
+        new_character.exp = character_data['exp']
+        new_character.cash = character_data['cash']
             
-            for hack in character_data['hacks']:
-                new_hack = Habit(hack['title'],
-                                  hack['description'],
-                                  None,#value
-                                  None,#exp
-                                  None,#hack_type
-                                  hack['index'])
+        # REVISIT THIS -D
+        for hack in character_data['hacks']:
+            new_hack = Hack(hack['h_type'],
+                            hack['title'],
+                            hack['description'],
+                            hack['value'],
+                            hack['exp'])
+           
+            new_character.add_hack(new_hack)
+           
+        for item in character_data['items']:
+            new_item = Item(item['title'],
+                            item['image'],
+                            item['value'],
+                            item['uses'],
+                            item['effect'])
             
-                new_character.add_hack(new_hack)
-            '''
-            for item in character_data['items']:
-                new_item = Item(item['name'],
-                                item['image'],
-                                item['value'],
-                                item['uses'],
-                                item['effect'])
+            new_character.add_item(new_item)
             
-                new_character.add_item(new_item)
-            '''
-            #Resynchronize hack index
+        #Resynchronize hack index
+        if len(new_character.hacks.keys()) > 0:
             new_character.hack_index = max(new_character.hacks.keys())
 
-            return new_character
+        return new_character
 
-        except:
-            self.error("Failed to build character from" \
-                       " default character data")
+        #except:
+        #    self.error("Failed to build character from" \
+        #               " default character data")
     
     def error(self, error_message):
         print("ERROR:", error_message)
@@ -152,29 +399,37 @@ def load(name):
     return new_character
 
 
-class GUI (Frame):
+# Placed here to resolve import loop issues with work_space, engine, and
+# shop.
+from work_space import *
 
-    def __init__(self, master, character):
-        Frame.__init__(self, master)
-        
+class Controller(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)        
         pad = 100
-        
-        self.character = character
+        self.game_data = Game_Data()
+        self.game_data.load_data()
+        self.character = self.game_data.build_character()
         self.character_name = StringVar()
         self.character_exp = StringVar()
         self.character_cash = StringVar()
         self.character_level = StringVar()
-        self.character_name.set(self.character.name)
-        self.character_exp.set(self.character.exp)
-        #self.character_cash.set(self.character.cash)
-        self.character_level.set(self.character.level)
+
+        self.update_name()
+        self.update_exp()
+        self.update_cash()
+        self.update_level()
+
+        #messagebox.showinfo("Character:", self.character.serialize())
+        
         self._geom='800x600+0+0'
         master.geometry("{0}x{1}+0+0".format(
             master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
         master.bind('<Escape>',self.toggle_geom)
         self.master = master
         self.initUI()
-
+        self.bind_buttons()
+        
         # link the shop so it can call GUI's buy_item()
         MyShop.setApp(self)
 
@@ -199,34 +454,33 @@ class GUI (Frame):
 
         # create menu bar with file, edit, and help drop down tabs
         # temp_menu_func is the default command for all the menu options
-        menu = Menu(self)
+        self.menu = Menu(self)
 
-        file_menu = Menu(menu, tearoff=0)
-        file_menu.add_command(label="New game", command=self.temp_menu_func)
-        file_menu.add_command(label="Load game", command=self.temp_menu_func)
-        file_menu.add_command(label="Save game", command=self.save_game)
-        file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.master.destroy)
-        menu.add_cascade(label="FILE", menu=file_menu)
+        self.file_menu = Menu(self.menu, tearoff=0)
+        self.file_menu.add_command(label="New game", command=self.temp_menu_func)
+        self.file_menu.add_command(label="Load game", command=self.temp_menu_func)
+        self.file_menu.add_command(label="Save game", command=self.save_game)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Exit", command=self.master.destroy)
+        self.menu.add_cascade(label="FILE", menu=self.file_menu)
 
-        edit_menu = Menu(menu, tearoff=0)
-        edit_menu.add_command(label="Habits", command=self.temp_menu_func)
-        edit_menu.add_command(label="Dailies", command=self.temp_menu_func)
-        edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
-        menu.add_cascade(label="EDIT", menu=edit_menu)
+        self.edit_menu = Menu(self.menu, tearoff=0)
+        self.edit_menu.add_command(label="Habits", command=self.temp_menu_func)
+        self.edit_menu.add_command(label="Dailies", command=self.temp_menu_func)
+        self.edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
+        self.menu.add_cascade(label="EDIT", menu=self.edit_menu)
 
-        options_menu = Menu(menu, tearoff=0)
-        options_menu.add_command(label="Game", command=self.no_where)
-        options_menu.add_command(label="Settings", command=self.no_where)
-        menu.add_cascade(label="OPTIONS", menu=options_menu)
+        self.options_menu = Menu(self.menu, tearoff=0)
+        self.options_menu.add_command(label="Game", command=self.no_where)
+        self.options_menu.add_command(label="Settings", command=self.no_where)
+        self.menu.add_cascade(label="OPTIONS", menu=self.options_menu)
          
-        help_menu = Menu(menu, tearoff=0)
-        help_menu.add_command(label="How to play", command=self.temp_menu_func)
-        help_menu.add_command(label="About", command=self.temp_menu_func)
-        menu.add_cascade(label="HELP", menu=help_menu)
+        self.help_menu = Menu(self.menu, tearoff=0)
+        self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
+        self.help_menu.add_command(label="About", command=self.temp_menu_func)
+        self.menu.add_cascade(label="HELP", menu=self.help_menu)
 
-        self.master.config(menu=menu)
-
+        self.master.config(menu=self.menu)
 
         # create banner
         self.banner = Frame(self, style='banner.TFrame', padding=0)
@@ -239,35 +493,63 @@ class GUI (Frame):
         logo_image.image = logo_img
         logo_image.bind('<Enter>', lambda e: logo_image.configure(background='#0F0F0F'))
         logo_image.bind('<Leave>', lambda e: logo_image.configure(background='black')) 
-        logo_image.bind('<1>', lambda e: self.home()) 
+        logo_image.bind('<1>', lambda e: self.go_to_home()) 
         self.style.configure('hack_logo.TLabel', background='black')
 
-        # make common 'menu bar' links
-        def make_menu(col_number, name, function):
-            menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=name)
-            menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-            menu_title.bind('<Enter>', lambda e: menu_title.configure(background='#0F0F0F', foreground='#FFD237'))
-            menu_title.bind('<Leave>', lambda e: menu_title.configure(background='black', foreground='#EBEBEB'))
-            menu_title.bind('<1>', lambda e: function()) 
-            menu_title.grid(row=0, column=col_number+1, sticky='e')
+        self.home_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Home')
+        self.home_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        self.home_title.bind('<Enter>', lambda e: self.home_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        self.home_title.bind('<Leave>', lambda e: self.home_title.configure(background='black', foreground='#EBEBEB'))
+        self.home_title.bind('<1>', lambda e: self.go_to_home()) 
+        self.home_title.grid(row=0, column=1, sticky='e')
+        
+        self.habit_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Habits')
+        self.habit_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        self.habit_title.bind('<Enter>', lambda e: self.habit_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        self.habit_title.bind('<Leave>', lambda e: self.habit_title.configure(background='black', foreground='#EBEBEB'))
+        self.habit_title.bind('<1>', lambda e: self.go_to_habits()) 
+        self.habit_title.grid(row=0, column=2, sticky='e')
 
-        menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop']
-        menu_functions = [self.home, self.habit, self.task, self.dailies, self.generic, self.buy]
-        for i in range(6):
-            make_menu(i, menu_titles[i], menu_functions[i])
-            
-      
+        self.tasks_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Tasks')
+        self.tasks_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        self.tasks_title.bind('<Enter>', lambda e: self.tasks_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        self.tasks_title.bind('<Leave>', lambda e: self.tasks_title.configure(background='black', foreground='#EBEBEB'))
+        self.tasks_title.bind('<1>', lambda e: self.go_to_tasks()) 
+        self.tasks_title.grid(row=0, column=3, sticky='e')
+        
+        self.dailies_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Dailies')
+        self.dailies_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        self.dailies_title.bind('<Enter>', lambda e: self.dailies_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        self.dailies_title.bind('<Leave>', lambda e: self.dailies_title.configure(background='black', foreground='#EBEBEB'))
+        self.dailies_title.bind('<1>', lambda e: self.go_to_dailies()) 
+        self.dailies_title.grid(row=0, column=4, sticky='e')
+
+        self.list_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='List')
+        self.list_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        self.list_title.bind('<Enter>', lambda e: self.list_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        self.list_title.bind('<Leave>', lambda e: self.list_title.configure(background='black', foreground='#EBEBEB'))
+        self.list_title.bind('<1>', lambda e: self.go_to_generic()) 
+        self.list_title.grid(row=0, column=5, sticky='e')
+
+        self.shop_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Shop')
+        self.shop_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+        self.shop_title.bind('<Enter>', lambda e: self.shop_title.configure(background='#0F0F0F', foreground='#FFD237'))
+        self.shop_title.bind('<Leave>', lambda e: self.shop_title.configure(background='black', foreground='#EBEBEB'))
+        self.shop_title.bind('<1>', lambda e: self.go_to_shop()) 
+        self.shop_title.grid(row=0, column=6, sticky='e')
+
+        
         # create character data frame
         self.char_frame = Frame(self)
         self.char_frame.grid(row=2, column=0, sticky='news')
         
-        name_lalel = Label(self.char_frame, text="Player Name")
-        name_lalel.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
-        name_lalel.configure(font='arial 12')
+        self.name_label = Label(self.char_frame, text="Player Name")
+        self.name_label.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
+        self.name_label.configure(font='arial 12')
         
-        name = Label(self.char_frame, textvariable = self.character_name)
-        name.grid(row = 0, column = 1, sticky=W, pady=4, padx=5)
-        name.configure(font='arial 12 bold')
+        self.name = Label(self.char_frame, textvariable = self.character_name)
+        self.name.grid(row = 0, column = 1, sticky=W, pady=4, padx=5)
+        self.name.configure(font='arial 12 bold')
         
         # load character image
         char_img = PhotoImage(file=os.path.join("assets", "art", "main.gif"))
@@ -293,7 +575,7 @@ class GUI (Frame):
         exp.configure(background="#283D57", font="arial 12 bold", foreground='#C5BD25')
 
         # add cash stats info
-        self.character_cash.set(self.character.cash)
+        
         cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
         cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
         cash = Label(self.stats_frame, textvariable= self.character_cash)
@@ -311,24 +593,7 @@ class GUI (Frame):
         self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
         self.style.configure("statsFrame.TFrame", background="#283D57")
         
-
-        mb=  Menubutton(self, text="Options")
-        mb.grid(row = 0, column = 6, sticky = E)
-        mb.menu  =  Menu ( mb, tearoff = 0 )
-        mb["menu"]  =  mb.menu
-    
-        mayoVar  = IntVar()
-        ketchVar = IntVar()
-        mb.menu.add_command( label="Home", command = self.home)
-        mb.menu.add_command( label="Habits", command = self.habit)
-        mb.menu.add_command( label="Dailies", command = self.dailies )
-        mb.menu.add_command( label="Tasks", command = self.task )
-        mb.menu.add_command( label="Shop", command = self.buy )
-        mb.menu.add_command( label="Game", command = self.no_where)
-        mb.menu.add_command( label = "List", command = self.generic)
-        mb.menu.add_command( label = "Save Game", command = self.save_game)
-        mb.menu.add_command( label="Settings", command = self.no_where)
-
+        
         # footer
         footer_frame_bg = Frame(self, style='footer.TFrame', padding=3)
         footer_frame_bg.grid(row=10, column=0, columnspan=7, sticky= (W, E))
@@ -354,47 +619,85 @@ class GUI (Frame):
  
         self.frames = {}
         
-        # Add main frames to grid for geometry memory
-        # then remove them
-
+        
         work_space_frame = Work_Space(self, self.character)
         generic_frame = Generic(self, self.character)
         landing_page_frame = Landing_Page(self, self.character)
 
-        self.frames[Work_Space] = work_space_frame
-        self.frames[Generic] = generic_frame
-        self.frames[Landing_Page] = landing_page_frame
+        self.frames['Work_Space'] = work_space_frame
+        self.frames['Generic'] = generic_frame
+        self.frames['Landing_Page'] = landing_page_frame
+        self.show_frame('Landing_Page')
         
-        self.show_frame(Landing_Page)
 
-    """ This is the default for all menu bar options, except for exit """
+    def bind_buttons(self):
+        #Navigation Buttons
+        landing_page = self.frames['Landing_Page']
+        landing_page.go_to_habits_button.bind("<1>", lambda e : self.page_navigator('habit'))
+                                                             
+        landing_page.go_to_dailies_button.bind("<1>", lambda e : self.page_navigator('daily'))
+
+        landing_page.go_to_tasks_button.bind("<1>", lambda e : self.page_navigator('task'))
+
+    def update_cash(self):
+        self.character_cash.set(str(self.character.cash))
+
+    def update_name(self):
+        self.character_name.set(self.character.name)
+
+    def update_exp(self):
+        self.character_exp.set(self.character.exp)
+
+    def update_level(self):
+        self.character_level.set(self.character.level)
+
+    def remove_hack(self, hack_type, ID):
+        messagebox.showinfo("Hack Info", "Hack:"+hack_type+" "+str(ID))
+        self.character.remove_hack(ID)
+
+        
+    def page_navigator(self, page):
+        if page == 'habit':
+            self.show_frame('habit')
+            
+        elif page == 'daily':
+            self.show_frame('daily')
+            
+        elif page == 'task':
+            self.show_frame('task')
+            
+        else:
+            pass
+        
+    """ This is the default for all menu bar options,
+    except for exit """
     def temp_menu_func(self):
         print("test menu")
             
-    def show_frame(self, c):
+    def show_frame(self, frame_class):
         '''
-        Show a frame for the given class
+        Show a frame for the given frame class
         '''
         
-        if c in ('habit', 'daily', 'task', 'shop'):
-            if self.current_visible_frame != self.frames[Work_Space]: 
+        if frame_class in ('habit', 'daily', 'task', 'shop'):
+            if self.current_visible_frame != self.frames['Work_Space']: 
                 self.current_visible_frame.grid_remove()
                 
-            frame = self.frames[Work_Space]
+            frame = self.frames['Work_Space']
             frame.grid(row = 4, column = 0, columnspan = 7,
                        rowspan = 4, sticky = 'news')
 
             #Adjust notebook to desired tab
-            frame.select_tab(c)
+            frame.select_tab(frame_class)
             self.current_visible_frame = frame
             
             
         else:
-            if self.current_visible_frame != self.frames[c]:
+            if self.current_visible_frame != self.frames[frame_class]:
                 if self.current_visible_frame != None:
                     self.current_visible_frame.grid_remove()
 
-                frame = self.frames[c]
+                frame = self.frames[frame_class]
                 frame.grid(row = 4, column = 0, columnspan = 7,
                            rowspan = 4, sticky = 'news')
                 self.current_visible_frame = frame
@@ -423,30 +726,31 @@ class GUI (Frame):
            print("Not enough cash for " + item.name + "!")
 
         
-    def home(self):
+    def go_to_home(self):
         #Currently this goes no where, need to fix the grid_forget issue first
-        self.show_frame(Landing_Page)
+        self.show_frame('Landing_Page')
 
-    def habit(self):
+    def go_to_habits(self):
         self.show_frame('habit')
 
-    def task(self):
+
+    def go_to_tasks(self):
         self.show_frame('task')
         main.__subclasshook__
 
-    def dailies(self):
+    def go_to_dailies(self):
         self.show_frame('daily')
         
-    def buy(self):
+    def go_to_shop(self):
         self.show_frame('shop')
         
     def save_game(self):
-        saved_path = filedialog.asksaveasfilename()
-        if saved_path != '':
-            messagebox.showinfo("Save", "game save at: " + saved_path)  
-    
-    def generic(self):
-        self.show_frame(Generic)
+        messagebox.showinfo("Save", "Game Saved!")  
+        self.game_data.save_data(self.character)
+        self.game_data.save_to_file()
+        
+    def go_to_generic(self):
+        self.show_frame('Generic')
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")
@@ -461,11 +765,17 @@ def main():
     main_character = load('Tester')
    
     #Display current character's info
+    #main_character.show_info()
     root = Tk()
-    app = GUI(root, main_character)
+    controller = Controller(root)
+    #app = GUI(root, main_character)
     
     root.mainloop()
 
         
 if __name__ == "__main__":
     main()
+
+# These imports have been moved to resolve import loops between
+# shop, work_space, and engine over the Item class.
+from shop import *
