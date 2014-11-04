@@ -58,7 +58,7 @@ class Character:
         items_list = []
         
         for hack in self.hacks:
-            hacks_list.append(hacks.serialize())
+            hacks_list.append(hack.serialize())
 
         for item in self.items:
             items_list.append(item.serialize())
@@ -358,6 +358,45 @@ class Game_Data:
         print("ERROR:", error_message)
 
 
+        
+def load_hacks():
+    '''
+    Loads hacks for character
+    Used for debugging
+    '''
+    hack_1 = Hack('habit', 'Read More','Read more books', 50, 10)  
+    hack_2 = Hack('habit', 'Veggies', 'Eat more veggies', 100, 15)
+    hack_3 = Hack('habit', 'Sleep more', 'Get more sleep', 20, 5)
+
+    hack_4 = Hack('task', 'Make dinner', 'and make it delicious', 10, 10)
+
+    hack_5 = Hack('daily', 'Play guitar', 'hit strings in a pleasing combination', 15, 25)
+
+    hacks = []
+    hacks.append(hack_1)
+    hacks.append(hack_2)
+    hacks.append(hack_3)
+    hacks.append(hack_4)
+    hacks.append(hack_5)
+
+    return hacks
+
+def load_items():
+    '''
+    Loads items for character
+    Used for debugging
+    '''
+    item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
+    item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
+    item_3 = Item('SSD', 'ssd.jpg', 6, 20)
+
+    items = []
+    items.append(item_1)
+    items.append(item_2)
+    items.append(item_3)
+
+    return items
+
 def load(name):
     """
     Loads a default character data configuration. 
@@ -410,6 +449,13 @@ class Controller(Frame):
         self.game_data = Game_Data()
         self.game_data.load_data()
         self.character = self.game_data.build_character()
+
+        for hack in load_hacks():
+            self.character.add_hack(hack)
+
+        for item in load_items():
+            self.character.add_item(item)
+
         self.character_name = StringVar()
         self.character_exp = StringVar()
         self.character_cash = StringVar()
@@ -727,7 +773,6 @@ class Controller(Frame):
 
         
     def go_to_home(self):
-        #Currently this goes no where, need to fix the grid_forget issue first
         self.show_frame('Landing_Page')
 
     def go_to_habits(self):
