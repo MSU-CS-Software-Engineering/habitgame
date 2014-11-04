@@ -480,7 +480,24 @@ class GUI(Frame):
         if self.character.items[item_ID].uses == 0:
             self.character.remove_item(item_ID)
             self.character.set_item_IDs()
-            
+
+    def update_stats_banner(self):
+        """
+        this function is called in landing_page.py and work_space.py when the user
+        presses the complete button for a task, daily, or habit. The cash and exp
+        data are updated on the banner.
+        """
+        self.character_cash.set(self.character.cash)
+        self.character_exp.set(self.character.exp)
+
+        curr_level = self.character_level.get()
+
+        exp = int(self.character_exp.get())
+        level_up = 15*int(curr_level)*2
+        print(level_up)
+        if exp >= level_up:
+            self.character_level.set(int(curr_level)+1)
+        
     def buy_item(self, item):
         if self.character.cash >= item.value:    
             self.character.add_item(item)
@@ -525,7 +542,7 @@ def main():
     """
       Stub for main function
     """
-    db = authenticate.db()
+    #db = authenticate.db()
 
     #main_character = load('Tester')
    

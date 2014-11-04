@@ -7,7 +7,7 @@ from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 
-class Work_Space (Frame):
+class Work_Space(Frame):
 
     def __init__(self, parent, character):
         Frame.__init__(self, parent)
@@ -143,7 +143,7 @@ class Work_Space (Frame):
 
             complete_habit_btn = Button(habit_btn_frame, text='Complete habit', image=complete_img,
                                         compound="left", style = 'complete_task.TButton', cursor = 'hand2',
-                                        command = lambda h=h: self.edit_hack(h)) #FIX ME -D
+                                        command = lambda h=h: self.complete_hack(h))
             complete_habit_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_habit_btn.image = complete_img
  
@@ -226,7 +226,7 @@ class Work_Space (Frame):
             
             complete_dailies_btn = Button(dailies_btn_frame, text = 'Complete Daily', image=complete_img,
                                           compound="left", style = 'complete_task.TButton', cursor = 'hand2',
-                                          command = lambda d=d: self.edit_hack(d)) #FIX ME -D
+                                          command = lambda d=d: self.complete_hack(d))
             complete_dailies_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_dailies_btn.image = complete_img
 
@@ -309,7 +309,7 @@ class Work_Space (Frame):
             
             complete_tasks_btn = Button(tasks_btn_frame, text = 'Complete Task', image=complete_img,
                                         compound="left", style = 'complete_task.TButton', cursor = 'hand2',
-                                        command =lambda t=t: self.edit_hack(t)) #FIX ME -D
+                                        command =lambda t=t: self.complete_hack(t))
             complete_tasks_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_tasks_btn.image = complete_img
             
@@ -369,7 +369,10 @@ class Work_Space (Frame):
         MyShop.setShop(self.tab_shop)
         self.frame.select(self.tab_shop)
         
-
+    def complete_hack(self, hack_ID):
+        self.character.complete_hack(hack_ID)
+        self.parent.update_stats_banner()
+        
     def add_hack(self, h_type):
         ''' Calls input window; Adds result to hack list '''
         new_hack = self.input_hack_data(h_type)

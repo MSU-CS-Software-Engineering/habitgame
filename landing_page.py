@@ -68,7 +68,8 @@ class Hack_Frame(Frame):
 
     def remove(self):
         #Pass the data to the top-level(parent->parent->parent)
-        self.parent.parent.parent.remove_hack(self.hack_type, self.ID)
+        self.parent.parent.character.complete_hack(self.ID)
+        self.parent.parent.parent.update_stats_banner()
         self.destroy()
 
     def function_builder(self, args):
