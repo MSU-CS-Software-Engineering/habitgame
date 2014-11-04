@@ -485,10 +485,14 @@ class Work_Space (Frame):
     def save_new_hack(self, window, hack_data):
         self.character.add_hack(hack_data)
         window.destroy()
+        messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
+                            ' hack has been saved!')
 
     def save_edited_hack(self, window, hack_ID, hack_data):
         self.character.edit_hack(hack_ID, hack_data)
         window.destroy()
+        messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
+                            ' hack has been saved!')
 
     def check_input_validity(self, warn_label, value_string, confirmButton):
         try:
