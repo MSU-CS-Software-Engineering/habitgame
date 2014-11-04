@@ -120,7 +120,7 @@ class file_parser:
         """
 
         self.item_list = self.doc.getElementsByTagName('item')
-
+        
         items = list()
         
         for item in self.item_list:
@@ -204,8 +204,8 @@ class file_parser:
 
         #Local variables from character
         
-        char_fname = char['fname']
-        char_lname = char['lname']
+        char_fname = char['firstname']
+        char_lname = char['lastname']
         char_birthday = char['birthday']
         char_token = char['token']
         char_name = char['name']

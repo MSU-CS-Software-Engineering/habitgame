@@ -195,8 +195,8 @@ class Generic (Frame):
         for t in tasks_dict:
             ############
             tasks_frame = Frame(frame, width = 800 , height = 95, style = "f.TFrame", padding = 5)
-            habit_frame.grid(row = row_number, column = 0, sticky = 'news')
-            habit_frame.columnconfigure(0, weight = 1)
+            tasks_frame.grid(row = row_number, column = 0, sticky = 'news')
+            tasks_frame.columnconfigure(0, weight = 1)
             row_number += 1
             
             #habit_frame.grid_propagate(False)

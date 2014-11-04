@@ -8,13 +8,11 @@
    <cash>20000</cash>
    <exp>0</exp>
    <level>1</level>
-   <habits/>
-   <tasks/>
-   <dailies/>
+   <hacks/>
    <items>
       <item>
          <title>Laptop</title>
-         <desc>HP G62 Laptop Computer</desc>
+         <desc>Nothing</desc>
          <ID>0</ID>
          <image>laptop.jpg</image>
          <value>5</value>
@@ -23,7 +21,7 @@
       </item>
       <item>
          <title>CAT-5 Cable</title>
-         <desc>Provides help via ethernet</desc>
+         <desc>Nothing</desc>
          <ID>1</ID>
          <image>cat5.jpg</image>
          <value>4</value>
@@ -32,8 +30,35 @@
       </item>
       <item>
          <title>SSD</title>
-         <desc>Store information</desc>
+         <desc>Nothing</desc>
          <ID>2</ID>
+         <image>ssd.jpg</image>
+         <value>6</value>
+         <uses>20</uses>
+         <effect>None</effect>
+      </item>
+      <item>
+         <title>Laptop</title>
+         <desc>Nothing</desc>
+         <ID>3</ID>
+         <image>laptop.jpg</image>
+         <value>5</value>
+         <uses>1</uses>
+         <effect>None</effect>
+      </item>
+      <item>
+         <title>CAT-5 Cable</title>
+         <desc>Nothing</desc>
+         <ID>4</ID>
+         <image>cat5.jpg</image>
+         <value>4</value>
+         <uses>15</uses>
+         <effect>None</effect>
+      </item>
+      <item>
+         <title>SSD</title>
+         <desc>Nothing</desc>
+         <ID>5</ID>
          <image>ssd.jpg</image>
          <value>6</value>
          <uses>20</uses>

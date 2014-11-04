@@ -7,262 +7,17 @@
 
 #import landing_page.py
 import os.path
-from datetime import date #For timestamps
 from file_parser import *
 from tkinter  import *
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 
+from hack_classes import *
 from landing_page import *
 from generic_list import *
-import authenticate     
-
-        
-class Character:
-    """
-      Class for Habit character profile
-
-      Variables:
-        name: Name of character       (string)
-        cash: Total currency          (int)
-        exp: Total experience points  (int)
-        level: Current level          (int)
-        habits: Current habits        (list of Habit objects)
-        tasks:                        (list of Task objects)
-        dailies:                      (list of Daily objects)
-        items: Owned (soft|hard)ware  (list of Item objects)
-    """
-    def __init__(self, name):
-        self.hack_index = 0
-        self.name = name
-        self.cash = 0
-        self.exp = 0
-        self.level = 1
-        self.hacks = {}
-        self.items = []
-
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary 
-        which can then be converted to a string
-        """
-        character_dict = {'name': self.name,
-                          'cash': self.cash,
-                          'exp' : self.exp,
-                          'level' : self.level,
-                          'hacks': None,
-                          'items': None}
-
-        hacks_list = []
-        items_list = []
-        
-        for hack in self.hacks:
-            hacks_list.append(hack.serialize())
-
-        for item in self.items:
-            items_list.append(item.serialize())
-
-        character_dict['hacks'] = hacks_list
-        character_dict['items'] = items_list
-        
-        return character_dict
-
-    def show_info(self):
-        """
-        Displays the characters current information:
-        Cash, name, experience, level, habits, and items
-        """
-        print("Player Info:")
-        print("Name:       "+self.name)
-        print("Cash:      $"+str(self.cash))
-        print("Experience: "+str(self.exp))
-        print("Level:      "+str(self.level))
-        print("\n\nHacks:\n-------")
-        self.show_hacks()
-        print("\n\nItems:\n------")
-        self.show_items()
-
-    def add_hack(self, hack):
-        if hack.ID == -1:
-            hack.ID = self.hack_index
-        self.hacks[hack.ID] = hack
-        self.hack_index = max(self.hacks.keys()) + 1
-        return hack.ID
-
-    def edit_hack(self, hack_ID, hack):
-        try:
-            self.remove_hack(hack_ID)
-            hack.ID = hack_ID
-            self.add_hack(hack)
-            return True
-        except:
-            print("Edit failed!")
-            return False
-
-    def remove_hack(self, hack_ID):
-        try:
-            del self.hacks[hack_ID]
-            return True
-        except:
-            print("Invalid hack id!")
-            return False
-
-    def complete_hack(self, hack_ID):
-        hack = self.get_hack(hack_ID)
-        self.cash += hack.value
-        self.exp += hack.exp
-        self.remove_hack(hack_ID)
-
-    def get_hack(self, hack_ID):
-        try:
-            hack = self.hacks[hack_ID]
-            return hack
-        except:
-            print("Error: Invalid hack id")
-
-
-    #Shouldn't be needed with the new ID model
-
-    #def set_hack_IDs(self):     
-    #    for hack in enumerate(self.hacks):
-    #        hack[1].ID = hack[0]
-
-
-    def show_hack(self, hack_id):
-        try:
-            hack = self.hacks[hack_id]
-            print("Type:        " + hack.h_type)
-            print("Title:       " + hack.title)
-            print("Description: " + hack.description)
-            print("ID:          " + str(hack.ID))
-            print("Timestamp:   " + str(hack.timestamp))
-            print("Value:       " + str(hack.value))
-            print("Exp Pts:     " + str(hack.exp))
-
-        except:
-            print("Error: Invalid hack_id")
-
-    def show_hacks(self):
-        for hack in self.hacks:
-            self.show_hack(hack.ID)
-
-    def add_item(self, item):
-        if len(self.items) != 0:
-            item.ID = len(self.items)
-        
-        self.items.append(item)
-        return item.ID
-
-    def remove_item(self, item_ID):
-        try:
-            item_id = self.items.pop(item_ID).ID
-            self.set_item_IDs()
-            return item_id
-        except:
-            print("Invalid item id!")
-            return False
-
-    def get_item(self, item_ID):
-        try:
-            item = self.items[item_ID]
-            return self.items[item_ID]
-        except:
-            print("Error: Invalid item ID")
-
-
-    def set_item_IDs(self):
-        for item in enumerate(self.items):
-            item[1].ID = item[0]
-
- 
-    def show_item(self, item_ID):
-        
-        try:
-            item = self.items[item_ID]
-            print("Name:   " + item.name)
-            print("ID:     " + str(item.ID))
-            print("Value:  " + str(item.value))
-            print("Uses:   " + str(item.uses))
-        except:
-            print("Error: Invalid item ID")
-
-    def show_items(self):
-        for item in self.items:
-            self.show_item(item.ID)
-
-class Hack:
-    """
-      Class for Individual Hacks (Habits, dailies, and goals)
-
-      Variables:
-        h_type: Type of hack (habit, daily, goal)    (string)
-        title: Name of hack                          (string)
-        description: Short description of hack       (string) 
-        ID: Number to hold index in                  (int)
-        timestamp: Last-accessed date                (date)
-        value: Cash reward/penalty                   (int)
-        exp: Experience point value                  (int)
-    """
-    def __init__(self, h_type, title, desc, value, exp = 100 ):
-        self.h_type = h_type
-        self.title = title
-        self.description = desc
-        self.ID = -1
-        self.timestamp = date.today()
-        self.value = value
-        self.exp = exp    #Temporarily defaults to 100.
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary 
-        which can be converted to a string
-        """
-        hack_dict = {
-                      'type':self.h_type,
-                      'title':self.title,
-                      'desc':self.description,
-                      'ID'  :self.ID,
-                      'timestamp':str(self.timestamp),
-                      'value':self.value,
-                      'exp':self.exp
-                     }
-        
-        return hack_dict
-    
-class Item:
-    """
-      Class for purchasable software/hardware
-
-      Variables:
-        name: Name of item                                (string)
-        ID: Number to hold index in itemlist              (int)
-        image: Name of accompanying image                 (string)
-        value: Currency value of item                     (int)
-        uses: Uses before item expires [-1 for infinite]  (int)
-        effect: Special function that the item performs   (function)
-    """
-    def __init__(self, name, image, value, uses, effect = None):
-        self.name = name
-        self.ID = 0
-        self.image = image
-        self.value = value
-        self.uses = uses
-        self.effect = effect
-
-    def serialize(self):
-        """
-        Serializes class properties to a dictionary
-        which can be converted to a string
-        """
-        item_dict = {'name':self.name,
-                      'ID':self.ID,
-                      'image':self.image,
-                      'value':self.value,
-                      'uses':self.uses,
-                      'effect':self.effect}
-        
-        return item_dict
+from work_space import *
+import authenticate
+from tkinter import filedialog # open/save file
 
 
 class Game_Data:
@@ -272,7 +27,14 @@ class Game_Data:
     def __init__(self):
         self.savefile = 'character.xml'
         self.character_data = {}
+        self.character_data['firstname'] = ''
+        self.character_data['lastname'] = ''
+        self.character_data['birthday'] = ''
         self.token = ''
+        self.parser = file_parser(self.savefile)
+                
+    def show_character_data(self):
+        print(self.character_data)
         
     def save_data(self, character):
         """
@@ -280,6 +42,11 @@ class Game_Data:
         Game_Data's character_data 
         """
         self.character_data = character.serialize()
+        self.character_data['firstname'] = self.firstname
+        self.character_data['lastname'] = self.lastname
+        self.character_data['birthday'] = self.birthday
+        self.character_data['token'] = self.token
+        
         print("Character data saved")
         
     def save_to_file(self):
@@ -287,7 +54,7 @@ class Game_Data:
         Saves character_data to file
         """
         try:
-            file_parser.update_file(self.character_data)
+            self.parser.update_file(self.character_data, self.savefile)
             
         except:
             self.error('Failed to write to file')
@@ -299,15 +66,16 @@ class Game_Data:
         character_data dict
         """
         try:
-            data = file_parser(self.savefile)
-            self.character_data['hacks'] = data.parse_hacks()
-            self.character_data['name'] = data.parse_name()
-            self.token = data.parse_token()
-            self.character_data['level'] = data.parse_level()
-            self.character_data['exp'] = data.parse_exp()
-            self.character_data['cash'] = data.parse_cash()
-            self.character_data['items'] = data.parse_items()
-            #return self.build_character(self.character_data)
+            self.character_data['hacks'] = self.parser.parse_hacks()
+            self.firstname = self.parser.parse_firstname()
+            self.lastname = self.parser.parse_lastname()
+            self.character_data['name'] = self.parser.parse_name()
+            self.birthday = self.parser.parse_birthday()
+            self.token = self.parser.parse_token()
+            self.character_data['level'] = self.parser.parse_level()
+            self.character_data['exp'] = self.parser.parse_exp()
+            self.character_data['cash'] = self.parser.parse_cash()
+            self.character_data['items'] = self.parser.parse_items()
         
         except:
             self.error('Failed to load data')
@@ -318,41 +86,41 @@ class Game_Data:
         Builds a character object from the Game_Data's 
         character_data. 
         """
-        #try:
-        character_data = self.character_data
-        new_character = Character(character_data['name'])
-        new_character.level = character_data['level']
-        new_character.exp = character_data['exp']
-        new_character.cash = character_data['cash']
+        try:
+            character_data = self.character_data
+            new_character = Character(character_data['name'])
+            new_character.level = character_data['level']
+            new_character.exp = character_data['exp']
+            new_character.cash = character_data['cash']
             
-        # REVISIT THIS -D
-        for hack in character_data['hacks']:
-            new_hack = Hack(hack['h_type'],
-                            hack['title'],
-                            hack['description'],
-                            hack['value'],
-                            hack['exp'])
+        
+            for hack in character_data['hacks']:
+                new_hack = Hack(hack['h_type'],
+                                hack['title'],
+                                hack['desc'],
+                                hack['value'],
+                                hack['exp'])
            
-            new_character.add_hack(new_hack)
-           
-        for item in character_data['items']:
-            new_item = Item(item['title'],
-                            item['image'],
-                            item['value'],
-                            item['uses'],
-                            item['effect'])
+                new_character.add_hack(new_hack)
+         
+            for item in character_data['items']:
+                new_item = Item(item['title'],
+                                item['image'],
+                                item['value'],
+                                item['uses'],
+                                item['effect'])
             
-            new_character.add_item(new_item)
+                new_character.add_item(new_item)
             
-        #Resynchronize hack index
-        if len(new_character.hacks.keys()) > 0:
-            new_character.hack_index = max(new_character.hacks.keys())
+            #Resynchronize hack index
+            if len(new_character.hacks.keys()) > 0:
+                new_character.hack_index = max(new_character.hacks.keys())
 
-        return new_character
+            return new_character
 
-        #except:
-        #    self.error("Failed to build character from" \
-        #               " default character data")
+        except:
+            self.error("Failed to build character from" \
+                       " default character data")
     
     def error(self, error_message):
         print("ERROR:", error_message)
@@ -397,59 +165,21 @@ def load_items():
 
     return items
 
-def load(name):
-    """
-    Loads a default character data configuration. 
-    Used for debugging
-    """
-    new_character = Character(name)
-    
-    hack_1 = Hack('habit', 'Read More','Read more books', 50, 10)  
-    hack_2 = Hack('habit', 'Veggies', 'Eat more veggies', 100, 15)
-    hack_3 = Hack('habit', 'Sleep more', 'Get more sleep', 20, 5)
-
-    hack_4 = Hack('task', 'Make dinner', 'and make it delicious', 10, 10)
-
-    hack_5 = Hack('daily', 'Play guitar', 'hit strings in a pleasing combination', 15, 25)
-
-    item_1 = Item('Laptop', 'laptop.jpg', 5, 1)
-    item_2 = Item('CAT-5 Cable', 'cat5.jpg', 4, 15)
-    item_3 = Item('SSD', 'ssd.jpg', 6, 20)
-
-    hacks = []
-    items = []
-
-    hacks.append(hack_1)
-    hacks.append(hack_2)
-    hacks.append(hack_3)
-    hacks.append(hack_4)
-    hacks.append(hack_5)
-
-    items.append(item_1)
-    items.append(item_2)
-    items.append(item_3)
-
-    for hack in hacks:
-        new_character.add_hack(hack)
-
-    for item in items:
-        new_character.add_item(item)
-
-    return new_character
-
 
 # Placed here to resolve import loop issues with work_space, engine, and
 # shop.
 from work_space import *
 
-class Controller(Frame):
+class GUI(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)        
         pad = 100
+
         self.game_data = Game_Data()
         self.game_data.load_data()
         self.character = self.game_data.build_character()
 
+        #Hacks and Items for debugging
         for hack in load_hacks():
             self.character.add_hack(hack)
 
@@ -465,8 +195,6 @@ class Controller(Frame):
         self.update_exp()
         self.update_cash()
         self.update_level()
-
-        #messagebox.showinfo("Character:", self.character.serialize())
         
         self._geom='800x600+0+0'
         master.geometry("{0}x{1}+0+0".format(
@@ -542,48 +270,25 @@ class Controller(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home()) 
         self.style.configure('hack_logo.TLabel', background='black')
 
-        self.home_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Home')
-        self.home_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        self.home_title.bind('<Enter>', lambda e: self.home_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        self.home_title.bind('<Leave>', lambda e: self.home_title.configure(background='black', foreground='#EBEBEB'))
-        self.home_title.bind('<1>', lambda e: self.go_to_home()) 
-        self.home_title.grid(row=0, column=1, sticky='e')
-        
-        self.habit_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Habits')
-        self.habit_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        self.habit_title.bind('<Enter>', lambda e: self.habit_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        self.habit_title.bind('<Leave>', lambda e: self.habit_title.configure(background='black', foreground='#EBEBEB'))
-        self.habit_title.bind('<1>', lambda e: self.go_to_habits()) 
-        self.habit_title.grid(row=0, column=2, sticky='e')
+        # make common 'menu bar' links
+        def make_menu(col_number, name, function):
+            menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=name)
+            menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+            menu_title.bind('<Enter>', lambda e: menu_title.configure(background='#0F0F0F', foreground='#FFD237'))
+            menu_title.bind('<Leave>', lambda e: menu_title.configure(background='black', foreground='#EBEBEB'))
+            menu_title.bind('<1>', lambda e: function())
+            menu_title.grid(row=0, column=col_number+1, sticky='e')
 
-        self.tasks_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Tasks')
-        self.tasks_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        self.tasks_title.bind('<Enter>', lambda e: self.tasks_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        self.tasks_title.bind('<Leave>', lambda e: self.tasks_title.configure(background='black', foreground='#EBEBEB'))
-        self.tasks_title.bind('<1>', lambda e: self.go_to_tasks()) 
-        self.tasks_title.grid(row=0, column=3, sticky='e')
-        
-        self.dailies_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Dailies')
-        self.dailies_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        self.dailies_title.bind('<Enter>', lambda e: self.dailies_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        self.dailies_title.bind('<Leave>', lambda e: self.dailies_title.configure(background='black', foreground='#EBEBEB'))
-        self.dailies_title.bind('<1>', lambda e: self.go_to_dailies()) 
-        self.dailies_title.grid(row=0, column=4, sticky='e')
+        menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop']
+        menu_functions = [self.go_to_home,
+                          self.go_to_habits,
+                          self.go_to_tasks,
+                          self.go_to_dailies,
+                          self.go_to_generic,
+                          self.go_to_shop]
 
-        self.list_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='List')
-        self.list_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        self.list_title.bind('<Enter>', lambda e: self.list_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        self.list_title.bind('<Leave>', lambda e: self.list_title.configure(background='black', foreground='#EBEBEB'))
-        self.list_title.bind('<1>', lambda e: self.go_to_generic()) 
-        self.list_title.grid(row=0, column=5, sticky='e')
-
-        self.shop_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text='Shop')
-        self.shop_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-        self.shop_title.bind('<Enter>', lambda e: self.shop_title.configure(background='#0F0F0F', foreground='#FFD237'))
-        self.shop_title.bind('<Leave>', lambda e: self.shop_title.configure(background='black', foreground='#EBEBEB'))
-        self.shop_title.bind('<1>', lambda e: self.go_to_shop()) 
-        self.shop_title.grid(row=0, column=6, sticky='e')
-
+        for i in range(6):
+            make_menu(i, menu_titles[i], menu_functions[i])
         
         # create character data frame
         self.char_frame = Frame(self)
@@ -698,10 +403,10 @@ class Controller(Frame):
         self.character_level.set(self.character.level)
 
     def remove_hack(self, hack_type, ID):
-        messagebox.showinfo("Hack Info", "Hack:"+hack_type+" "+str(ID))
+        #messagebox.showinfo("Hack Info", "Hack:"+hack_type+" "+str(ID))
         self.character.remove_hack(ID)
-
-        
+        self.redraw()
+    '''    
     def page_navigator(self, page):
         if page == 'habit':
             self.show_frame('habit')
@@ -714,6 +419,15 @@ class Controller(Frame):
             
         else:
             pass
+    '''
+    def redraw(self):
+        """
+        Redraws each area of the GUI after data is modified
+        """
+        self.frames['Landing_Page'].redraw(self.character)
+        #self.frames['Work_Space'].redraw(self.character)
+        #self.frames['Generic'].redraw(self.character)
+        
         
     """ This is the default for all menu bar options,
     except for exit """
@@ -807,13 +521,10 @@ def main():
     """
     db = authenticate.db()
 
-    main_character = load('Tester')
+    #main_character = load('Tester')
    
-    #Display current character's info
-    #main_character.show_info()
     root = Tk()
-    controller = Controller(root)
-    #app = GUI(root, main_character)
+    app = GUI(root)
     
     root.mainloop()
 

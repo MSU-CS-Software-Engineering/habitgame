@@ -39,8 +39,8 @@ class Character:
         hacks_list = []
         items_list = []
         
-        for hack in self.hacks:
-            hacks_list.append(hacks.serialize())
+        for hack in self.hacks.values():
+            hacks_list.append(hack.serialize())
 
         for item in self.items:
             items_list.append(item.serialize())
@@ -151,7 +151,7 @@ class Hack:
         which can be converted to a string
         """
         hack_dict = {
-                      'type':self.h_type,
+                      'h_type':self.h_type,
                       'title':self.title,
                       'desc':self.description,
                       'ID'  :self.ID,
@@ -177,6 +177,7 @@ class Item:
     def __init__(self, name, image, value, uses, effect = None):
         self.name = name
         self.ID = 0
+        self.description = 'Nothing'
         self.image = image
         self.value = value
         self.uses = uses
@@ -187,8 +188,9 @@ class Item:
         Serializes class properties to a dictionary
         which can be converted to a string
         """
-        item_dict = {'name':self.name,
+        item_dict = {'title':self.name,
                       'ID':self.ID,
+                     'desc':self.description,
                       'image':self.image,
                       'value':self.value,
                       'uses':self.uses,
