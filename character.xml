@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
-   <token>LSgDEkSmcWgAAAAAAAAa9caq8mRra-veTqfWcR7H7FbxrJb6sGxcQYOousxbg4OU</token>
-   <firstname>John</firstname>
+   <token>LSgDEkSmcWgAAAAAAAAa-xr7yNQyx3N1QR99znXp7U9PU3tBeb_W1nj4SvGdyvOF</token>
+   <firstname>Joe</firstname>
    <lastname>Doe</lastname>
-   <username>hackerMan20</username>
+   <username>hacker_Joe20</username>
    <birthday>01-01-01</birthday>
-   <cash>250</cash>
+   <cash>123</cash>
    <exp>100</exp>
    <level>0</level>
    <hacks/>

@@ -106,7 +106,10 @@ class file_parser:
             for node in hack.childNodes:
                 if node.nodeType != node.TEXT_NODE:
                     tag_type = node.nodeName
-                    inner = node.childNodes[0].data
+                    if len(node.childNodes) == 0:
+                        inner = ''
+                    else:
+                        inner = node.childNodes[0].data
 
                     if tag_type in self.integer_types:
                         inner = int(inner)
