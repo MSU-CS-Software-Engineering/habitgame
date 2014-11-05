@@ -52,6 +52,9 @@ class file_parser:
         """
         self.nodes = self.doc.getElementsByTagName(tag)
 
+        if len(self.nodes) == 0:
+            return 0
+        
         if self.nodes[0].nodeName in self.integer_types:
             return int(self.nodes[0].firstChild.data)
         

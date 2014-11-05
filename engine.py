@@ -180,11 +180,11 @@ class GUI(Frame):
         self.character = self.game_data.build_character()
 
         #Hacks and Items for debugging
-        for hack in load_hacks():
-            self.character.add_hack(hack)
-
-        for item in load_items():
-            self.character.add_item(item)
+        #for hack in load_hacks():
+        #    self.character.add_hack(hack)
+        #
+        #for item in load_items():
+        #    self.character.add_item(item)
 
         self.character_name = StringVar()
         self.character_exp = StringVar()
@@ -551,10 +551,13 @@ class GUI(Frame):
         exp = int(self.character_exp.get())
         level_up = 30 * curr_level
         
-        if exp >= level_up:
+        if exp >= level_up and curr_level >0:
             #LEVEL UP! WOOOOOOOOOO HOOOOOOOOOOO!
+            #Reset experience
             self.character.level = int(curr_level) + 1
+            self.character.exp = 0
             self.update_level()
+            self.update_exp()
         
     def buy_item(self, item):
         if self.character.cash >= item.value:    
@@ -600,7 +603,7 @@ def main():
     """
       Stub for main function
     """
-    #db = authenticate.db()
+    db = authenticate.db()
 
     #main_character = load('Tester')
    

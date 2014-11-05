@@ -113,11 +113,13 @@ class Landing_Area_Frame(Frame):
         self.hack_type = hack_type
         self.column = self.get_column()
         self.parent = parent
-
+        self.current_row = 0
+        
     def remove_frames(self):
         for frame in self.frames:
             frame.destroy()
-            
+
+        self.current_row = 1
         self.frames = []
         
     def set_style(self, height=None):
@@ -139,6 +141,10 @@ class Landing_Area_Frame(Frame):
         self.header.grid(row = 0, column = self.column, sticky = 'new',
                          pady = (3,0), padx = 3)
 
+    def get_current_row(self):
+        self.current_row += 1
+        return self.current_row
+    
     def get_column(self):
         if self.hack_type == 'habit':
             return 0
@@ -179,7 +185,7 @@ class Landing_Area_Frame(Frame):
             for key in hack_dict.keys():
                 hack = hack_dict[key]
                 hack_frame = Hack_Frame(self, hack.ID, self.hack_type)
-                hack_frame.grid(row = hack.ID + 1,
+                hack_frame.grid(row = self.get_current_row(),
                                 column = self.column,
                                 sticky = 'new', pady = (3,0),
                                 padx = 3)
