@@ -11,7 +11,8 @@ class Hack_Frame(Frame):
         self.parent = parent
         self.ID = ID
         self.hack_type = hack_type
-
+        self.top_class = self.parent.parent.parent
+        
         self.name_label = Label(self,
                                 text = '',
                                 anchor = CENTER,
@@ -68,8 +69,7 @@ class Hack_Frame(Frame):
 
     def remove(self):
         #Pass the data to the top-level(parent->parent->parent)
-        self.parent.parent.character.complete_hack(self.ID)
-        self.parent.parent.parent.update_stats_banner()
+        self.top_class.complete_hack(self.ID)
         self.destroy()
 
     def function_builder(self, args):
@@ -169,6 +169,7 @@ class Landing_Area_Frame(Frame):
                 label_string = 'tasks'
                 
             hack_frame.set_name_label("No "+label_string+" to Display")
+            self.frames.append(hack_frame)
             
         else:
             self.number_of_frames = len(hack_dict)

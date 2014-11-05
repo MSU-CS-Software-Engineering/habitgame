@@ -439,10 +439,33 @@ class GUI(Frame):
     def update_level(self):
         self.character_level.set(self.character.level)
 
-    def remove_hack(self, hack_type, ID):
-        #messagebox.showinfo("Hack Info", "Hack:"+hack_type+" "+str(ID))
-        self.character.remove_hack(ID)
+    def add_hack(self, hack_data):
+        #messagebox.showinfo("Hack Info", "Added Hack "+hack_data.title)
+        self.character.add_hack(hack_data)
+        self.update_stats_banner()
         self.redraw()
+        
+
+    def edit_hack(self, hack_ID, hack_data):
+        #messagebox.showinfo("Hack Info", "Edited Hack "+hack_data.title)
+        self.character.edit_hack(hack_ID, hack_data)
+        self.update_stats_banner()
+        self.redraw()
+        
+
+    def complete_hack(self, hack_ID):
+        #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
+        self.character.complete_hack(hack_ID)
+        self.update_stats_banner()
+        self.redraw()
+        
+
+    def delete_hack(self, hack_ID):
+        #messagebox.showinfo("Hack Info", "Deleted Hack "+str(ID))
+        self.character.remove_hack(hack_ID)
+        self.update_stats_banner()
+        self.redraw()
+
         
     def page_navigator(self, page):
         if page == 'habit':
@@ -462,7 +485,7 @@ class GUI(Frame):
         Redraws each area of the GUI after data is modified
         """
         self.frames['Landing_Page'].redraw(self.character)
-        #self.frames['Work_Space'].redraw(self.character)
+        self.frames['Work_Space'].redraw(self.character)
         #self.frames['Generic'].redraw(self.character)
         
         
@@ -517,17 +540,21 @@ class GUI(Frame):
         this function is called in landing_page.py and work_space.py when the user
         presses the complete button for a task, daily, or habit. The cash and exp
         data are updated on the banner.
-        """
-        self.character_cash.set(self.character.cash)
-        self.character_exp.set(self.character.exp)
+        """        
+        self.update_cash()
+        self.update_exp()
+        self.check_level()
 
-        curr_level = self.character_level.get()
-
+        
+    def check_level(self):
+        curr_level = int(self.character_level.get())
         exp = int(self.character_exp.get())
-        level_up = 15*int(curr_level)*2
-        print(level_up)
+        level_up = 30 * curr_level
+        
         if exp >= level_up:
-            self.character_level.set(int(curr_level)+1)
+            #LEVEL UP! WOOOOOOOOOO HOOOOOOOOOOO!
+            self.character.level = int(curr_level) + 1
+            self.update_level()
         
     def buy_item(self, item):
         if self.character.cash >= item.value:    
