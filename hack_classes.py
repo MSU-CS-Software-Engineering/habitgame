@@ -77,8 +77,8 @@ class Character:
 
     def complete_hack(self, hack_ID):
         hack = self.get_hack(hack_ID)
-        self.cash += hack.value
-        self.exp += hack.exp
+        self.cash += int(hack.value)
+        self.exp += int(hack.exp)
         self.remove_hack(hack_ID)
 
     def get_hack(self, hack_ID):

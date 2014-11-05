@@ -52,6 +52,9 @@ class file_parser:
         """
         self.nodes = self.doc.getElementsByTagName(tag)
 
+        if len(self.nodes) == 0:
+            return 0
+        
         if self.nodes[0].nodeName in self.integer_types:
             return int(self.nodes[0].firstChild.data)
         
@@ -103,7 +106,10 @@ class file_parser:
             for node in hack.childNodes:
                 if node.nodeType != node.TEXT_NODE:
                     tag_type = node.nodeName
-                    inner = node.childNodes[0].data
+                    if len(node.childNodes) == 0:
+                        inner = ''
+                    else:
+                        inner = node.childNodes[0].data
 
                     if tag_type in self.integer_types:
                         inner = int(inner)

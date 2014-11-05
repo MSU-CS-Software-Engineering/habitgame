@@ -7,6 +7,208 @@ from shop import MyShop
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 
+class hack_frame(Frame):
+
+    def __init__(self, parent, hack):
+        Frame.__init__(self, parent)
+        self.parent = parent
+        self.ID = hack.ID
+        self.hack_type = hack.h_type
+        self.top_class = self.parent.parent.parent.parent
+        self.delete_img = self.top_class.delete_img
+        self.edit_img = self.top_class.edit_img
+        self.complete_img = self.top_class.complete_img
+        self.configure(style = 'hack.TFrame')
+        
+        frame_style = Style()
+        frame_style.configure('hack.TFrame', background = '#C3C3C3')
+        # style delete, edit, and complete buttons for habits,
+        #dailies, and tasks tabs
+        frame_style.configure('delete.TButton',
+                              font = 'arial 14 bold',
+                              relief = 'flat',
+                              padding = 5,
+                              foreground = 'black',
+                              background = '#FF3C3C')
+        
+        frame_style.configure('edit.TButton',
+                              font = 'arial 14 bold',
+                              relief = 'flat',
+                              padding = 5,
+                              foreground = 'black',
+                              background = '#59AEE1')
+        
+        frame_style.configure('complete_task.TButton',
+                              font = 'arial 14 bold',
+                              relief = 'flat',
+                              padding = 5,
+                              foreground = 'black',
+                              background = '#87DC5F')
+                              
+        self.name_label = Label(self, text = hack.title)
+        self.name_label.grid(row = 0, column = 0, sticky = 'ew')
+        self.name_label.configure(foreground = 'white', background = '#323232',
+                                  padding = 5, font = 'arial 14 bold', anchor = CENTER)
+        
+        self.description_label = Label(self, text = hack.description, wraplength = 800)
+        self.description_label.grid(row = 1, column = 0, sticky = 'ew')
+        self.description_label.configure(foreground = '#373737', background = '#D9D9D9',
+                                        padding = '15 5 15 5', font = 'arial 12', width = 80)
+
+        self.stats_frame = Frame(self, style = 'stats.TFrame')
+        self.stats_frame.grid(row = 2, column = 0, sticky = 'news')
+
+        frame_style.configure('stats.TFrame', background = '#D9D9D9')
+            
+        self.value_label = Label(self.stats_frame, text = "Value:  " + str(hack.value))
+        self.value_label.grid(row = 0, column = 0, sticky = 'ew')
+        self.value_label.configure(padding = '15 5 15 5', background = '#D9D9D9',
+                                  foreground = '#373737', font = 'arial 12 bold')
+
+        self.date_label = Label(self.stats_frame, text = "Date:  " + str(hack.timestamp))
+        self.date_label.grid(row = 0, column = 1, sticky = 'ew')
+        self.date_label.configure(padding = 5, background = '#D9D9D9',
+                                 foreground = '#373737', font = 'arial 12 bold')
+
+        self.btn_frame = Frame(self)
+        self.btn_frame.grid(row = 3, column = 0)
+            
+        self.delete_btn = Button(self.btn_frame, text='Delete '+self.hack_type, image=self.delete_img, compound="left",
+                                      style = 'delete.TButton', cursor = 'hand2',
+                                      command = self.delete)
+        self.delete_btn.grid(row = 0, column = 0, sticky = 'news')
+        self.delete_btn.image = self.delete_img
+
+        self.edit_btn = Button(self.btn_frame, text='Edit '+self.hack_type, image=self.edit_img, compound="left",
+                                    style = 'edit.TButton', cursor = 'hand2',
+                                    command = self.edit)
+        self.edit_btn.grid(row = 0, column = 1, sticky = 'news')
+        self.edit_btn.image = self.edit_img
+
+        self.complete_btn = Button(self.btn_frame, text='Complete '+self.hack_type,
+                                   image= self.complete_img, compound="left",
+                                   style = 'complete_task.TButton', cursor = 'hand2',
+                                   command = self.complete)
+        
+        self.complete_btn.grid(row = 0, column = 2, sticky = 'news')
+        self.complete_btn.image = self.complete_img
+
+    '''
+    def set_name_label_text(self, text=self.hack.title):
+        self.name_label.configure(text = text)
+            
+    def set_description_label_text(self, text=self.hack.description):
+        self.description_label.configure(text = text)
+            
+    def set_date_label_text(self, text=str(self.hack.timestamp)):
+        self.date_label.configure(text = text)
+            
+    def set_value_label_text(self, text=str(self.hack.value)):
+        self.value_label.configure(text = text)
+
+    '''
+    
+    def redraw(self, hack):
+        '''
+        Redraws the frame to display the current character data
+        '''
+        self.hack = hack
+        self.set_name_label_text()
+        self.set_description_label_text()
+        self.set_data_label_text()
+        self.set_value_label_text()
+
+    def delete(self):
+        self.top_class.delete_hack(self.ID)
+        self.destroy()
+            
+    def edit(self):
+        self.top_class.edit_hack(self.ID)
+            
+    def complete(self):
+        self.top_class.complete_hack(self.ID)
+        self.destroy()
+
+class Work_Space_Tab(Canvas):
+    def __init__(self, parent, width, height):
+        Canvas.__init__(self, parent)
+        self.parent = parent
+        self.configure(width = width, height = height)
+        
+    def set_width(self, width):
+        self.configure(width = width)
+
+    def set_height(self, height):
+        self.configure(height = height)
+
+        
+class Work_Space_Area(Canvas):
+    def __init__(self, parent):
+        Canvas.__init__(self, parent)
+        self.configure(highlightthickness = 0,
+                       background = '#EBEDF1')
+        
+        self.parent = parent
+        self.frame = Frame(self, style = "W.TFrame",
+                           borderwidth = 0, padding = 10)
+        self.frame.grid(row = 0, column = 0, sticky = 'news')
+        self.frames = []
+        
+        canvas_style = Style()
+
+        canvas_style.configure("W.TFrame", background='#EBEDF1',
+                              pady = (10,0), padx =3)
+        
+        
+        self.scrollbar = Scrollbar(self.parent,
+                                   orient = "vertical",
+                                   command = self.yview)
+        
+        self.configure(yscrollcommand = self.scrollbar.set)
+
+        self.create_window((0,0), anchor = 'nw', window = self.frame)
+        self.scrollbar.grid(row = 1, column = 1, sticky = 'ns')
+
+        self.frame.bind("<Configure>", self.setup_habit_frame)
+        self.bind("<MouseWheel>", lambda e: self.scroll_habit(e))
+
+    def remove_frames(self):
+        for frame in self.frames:
+            frame.destroy()
+
+        self.frames = []
+
+
+    def redraw(self, hack_dict):
+        self.remove_frames()
+        self.set_frames(hack_dict)
+            
+    def set_frames(self, hack_dict):
+        for hack in hack_dict.values():
+           individual_hack = hack_frame(self, hack) 
+           individual_hack.grid(row = hack.ID, column = 0,
+                                sticky = 'ew', pady = (10,0))
+           self.frames.append(individual_hack)
+        
+    def setup_habit_frame(event):
+        # resets the scroll region for the frame inserted into the canvas
+        self.configure(scrollregion = self.bbox("all"))
+        
+        
+    def scroll_habit(event):
+        """ allows for mouse wheel scrolling """
+        try:
+            self.yview_scroll(-1 * int(event.delta/120), "units")
+        except:
+            pass
+
+class Work_Space_Notebook(Notebook):
+    def __init__(self, parent, height, width, padding):
+        Notebook.__init__(self, parent)
+        self.parent = parent
+        self.configure(width = width, height = height,
+                       padding = padding)
+        
 class Work_Space(Frame):
 
     def __init__(self, parent, character):
@@ -14,9 +216,22 @@ class Work_Space(Frame):
         self.style = Style()
         self.parent = parent
         self.character = character
+        self.set_dicts()
         self.rowconfigure(4, weight =1)
         self.columnconfigure(0, weight = 1)
-        self.work_window()
+        self.set_work_window()
+
+    def set_dicts(self):
+        self.habits_dict = {k:self.character.hacks[k]
+                           for k in self.character.hacks
+                           if self.character.hacks[k].h_type == 'habit'}
+        self.dailies_dict = {k:self.character.hacks[k]
+                             for k in self.character.hacks
+                             if self.character.hacks[k].h_type == 'daily'}
+        self.tasks_dict = {k:self.character.hacks[k]
+                           for k in self.character.hacks
+                           if self.character.hacks[k].h_type == 'task'}
+
         
     def select_tab(self, tab):
         '''
@@ -26,20 +241,31 @@ class Work_Space(Frame):
         tabs = {
                 'task' : self.tab_tasks,
                 'daily': self.tab_dailies,
-                'habit': self.tab_habit,
+                'habit': self.tab_habits,
                 'shop' : self.tab_shop
                }
         try:
-            self.frame.select(tabs[tab])
+            self.main_frame.select(tabs[tab])
             
         except:
             messagebox.showerror("Error", "Couldn't change tabs")
+
             
-    def work_window(self):
-        hack_dict = self.character.hacks
+    def redraw(self, character):
+        #Update class' character data instance
+        self.character = character
+        self.set_dicts()
+        
+        #Call class canvases redraw function
+        self.habit_canvas.redraw(self.habits_dict)
+        self.daily_canvas.redraw(self.dailies_dict)
+        self.task_canvas.redraw(self.tasks_dict)
+        
+            
+    def set_work_window(self):
 
         #creating the workspace 
-        frame = Notebook(self, height = 200, width = 400, padding=5)
+        frame = Work_Space_Notebook(self, height = 200, width = 400, padding=5)
         frame.grid(row=4, column = 0, columnspan = 7, rowspan = 4,
                    sticky = 'nesw')
         frame_style = Style()
@@ -49,21 +275,22 @@ class Work_Space(Frame):
         frame.columnconfigure(0, weight = 1)
         #frame.grid_propagate(False)
 
-        tab_habit = Canvas(frame, width=850, height=400)
-        tab_dailies = Canvas(frame, width=850, height=400)
-        tab_tasks = Canvas(frame, width=850, height=400)
-        tab_shop = Canvas(frame, width=850, height=400)
+        self.tab_habits = Work_Space_Tab(frame, width=850, height=400)
+        self.tab_dailies = Work_Space_Tab(frame, width=850, height=400)
+        self.tab_tasks = Work_Space_Tab(frame, width=850, height=400)
+        self.tab_shop = Work_Space_Tab(frame, width=850, height=400)
 
-        tab_habit.pack(fill = BOTH, expand = YES)
-        tab_dailies.pack(fill = BOTH, expand = YES)
-        tab_tasks.pack(fill = BOTH, expand = YES)
-        tab_shop.pack(fill = BOTH, expand = YES)
+        self.tab_habits.pack(fill = BOTH, expand = YES)
+        self.tab_dailies.pack(fill = BOTH, expand = YES)
+        self.tab_tasks.pack(fill = BOTH, expand = YES)
+        self.tab_shop.pack(fill = BOTH, expand = YES)
 
         # load images for complete, edit, delete buttons
-        delete_img = PhotoImage(file=os.path.join("assets", "art", "minus.gif"))
-        edit_img = PhotoImage(file=os.path.join("assets", "art", "pencil.gif"))
-        complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
-            
+        self.delete_img = PhotoImage(file=os.path.join("assets", "art", "minus.gif"))
+        self.edit_img = PhotoImage(file=os.path.join("assets", "art", "pencil.gif"))
+        self.complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
+
+        '''
         #Begining of Habit Tab Code
         habit_canvas = Canvas(tab_habit, highlightthickness = 0, background = '#EBEDF1')
         habit_canvas.grid(row = 1, column = 0, sticky = 'news')
@@ -95,9 +322,23 @@ class Work_Space(Frame):
                 pass
 
         habit_canvas.bind("<MouseWheel>", lambda e: scroll_habit(e))
+        '''
 
+        self.habit_canvas = Work_Space_Area(self.tab_habits) 
+        self.daily_canvas = Work_Space_Area(self.tab_dailies)
+        self.task_canvas = Work_Space_Area(self.tab_tasks)
+
+        self.habit_canvas.grid(row = 1, column = 0, sticky = 'news')
+        self.daily_canvas.grid(row = 1, column = 0, sticky = 'news')
+        self.task_canvas.grid(row = 1, column = 0, sticky = 'news')
+
+        self.habit_canvas.set_frames(self.habits_dict)
+        self.daily_canvas.set_frames(self.dailies_dict)
+        self.task_canvas.set_frames(self.tasks_dict)
+        
+        '''
         for h in [hack for hack in hack_dict if hack_dict[hack].h_type == 'habit']: #Gather habit-type hacks from dict
-            individual_habit = Frame(habits_frame, style = 'habit.TFrame')
+            individual_habit = hack_frame(habits_frame, style = 'habit.TFrame')
             individual_habit.grid(row = hack_dict[h].ID, column = 0, sticky = 'ew', pady = (10,0))
             
             frame_style.configure('habit.TFrame', background = '#C3C3C3')
@@ -146,7 +387,7 @@ class Work_Space(Frame):
                                         command = lambda h=h: self.complete_hack(h))
             complete_habit_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_habit_btn.image = complete_img
- 
+        
         #Begining of Dailies Tab Code
         daily = Canvas(tab_dailies, highlightthickness = 0, background = '#EBEDF1')
         daily.grid(row = 1, column = 0, sticky = 'news')
@@ -312,27 +553,28 @@ class Work_Space(Frame):
                                         command =lambda t=t: self.complete_hack(t))
             complete_tasks_btn.grid(row = 0, column = 2, sticky = 'news')
             complete_tasks_btn.image = complete_img
-            
-        frame.add(tab_habit, text='Habits')
-        frame.add(tab_tasks, text='Tasks')
-        frame.add(tab_dailies, text='Dailies')
-        frame.add(tab_shop, text='Shop')
+        '''
+        
+        frame.add(self.tab_habits, text='Habits')
+        frame.add(self.tab_tasks, text='Tasks')
+        frame.add(self.tab_dailies, text='Dailies')
+        frame.add(self.tab_shop, text='Shop')
 
         plus_img = PhotoImage(file=os.path.join("assets", "art", "plus.gif"))
         
-        add_habit_btn = Button(tab_habit, text = 'Add new habit', image=plus_img, compound="left",
+        add_habit_btn = Button(self.tab_habits, text = 'Add new habit', image=plus_img, compound="left",
                                style = 'add_habit.TButton', cursor = 'hand2',
                                command = lambda: self.add_hack('habit'))
         add_habit_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
         add_habit_btn.image = plus_img
         
-        add_task_btn = Button(tab_tasks, text = 'Add new task', image=plus_img, compound="left",
+        add_task_btn = Button(self.tab_tasks, text = 'Add new task', image=plus_img, compound="left",
                               style = 'add_task.TButton', cursor = 'hand2',
                               command = lambda: self.add_hack('task'))
         add_task_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
         add_task_btn.image = plus_img
         
-        add_daily_btn = Button(tab_dailies, text = 'Add new daily', image=plus_img, compound="left",
+        add_daily_btn = Button(self.tab_dailies, text = 'Add new daily', image=plus_img, compound="left",
                                style = 'add_daily.TButton', cursor = 'hand2',
                                command = lambda: self.add_hack('daily'))
         add_daily_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
@@ -353,36 +595,26 @@ class Work_Space(Frame):
         frame_style.configure('add_daily.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#7A9BC2')
 
-        
-        #habit.create_window(-675, 0, window  =  add_habit_btn)
-        #daily.create_window(-675, 0, window  =  add_daily_btn)
-        #task.create_window(-675,  0, window  =  add_task_btn)
-
-        #Set self.frame as local variable 'frame'
-        self.frame = frame
-        
-        self.tab_tasks = tab_tasks
-        self.tab_dailies = tab_dailies
-        self.tab_shop = tab_shop
-        self.tab_habit = tab_habit
+        self.main_frame = frame
         
         MyShop.setShop(self.tab_shop)
-        self.frame.select(self.tab_shop)
+        self.main_frame.select(self.tab_shop)
         
     def complete_hack(self, hack_ID):
-        self.character.complete_hack(hack_ID)
-        self.parent.update_stats_banner()
+        self.parent.complete_hack(hack_ID)
+        
         
     def add_hack(self, h_type):
         ''' Calls input window; Adds result to hack list '''
-        new_hack = self.input_hack_data(h_type)
+        self.input_hack_data(h_type)
         #REBUILD_HACK_LIST_ON_GUI
         
     def delete_hack(self, hack_ID):
         answer = messagebox.askokcancel("Delete Hack", "Delete hack?")
         if answer is True:
-            self.character.remove_hack(hack_ID)
-            #REBUILD_HACK_LIST_ON_GUI() 
+            self.parent.delete_hack(hack_ID)
+            #REBUILD_HACK_LIST_ON_GUI()
+            
         else:
             #print("User clicked Cancel")
             return False
@@ -392,6 +624,7 @@ class Work_Space(Frame):
         try:
             hack_data = self.character.get_hack(hack_ID)
             self.input_hack_data(hack_data.h_type, hack_data)
+            
             #REBUILD_HACK_LIST_ON_GUI()
         except:
             print("Failed to pass hack to input_hack_data")           
@@ -486,13 +719,13 @@ class Work_Space(Frame):
         
     #Helper functions for input_hack_data
     def save_new_hack(self, window, hack_data):
-        self.character.add_hack(hack_data)
+        self.parent.add_hack(hack_data)
         window.destroy()
         messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
                             ' hack has been saved!')
 
     def save_edited_hack(self, window, hack_ID, hack_data):
-        self.character.edit_hack(hack_ID, hack_data)
+        self.parent.edit_hack(hack_ID, hack_data)
         window.destroy()
         messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
                             ' hack has been saved!')
