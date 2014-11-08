@@ -455,9 +455,9 @@ class GUI(Frame):
 
     def complete_hack(self, hack_ID):
         #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
-        self.character.complete_hack(hack_ID)
+        if(self.character.complete_hack(hack_ID)):
+            self.redraw()
         self.update_stats_banner()
-        self.redraw()
         
 
     def delete_hack(self, hack_ID):

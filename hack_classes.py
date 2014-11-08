@@ -77,9 +77,25 @@ class Character:
 
     def complete_hack(self, hack_ID):
         hack = self.get_hack(hack_ID)
+
+        if hack.h_type == "daily":
+            if hack.timestamp < date.today():
+                self.hacks[hack_id].timestamp = date.today()
+            else:
+                return False
+
+        elif hack.h_type == "task":
+            self.remove_hack(hack_ID)
+
+        if int(hack.value) > 0:
+            self.exp += int(hack.exp)
+
         self.cash += int(hack.value)
-        self.exp += int(hack.exp)
-        self.remove_hack(hack_ID)
+        
+        if hack.h_type == "habit":
+            return False
+
+        return True
 
     def get_hack(self, hack_ID):
         try:

@@ -93,20 +93,6 @@ class hack_frame(Frame):
         self.complete_btn.grid(row = 0, column = 2, sticky = 'news')
         self.complete_btn.image = self.complete_img
 
-    '''
-    def set_name_label_text(self, text=self.hack.title):
-        self.name_label.configure(text = text)
-            
-    def set_description_label_text(self, text=self.hack.description):
-        self.description_label.configure(text = text)
-            
-    def set_date_label_text(self, text=str(self.hack.timestamp)):
-        self.date_label.configure(text = text)
-            
-    def set_value_label_text(self, text=str(self.hack.value)):
-        self.value_label.configure(text = text)
-
-    '''
     
     def redraw(self, hack):
         '''
@@ -126,8 +112,8 @@ class hack_frame(Frame):
         self.top_class.edit_hack(self.ID)
             
     def complete(self):
-        self.top_class.complete_hack(self.ID)
-        self.destroy()
+        if(self.top_class.complete_hack(self.ID)):
+            self.destroy()
 
 class Work_Space_Tab(Canvas):
     def __init__(self, parent, width, height):
@@ -290,40 +276,6 @@ class Work_Space(Frame):
         self.edit_img = PhotoImage(file=os.path.join("assets", "art", "pencil.gif"))
         self.complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
 
-        '''
-        #Begining of Habit Tab Code
-        habit_canvas = Canvas(tab_habit, highlightthickness = 0, background = '#EBEDF1')
-        habit_canvas.grid(row = 1, column = 0, sticky = 'news')
-
-        habits_frame = Frame(habit_canvas, style = "W.TFrame", borderwidth = 0, padding = 10)
-        habits_frame.grid(row = 0, column = 0, sticky = 'news')
-        
-        bar_habit = Scrollbar(tab_habit, orient = "vertical", command = habit_canvas.yview)
-        habit_canvas.configure(yscrollcommand = bar_habit.set)
-
-        tab_habit.grid_columnconfigure(0, weight = 1)
-        #tab_habit.grid_rowconfigure(0, weight = 1)
-        tab_habit.grid_rowconfigure(1, weight=1)
-        
-        habit_canvas.create_window((0,0), anchor = 'nw', window = habits_frame, tags = 'habits_frame')
-        bar_habit.grid(row = 1, column = 1, sticky = 'ns')
-
-        def setupHabitFrame(event):
-            # resets the scroll region for the frame inserted into the canvas
-            habit_canvas.configure(scrollregion = habit_canvas.bbox("all"))
-
-        habits_frame.bind("<Configure>", setupHabitFrame)
-        
-        def scroll_habit(event):
-            """ allows for mouse wheel scrolling """
-            try:
-                habit_canvas.yview_scroll(-1 * int(event.delta/120), "units")
-            except:
-                pass
-
-        habit_canvas.bind("<MouseWheel>", lambda e: scroll_habit(e))
-        '''
-
         self.habit_canvas = Work_Space_Area(self.tab_habits) 
         self.daily_canvas = Work_Space_Area(self.tab_dailies)
         self.task_canvas = Work_Space_Area(self.tab_tasks)
@@ -336,224 +288,6 @@ class Work_Space(Frame):
         self.daily_canvas.set_frames(self.dailies_dict)
         self.task_canvas.set_frames(self.tasks_dict)
         
-        '''
-        for h in [hack for hack in hack_dict if hack_dict[hack].h_type == 'habit']: #Gather habit-type hacks from dict
-            individual_habit = hack_frame(habits_frame, style = 'habit.TFrame')
-            individual_habit.grid(row = hack_dict[h].ID, column = 0, sticky = 'ew', pady = (10,0))
-            
-            frame_style.configure('habit.TFrame', background = '#C3C3C3')
-            
-            habit_name = Label(individual_habit, text = hack_dict[h].title)
-            habit_name.grid(row = 0, column = 0, sticky = 'ew')
-            habit_name.configure(foreground = 'white', background = '#323232',
-                                 padding = 5, font = 'arial 14 bold', anchor = CENTER)
-
-            habit_description = Label(individual_habit, text = hack_dict[h].description, wraplength = 800)
-            habit_description.grid(row = 1, column = 0, sticky = 'ew')
-            habit_description.configure(foreground = '#373737', background = '#D9D9D9',
-                                        padding = '15 5 15 5', font = 'arial 12', width = 80)
-
-            habit_stats_frame = Frame(individual_habit, style = 'habit_stats.TFrame')
-            habit_stats_frame.grid(row = 2, column = 0, sticky = 'news')
-            frame_style.configure('habit_stats.TFrame', background = '#D9D9D9')
-            
-            habit_value = Label(habit_stats_frame, text = "Value:  " + str(hack_dict[h].value))
-            habit_value.grid(row = 0, column = 0, sticky = 'ew')
-            habit_value.configure(padding = '15 5 15 5', background = '#D9D9D9',
-                                  foreground = '#373737', font = 'arial 12 bold')
-
-            habit_date = Label(habit_stats_frame, text = "Date:  " + str(hack_dict[h].timestamp))
-            habit_date.grid(row = 0, column = 1, sticky = 'ew')
-            habit_date.configure(padding = 5, background = '#D9D9D9',
-                                 foreground = '#373737', font = 'arial 12 bold')
-
-            habit_btn_frame = Frame(individual_habit)
-            habit_btn_frame.grid(row = 3, column = 0)
-            
-            delete_habit_btn = Button(habit_btn_frame, text='Delete habit', image=delete_img, compound="left",
-                                      style = 'delete.TButton', cursor = 'hand2',
-                                      command = lambda h=h: self.delete_hack(h))
-            delete_habit_btn.grid(row = 0, column = 0, sticky = 'news')
-            delete_habit_btn.image = delete_img
-
-            edit_habit_btn = Button(habit_btn_frame, text='Edit habit', image=edit_img, compound="left",
-                                    style = 'edit.TButton', cursor = 'hand2',
-                                    command = lambda h=h: self.edit_hack(h))
-            edit_habit_btn.grid(row = 0, column = 1, sticky = 'news')
-            edit_habit_btn.image = edit_img
-
-            complete_habit_btn = Button(habit_btn_frame, text='Complete habit', image=complete_img,
-                                        compound="left", style = 'complete_task.TButton', cursor = 'hand2',
-                                        command = lambda h=h: self.complete_hack(h))
-            complete_habit_btn.grid(row = 0, column = 2, sticky = 'news')
-            complete_habit_btn.image = complete_img
-        
-        #Begining of Dailies Tab Code
-        daily = Canvas(tab_dailies, highlightthickness = 0, background = '#EBEDF1')
-        daily.grid(row = 1, column = 0, sticky = 'news')
-
-        dailies = Frame(daily, style = "W.TFrame", borderwidth = 0, padding = 10)
-        dailies.grid(row = 0, column = 0, sticky = 'news')
-
-        bar_dailies = Scrollbar(tab_dailies, orient = VERTICAL, command = daily.yview)
-        daily.configure(yscrollcommand = bar_dailies.set)
-
-        tab_dailies.rowconfigure(1, weight = 1)
-        tab_dailies.columnconfigure(0, weight = 1)
-
-        daily.create_window((0,0), anchor = N + E, window = dailies, tags = 'dailies')
-        bar_dailies.grid(row = 1, column = 1, sticky = 'ns')
-
-        def setupDailiesFrame(event):
-            # resets the scroll region for the frame inserted into the canvas
-            daily.configure(scrollregion=daily.bbox("all"))
-
-        daily.bind("<Configure>", setupDailiesFrame)
-
-        def scroll_daily(event):
-            """ allows for mouse wheel scrolling """
-            try:
-                daily.yview_scroll(-1 * int(event.delta/120), "units")
-            except:
-                pass
-
-        daily.bind("<MouseWheel>", lambda e: scroll_daily(e))
-        
-        #Gather dailies from dict
-        for d in [hack for hack in hack_dict if hack_dict[hack].h_type == 'daily']:  
-            individual_dailies = Frame(dailies, style = 'dailies.TFrame')
-            individual_dailies.grid(row = hack_dict[d].ID, column = 0, sticky = 'ew', pady = (10,0))
-            
-            frame_style.configure('dailies.TFrame', background = '#C3C3C3')
-            
-            dailies_title = Label(individual_dailies, text = hack_dict[d].title)
-            dailies_title.grid(row = 0, column = 0, sticky = 'ew')
-            dailies_title.configure(foreground = 'white', background = '#323232',
-                                    padding = 5, font = 'arial 14 bold', anchor = CENTER)
-
-            dailies_description = Label(individual_dailies, text = hack_dict[d].description, wraplength = 800)
-            dailies_description.grid(row = 1, column = 0, sticky = 'ew')
-            dailies_description.configure(foreground = 'black', background = '#D9D9D9',
-                                          padding = '15 5 15 5', font = 'arial 12', width = 80)
-
-            dailies_stats_frame = Frame(individual_dailies, style = 'dailies_stats.TFrame')
-            dailies_stats_frame.grid(row = 2, column = 0, sticky = 'news')
-            frame_style.configure('dailies_stats.TFrame', background = '#D9D9D9')
-            
-            dailies_value = Label(dailies_stats_frame, text = "Value:  " + str(hack_dict[d].value))
-            dailies_value.grid(row = 0, column = 0, sticky = 'ew')
-            dailies_value.configure(padding = '15 5 15 5', background = '#D9D9D9',
-                                    foreground = '#373737', font = 'arial 12 bold')
-
-            dailies_date = Label(dailies_stats_frame, text = "Date:  " + str(hack_dict[d].timestamp))
-            dailies_date.grid(row = 0, column = 1, sticky = 'ew')
-            dailies_date.configure(padding = 5, background = '#D9D9D9',
-                                   foreground = '#373737', font = 'arial 12 bold')
-
-            dailies_btn_frame = Frame(individual_dailies)
-            dailies_btn_frame.grid(row = 3, column = 0)
-
-            delete_dailies_btn = Button(dailies_btn_frame, text = 'Delete Daily', image=delete_img, compound="left",
-                                        style = 'delete.TButton', cursor = 'hand2',
-                                        command = lambda d=d: self.delete_hack(d))
-            delete_dailies_btn.grid(row = 0, column = 0, sticky = 'news')
-            delete_dailies_btn.image = delete_img
-            
-            edit_dailies_btn = Button(dailies_btn_frame, text = 'Edit Daily', image=edit_img, compound="left",
-                                      style = 'edit.TButton', cursor = 'hand2',
-                                      command = lambda d=d: self.edit_hack(d))
-            edit_dailies_btn.grid(row = 0, column = 1, sticky = 'news')
-            edit_dailies_btn.image = edit_img
-            
-            complete_dailies_btn = Button(dailies_btn_frame, text = 'Complete Daily', image=complete_img,
-                                          compound="left", style = 'complete_task.TButton', cursor = 'hand2',
-                                          command = lambda d=d: self.complete_hack(d))
-            complete_dailies_btn.grid(row = 0, column = 2, sticky = 'news')
-            complete_dailies_btn.image = complete_img
-
-        #Begining of Tasks Tab Code
-        task = Canvas(tab_tasks, highlightthickness = 0, background = '#EBEDF1')
-        task.grid(row = 1, column = 0, sticky = 'news')
-
-        tasks= Frame(task, style = "W.TFrame", padding = 10)
-        tasks.grid(row = 0, column = 0, sticky = 'news')
-
-        bar_tasks = Scrollbar(tab_tasks, orient = VERTICAL, command = task.yview)
-        task.configure(yscrollcommand = bar_tasks.set)
-
-        tab_tasks.rowconfigure(1, weight = 1)
-        tab_tasks.columnconfigure(0, weight = 1)
-
-        task.create_window((0,0), anchor = N + E, window = tasks)
-        bar_tasks.grid(row = 1, column = 1, sticky = 'ns')
-
-        def setupTasksFrame(event):
-            # resets the scroll region for the frame inserted into the canvas
-            task.configure(scrollregion=task.bbox("all"))
-
-        task.bind("<Configure>", setupTasksFrame)
-
-        def scroll_task(event):
-            """ allows for mouse wheel scrolling """
-            try:
-                task.yview_scroll(-1 * int(event.delta/120), "units")
-            except:
-                pass
-
-        task.bind("<MouseWheel>", lambda e: scroll_task(e))
-        
-        #Gather tasks from dict
-        for t in [hack for hack in hack_dict if hack_dict[hack].h_type == 'task']: 
-            individual_tasks = Frame(tasks, style = 'tasks.TFrame')
-            individual_tasks.grid(row = hack_dict[t].ID, column = 0, sticky = 'ew', pady = (10,0))
-
-            frame_style.configure('tasks.TFrame', background = '#C3C3C3')
-            
-            tasks_title = Label(individual_tasks, text = hack_dict[t].title)
-            tasks_title.grid(row = 0, column = 0, sticky = 'ew')
-            tasks_title.configure(foreground = 'white', background = '#323232',
-                                  padding = 5, font = 'arial 14 bold', anchor = CENTER)
-
-            tasks_description = Label(individual_tasks, text = hack_dict[t].description, wraplength = 800)
-            tasks_description.grid(row = 1, column = 0, sticky = 'ew')
-            tasks_description.configure(foreground = 'black', background = '#D9D9D9',
-                                        padding = '15 5 15 5', font = 'arial 12', width = 80)
-
-            tasks_stats_frame = Frame(individual_tasks, style = 'tasks_stats.TFrame')
-            tasks_stats_frame.grid(row = 2, column = 0, sticky = 'news')
-            frame_style.configure('tasks_stats.TFrame', background = '#D9D9D9')
-            
-            tasks_value = Label(tasks_stats_frame, text = "Value:  " + str(hack_dict[t].value))
-            tasks_value.grid(row = 0, column = 0, sticky = 'ew')
-            tasks_value.configure(padding = '15 5 15 5', background = '#D9D9D9',
-                                  foreground = '#373737', font = 'arial 12 bold')
-
-            tasks_date = Label(tasks_stats_frame, text = "Date:  " + str(hack_dict[t].timestamp))
-            tasks_date.grid(row = 0, column = 1, sticky = 'ew')
-            tasks_date.configure(padding = 5, background = '#D9D9D9',
-                                 foreground = '#373737', font = 'arial 12 bold')
-
-            tasks_btn_frame = Frame(individual_tasks)
-            tasks_btn_frame.grid(row = 3, column = 0)
-            
-            delete_tasks_btn = Button(tasks_btn_frame, text = 'Delete Task', image=delete_img, compound="left",
-                                      style = 'delete.TButton', cursor = 'hand2',
-                                      command = lambda t=t: self.delete_hack(t))
-            delete_tasks_btn.grid(row = 0, column = 0, sticky = 'news')
-            delete_tasks_btn.image = delete_img
-            
-            edit_tasks_btn = Button(tasks_btn_frame, text = 'Edit Task', image=edit_img, compound="left",
-                                    style = 'edit.TButton', cursor = 'hand2',
-                                    command = lambda t=t: self.edit_hack(t))
-            edit_tasks_btn.grid(row = 0, column = 1, sticky = 'news')
-            edit_tasks_btn.image = edit_img
-            
-            complete_tasks_btn = Button(tasks_btn_frame, text = 'Complete Task', image=complete_img,
-                                        compound="left", style = 'complete_task.TButton', cursor = 'hand2',
-                                        command =lambda t=t: self.complete_hack(t))
-            complete_tasks_btn.grid(row = 0, column = 2, sticky = 'news')
-            complete_tasks_btn.image = complete_img
-        '''
         
         frame.add(self.tab_habits, text='Habits')
         frame.add(self.tab_tasks, text='Tasks')
@@ -601,8 +335,10 @@ class Work_Space(Frame):
         self.main_frame.select(self.tab_shop)
         
     def complete_hack(self, hack_ID):
-        self.parent.complete_hack(hack_ID)
-        
+        if(self.parent.complete_hack(hack_ID)):
+            return True
+        else:
+            return False
         
     def add_hack(self, h_type):
         ''' Calls input window; Adds result to hack list '''
@@ -646,6 +382,11 @@ class Work_Space(Frame):
                            foreground='white', background='#283D57', font='arial 12 bold')
         name_label.pack(side="top")
 
+        name_warning_label = Label(name_frame, text = "Title cannot be empty!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        name_warning_label.pack(side="top", padx = 10, pady=10)
+        name_warning_label.pack_forget() #Start invisible
+
         ticket_name = Entry(name_frame, justify=CENTER)
         ticket_name.pack(side="bottom", pady=5)
 
@@ -656,6 +397,11 @@ class Work_Space(Frame):
         desc_label = Label(desc_frame, text="Description", padding='128 5 128 5',
                            foreground='white', background='#283D57', font='arial 12 bold')
         desc_label.pack(side="top")
+
+        desc_warning_label = Label(desc_frame, text = "Description cannot be empty!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        desc_warning_label.pack(side="top", padx = 10, pady=10)
+        desc_warning_label.pack_forget() #Start invisible
 
         ticket_desc = Text(desc_frame, width=40, height=4)
 
@@ -712,8 +458,23 @@ class Work_Space(Frame):
                                           ticket_value.get())))
 
         confirmButton.pack(side="right")
+        confirmButton.config(state = 'disabled')
+
+        ticket_name.bind('<FocusOut>', lambda event: self.check_input_validity(
+                                                name_warning_label, desc_warning_label, value_warning_label, 
+                                                ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
+                                                confirmButton)) 
+
+        ticket_desc.bind('<FocusOut>', lambda event: self.check_input_validity(
+                                                name_warning_label, desc_warning_label, value_warning_label, 
+                                                ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
+                                                confirmButton)) 
+
         ticket_value.bind('<FocusOut>', lambda event: self.check_input_validity(
-                                                value_warning_label, ticket_value.get(), confirmButton)) 
+                                                name_warning_label, desc_warning_label, value_warning_label, 
+                                                ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
+                                                confirmButton)) 
+
         self.style.configure('save.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#96FF48')
         
@@ -730,14 +491,38 @@ class Work_Space(Frame):
         messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
                             ' hack has been saved!')
 
-    def check_input_validity(self, warn_label, value_string, confirmButton):
+    def check_input_validity(self, title_label, desc_label, value_label, 
+                                title_string, desc_string, value_string, confirmButton):
+
+        error_triggered = False
+
+        if title_string == "":
+            title_label.pack()
+            error_triggered = True
+        
+        else:
+            title_label.pack_forget()
+
+        if desc_string.strip('\t\n') == "": 
+            desc_label.pack()
+            error_triggered = True
+
+        else:
+            desc_label.pack_forget()
+
         try:
             int(value_string)
-            warn_label.pack_forget()
-            confirmButton.config(state = 'normal')
+            value_label.pack_forget()
+
         except:
-            warn_label.pack()
+            value_label.pack()
+            error_triggered = True
+
+        if error_triggered:
             confirmButton.config(state = 'disabled')
+
+        else:
+            confirmButton.config(state = 'normal')
 
 def main():
     #For Testing purposes
