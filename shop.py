@@ -288,7 +288,8 @@ class Shop():
         if self.itemName.get() != 'name':
             get_item = self.live_items[self.buy_item_id]
             item = MyShop.api.buy_item(get_item)
-            MyInventory.my_inventory.addItem(item)
+            if item != None:
+                MyInventory.my_inventory.addItem(item)
 
         
     def setItemInfo(self, name, descript, cost, item_id):
