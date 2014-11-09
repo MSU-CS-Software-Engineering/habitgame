@@ -130,7 +130,10 @@ class Character:
             return self.items[item_ID]
         except:
             print("Error: Invalid item ID")
-
+            
+    def get_all_items(self):
+        return self.items
+    
     def set_item_IDs(self):
         for item in enumerate(self.items):
             item[1].ID = item[0]
@@ -188,19 +191,22 @@ class Item:
       Variables:
         name: Name of item                                (string)
         ID: Number to hold index in itemlist              (int)
+        description: Text about what the item does        (string)
         image: Name of accompanying image                 (string)
         value: Currency value of item                     (int)
         uses: Uses before item expires [-1 for infinite]  (int)
         effect: Special function that the item performs   (function)
+        active: Is the item in use or not                 (bool)
     """
-    def __init__(self, name, image, value, uses, effect = None):
+    def __init__(self, name, desc, image, value, uses, effect = None):
         self.name = name
         self.ID = 0
-        self.description = 'Nothing'
+        self.description = desc
         self.image = image
         self.value = value
         self.uses = uses
         self.effect = effect
+        self.active = False
 
     def serialize(self):
         """
@@ -213,6 +219,7 @@ class Item:
                       'image':self.image,
                       'value':self.value,
                       'uses':self.uses,
-                      'effect':self.effect}
+                      'effect':self.effect,
+                      'active':self.active}
         
         return item_dict

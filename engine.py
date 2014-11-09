@@ -105,6 +105,7 @@ class Game_Data:
          
             for item in character_data['items']:
                 new_item = Item(item['title'],
+                                item['desc'],
                                 item['image'],
                                 item['value'],
                                 item['uses'],
@@ -190,7 +191,9 @@ class GUI(Frame):
         self.character_exp = StringVar()
         self.character_cash = StringVar()
         self.character_level = StringVar()
-
+        self.character_item_count = StringVar()
+        self.update_item_count()
+        
         self.update_name()
         self.update_exp()
         self.update_cash()
@@ -205,7 +208,8 @@ class GUI(Frame):
         self.bind_buttons()
         
         # link the shop so it can call GUI's buy_item()
-        MyShop.setApp(self)
+        MyShop.setApi(self)
+        MyInventory.setApi(self)
 
     def initUI(self):
         self.grid()
@@ -226,9 +230,9 @@ class GUI(Frame):
         self.rowconfigure(4, pad=7)
 
         self.make_menu_bar()
+        self.make_character_frame()
         self.make_banner()
         self.make_stats_banner()
-        self.make_character_frame()
         self.make_footer()
  
         self.frames = {}
@@ -285,6 +289,7 @@ class GUI(Frame):
         self.banner.grid(row=0, column=0, columnspan=9, sticky='news')
         self.style.configure('banner.TFrame', background='black')
 
+        # Daily Hack logo linked to the homepage
         logo_img = PhotoImage(file=os.path.join("assets", "art", "logo.gif"))
         logo_image = Label(self.banner, image=logo_img, style='hack_logo.TLabel', padding='7 7 7 6', cursor="hand2")
         logo_image.grid(row=0, column=0, sticky='e', padx=(0,30))
@@ -294,14 +299,74 @@ class GUI(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home()) 
         self.style.configure('hack_logo.TLabel', background='black')
 
-        menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop']
-        menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
-                          self.go_to_dailies, self.go_to_generic, self.go_to_shop]
+        self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
+        self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
+                               self.go_to_dailies, self.go_to_generic,
+                               self.go_to_shop, self.go_to_inventory]
 
         self.menu_link_buttons = []
         
-        for i in range(6):
-            self.make_menu(i, menu_titles[i], menu_functions[i])
+        for i in range(len(self.menu_titles)):
+            self.make_menu(i, self.menu_titles[i], self.menu_functions[i])
+
+    def clear_menus(self, not_clear):
+        """
+        this function is called for link buttons outside of the menu banner, so the proper buttons get reset.
+        ie: when the user clicks on the daily hack logo, the home button becomes selected and highlighted
+        """
+        self.button_selected = True
+        self.select_id = not_clear
+        self.menu_link_buttons[not_clear].configure(background='#283D57', foreground='#79DB44')
+        for i in range(len(self.menu_link_buttons)):
+                if i != not_clear:
+                    self.menu_link_buttons[i].configure(background='black', foreground='#EBEBEB')
+   
+    def make_menu(self, col_number, menu_title, go_to_page):
+        """
+        Make's common menu links. When the mouse hovers over the link, the foreground/background changes color.
+        When a link is clicked on, the foreground/background color stays the same as the hover over color and
+        it does not change until a new link is selected. Note: other links can still be hovered over and they will
+        highlight independently regardless of which link is currently selected.
+        """    
+        self.button_selected = False
+        self.select_id = 0
+        
+        def mouse_leave():
+            if not self.button_selected or col_number != self.select_id:
+                menu_link.configure(background='black', foreground='#EBEBEB')
+
+        def mouse_enter():
+            if self.select_id != col_number:
+                menu_link.configure(background='#0F0F0F', foreground='#FFD237')
+
+        def go_to():
+            self.button_selected = True
+            self.select_id = col_number
+            for i in range(len(self.menu_link_buttons)):
+                if i != col_number:
+                    self.menu_link_buttons[i].configure(background='black', foreground='#EBEBEB')
+
+            menu_link.configure(background='#283D57', foreground='#79DB44')
+            go_to_page()
+            
+        if 'Inventory' != menu_title:
+            menu_link = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=menu_title)
+        elif 'Inventory' == menu_title:
+            menu_link = Label(self.char_buttons_frame, padding='12 7 12 7', cursor='hand2',
+                         textvariable=self.character_item_count)
+            
+        menu_link.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
+
+        menu_link.bind('<Enter>', lambda e: mouse_enter())
+        menu_link.bind('<Leave>', lambda e: mouse_leave())
+        menu_link.bind('<1>', lambda e: go_to())
+
+        if 'Inventory' != menu_title:
+            menu_link.grid(row=0, column=col_number+1, sticky='e')
+        elif 'Inventory' == menu_title:
+            menu_link.grid(row=1, column=1, padx=5, sticky='e')
+            
+        self.menu_link_buttons.append(menu_link)
 
     def make_stats_banner(self):
         # create stats frame; embedded in the character frame
@@ -323,7 +388,7 @@ class GUI(Frame):
         # add cash stats info
         cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
         cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
-        cash = Label(self.stats_frame, textvariable= self.character_cash)
+        cash = Label(self.stats_frame, textvariable=self.character_cash)
         cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
         cash.configure(background="#283D57", font="arial 12 bold", foreground='#3BB623')
         
@@ -342,9 +407,13 @@ class GUI(Frame):
         # create character data frame
         self.char_frame = Frame(self)
         self.char_frame.grid(row=2, column=0, sticky='news')
+
+        # place character menu buttons here, self.make_menu() will use this
+        self.char_buttons_frame = Frame(self.char_frame)
+        self.char_buttons_frame.grid(row=1, column=1, sticky='news')
         
         self.name_label = Label(self.char_frame, text="Player Name")
-        self.name_label.grid(row = 0, column = 0,sticky=W, pady=4, padx=5)
+        self.name_label.grid(row = 0, column = 0, sticky=W, pady=4, padx=5)
         self.name_label.configure(font='arial 12')
         
         self.name = Label(self.char_frame, textvariable = self.character_name)
@@ -353,9 +422,9 @@ class GUI(Frame):
         
         # load character image
         char_img = PhotoImage(file=os.path.join("assets", "art", "main.gif"))
-        character_image = Label(self.char_frame, image=char_img)
-        character_image.grid(row=1, column=0, stick=W, padx=5)
-        character_image.image = char_img
+        self.character_image = Label(self.char_frame, image=char_img)
+        self.character_image.grid(row=1, column=0, stick=W, padx=5)
+        self.character_image.image = char_img
 
     def make_footer(self):
         # footer
@@ -379,44 +448,6 @@ class GUI(Frame):
         footer = Label(footer_frame, text="Copyright 2014")
         footer.grid(row=0, column=1, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
-
-    def make_menu(self, col_number, menu_title, go_to_page):
-        """
-        Make's common menu links. When the mouse hovers over the link, the foreground/background changes color.
-        When a link is clicked on, the foreground/background color stays the same as the hover over color and
-        it does not change until a new link is selected. Note: other links can still be hovered over and they will
-        highlight independently regardless of which link is currently selected.
-        """    
-        self.button_selected = False
-        self.select_id = 0
-        
-        def mouse_leave():
-            if not self.button_selected or col_number != self.select_id:
-                menu_title.configure(background='black', foreground='#EBEBEB')
-
-        def mouse_enter():
-            if self.select_id != col_number:
-                menu_title.configure(background='#0F0F0F', foreground='#FFD237')
-
-        def go_to():
-            self.button_selected = True
-            self.select_id = col_number
-            for i in range(len(self.menu_link_buttons)):
-                if i != col_number:
-                    self.menu_link_buttons[i].configure(background='black', foreground='#EBEBEB')
-
-            menu_title.configure(background='#283D57', foreground='#79DB44')
-            go_to_page()
-            
-        menu_title = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=menu_title)
-        menu_title.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
-
-        menu_title.bind('<Enter>', lambda e: mouse_enter())
-        menu_title.bind('<Leave>', lambda e: mouse_leave())
-        menu_title.bind('<1>', lambda e: go_to())
-        
-        menu_title.grid(row=0, column=col_number+1, sticky='e')
-        self.menu_link_buttons.append(menu_title)
         
     def bind_buttons(self):
         #Navigation Buttons
@@ -439,6 +470,10 @@ class GUI(Frame):
     def update_level(self):
         self.character_level.set(self.character.level)
 
+    def update_item_count(self):
+        str_set = str("Inventory ( " +str(len(self.character.items))) + " )"
+        self.character_item_count.set(str_set)
+        
     def add_hack(self, hack_data):
         #messagebox.showinfo("Hack Info", "Added Hack "+hack_data.title)
         self.character.add_hack(hack_data)
@@ -499,7 +534,7 @@ class GUI(Frame):
         Show a frame for the given frame class
         '''
         
-        if frame_class in ('habit', 'daily', 'task', 'shop'):
+        if frame_class in ('habit', 'daily', 'task', 'shop', 'inventory'):
             if self.current_visible_frame != self.frames['Work_Space']: 
                 self.current_visible_frame.grid_remove()
                 
@@ -535,6 +570,16 @@ class GUI(Frame):
             self.character.remove_item(item_ID)
             self.character.set_item_IDs()
 
+    def sell_item(self, item_ID):
+        """
+        called in Inventory class, sell and remove item at 75% of full price
+        """
+        item = self.character.items[item_ID]
+        self.character.cash += int(float(item.value)*0.75)
+        self.character.remove_item(item_ID)
+        self.update_stats_banner()
+        self.update_item_count()
+        
     def update_stats_banner(self):
         """
         this function is called in landing_page.py and work_space.py when the user
@@ -566,11 +611,18 @@ class GUI(Frame):
             self.character.set_item_IDs()
             self.character_cash.set(self.character.cash)
             print(item.name + " bought!")
+            self.update_item_count()
+            return self.character.get_item(item.ID)
         else:
            print("Not enough cash for " + item.name + "!")
+           return None
 
-        
+    def get_character_items(self):
+        return self.character.get_all_items()
+    
     def go_to_home(self):
+        # element 0 in self.menu_titles list
+        self.clear_menus(0)
         self.show_frame('Landing_Page')
 
     def go_to_habits(self):
@@ -586,6 +638,9 @@ class GUI(Frame):
         
     def go_to_shop(self):
         self.show_frame('shop')
+
+    def go_to_inventory(self):
+        self.show_frame('inventory')
         
     def save_game(self):
         messagebox.showinfo("Save", "Game Saved!")  
@@ -603,7 +658,7 @@ def main():
     """
       Stub for main function
     """
-    db = authenticate.db()
+    #db = authenticate.db()
 
     #main_character = load('Tester')
    
@@ -619,3 +674,4 @@ if __name__ == "__main__":
 # These imports have been moved to resolve import loops between
 # shop, work_space, and engine over the Item class.
 from shop import *
+from inventory import *

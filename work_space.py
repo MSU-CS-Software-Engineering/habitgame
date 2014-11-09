@@ -4,6 +4,7 @@ from tkinter.ttk import *
 
 from hack_classes import Hack
 from shop import MyShop
+from inventory import MyInventory
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
 
 
@@ -228,7 +229,8 @@ class Work_Space(Frame):
                 'task' : self.tab_tasks,
                 'daily': self.tab_dailies,
                 'habit': self.tab_habits,
-                'shop' : self.tab_shop
+                'shop' : self.tab_shop,
+                'inventory' : self.tab_inventory
                }
         try:
             self.main_frame.select(tabs[tab])
@@ -265,11 +267,13 @@ class Work_Space(Frame):
         self.tab_dailies = Work_Space_Tab(frame, width=850, height=400)
         self.tab_tasks = Work_Space_Tab(frame, width=850, height=400)
         self.tab_shop = Work_Space_Tab(frame, width=850, height=400)
-
+        self.tab_inventory = Work_Space_Tab(frame, width=850, height=400)
+        
         self.tab_habits.pack(fill = BOTH, expand = YES)
         self.tab_dailies.pack(fill = BOTH, expand = YES)
         self.tab_tasks.pack(fill = BOTH, expand = YES)
         self.tab_shop.pack(fill = BOTH, expand = YES)
+        self.tab_inventory.pack(fill = BOTH, expand = YES)
 
         # load images for complete, edit, delete buttons
         self.delete_img = PhotoImage(file=os.path.join("assets", "art", "minus.gif"))
@@ -293,7 +297,8 @@ class Work_Space(Frame):
         frame.add(self.tab_tasks, text='Tasks')
         frame.add(self.tab_dailies, text='Dailies')
         frame.add(self.tab_shop, text='Shop')
-
+        frame.add(self.tab_inventory, text='Inventory')
+        
         plus_img = PhotoImage(file=os.path.join("assets", "art", "plus.gif"))
         
         add_habit_btn = Button(self.tab_habits, text = 'Add new habit', image=plus_img, compound="left",
@@ -331,6 +336,7 @@ class Work_Space(Frame):
 
         self.main_frame = frame
         
+        MyInventory.setInventory(self.tab_inventory)
         MyShop.setShop(self.tab_shop)
         self.main_frame.select(self.tab_shop)
         
