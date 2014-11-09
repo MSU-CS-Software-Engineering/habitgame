@@ -313,6 +313,9 @@ class GUI(Frame):
         """
         this function is called for link buttons outside of the menu banner, so the proper buttons get reset.
         ie: when the user clicks on the daily hack logo, the home button becomes selected and highlighted
+
+        not_clear acceptable values:
+        'Home' = 0, 'Habits' = 1, 'Tasks' = 2, 'Dailies' = 3, 'List' = 4, 'Shop' = 5, 'Inventory' = 6 
         """
         self.button_selected = True
         self.select_id = not_clear
@@ -621,34 +624,41 @@ class GUI(Frame):
         return self.character.get_all_items()
     
     def go_to_home(self):
-        # element 0 in self.menu_titles list
         self.clear_menus(0)
         self.show_frame('Landing_Page')
 
-    def go_to_habits(self):
-        self.show_frame('habit')
+    def go_to_habits(self, no_frame = False):
+        self.clear_menus(1)
+        if not no_frame:
+            self.show_frame('habit')
 
+    def go_to_tasks(self, no_frame = False):
+        self.clear_menus(2)
+        if not no_frame:
+            self.show_frame('task')
+            main.__subclasshook__
 
-    def go_to_tasks(self):
-        self.show_frame('task')
-        main.__subclasshook__
+    def go_to_dailies(self, no_frame = False):
+        self.clear_menus(3)
+        if not no_frame:
+            self.show_frame('daily')
 
-    def go_to_dailies(self):
-        self.show_frame('daily')
+    def go_to_generic(self):
+        self.clear_menus(4)
+        self.show_frame('Generic')
         
     def go_to_shop(self):
+        self.clear_menus(5)
         self.show_frame('shop')
 
     def go_to_inventory(self):
+        self.clear_menus(6)
         self.show_frame('inventory')
         
     def save_game(self):
         messagebox.showinfo("Save", "Game Saved!")  
         self.game_data.save_data(self.character)
         self.game_data.save_to_file()
-        
-    def go_to_generic(self):
-        self.show_frame('Generic')
 
     def no_where(self):
         messagebox.showinfo("Placeholder", "I don't have anywhere to go yet :( !")

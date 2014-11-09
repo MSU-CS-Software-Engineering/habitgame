@@ -233,6 +233,13 @@ class Work_Space(Frame):
                 'inventory' : self.tab_inventory
                }
         try:
+            if tabs[tab] == tabs['habit']:
+                self.parent.go_to_habits(True)
+            elif tabs[tab] == tabs['task']:
+                self.parent.go_to_tasks(True)
+            elif tabs[tab] == tabs['daily']:
+                self.parent.go_to_dailies(True)
+            
             self.main_frame.select(tabs[tab])
             
         except:
