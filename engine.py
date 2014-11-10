@@ -172,6 +172,7 @@ def load_items():
 from work_space import *
 
 class GUI(Frame):
+    
     def __init__(self, master):
         Frame.__init__(self, master)        
         pad = 100
@@ -437,7 +438,12 @@ class GUI(Frame):
 
         # centered frame; holds logo and copyright text
         footer_frame = Frame(footer_frame_bg, style='footer.TFrame')
-        footer_frame.grid()
+        footer_frame.grid(row=0, column=0)
+
+        #create the notification frame. it's a class variable so we can reference
+        #it and directly modify its children from the notify function
+        GUI.notification_frame = Frame(footer_frame_bg, style='footer.TFrame')
+        GUI.notification_frame.grid(row=0, column=1)
         
         self.style.configure('footer.TFrame', background='black')
 
@@ -451,6 +457,25 @@ class GUI(Frame):
         footer = Label(footer_frame, text="Copyright 2014")
         footer.grid(row=0, column=1, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
+
+        #set the initial notification area message
+        notification = Label(GUI.notification_frame, text='Notification Area')
+        notification.grid(row=0, column=1, sticky = E)
+        notification.configure(background = 'black', foreground = 'white', anchor = E, font='arial 12')
+
+    def notify(type, message):
+
+        #type will be used later to add a small icon to the notifications
+        #(a coin for money, save icon, etc)
+
+        #destroy the previous message
+        for child in GUI.notification_frame.winfo_children():
+            child.destroy()
+
+        #rebuild the subframes
+        notification = Label(GUI.notification_frame, text=message)
+        notification.grid(row=0, column=1, sticky = E)
+        notification.configure(background = 'black', foreground = 'white', anchor = E, font='arial 12')
         
     def bind_buttons(self):
         #Navigation Buttons
@@ -674,6 +699,7 @@ def main():
    
     root = Tk()
     app = GUI(root)
+    #GUI.notify('put_type_here', 'Call GUI.notify today, for all your user-notification needs!')
     
     root.mainloop()
 
