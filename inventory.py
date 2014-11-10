@@ -138,6 +138,7 @@ class Inventory():
         # prep appropriate data for when the user clicks on a item
         t_name = self.items[i][0].getName()
         t_descript = self.items[i][0].getDescription()
+        t_uses = self.items[i][0].getUses()
         t_cost = self.items[i][0].getValue()
 
 
@@ -151,9 +152,8 @@ class Inventory():
         # user clicks on the frame border
         border_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
                           self.selectItem(item_id, item_ref))
-        border_frame.bind('<Enter>', lambda e, name=t_name, descript=t_descript, cost=t_cost,
-                          item_id=i : self.setItemInfo(name, descript, cost, item_id,
-                                                       self.items[i][0].getItemRef()))
+        border_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript,
+                          uses=t_uses, cost=t_cost : self.setItemInfo(name, descript, uses, cost))
 
 
         # create frame for item data
@@ -164,9 +164,8 @@ class Inventory():
         # user clicks on the frame containing all of the item's info
         item_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
                         self.selectItem(item_id, item_ref))
-        item_frame.bind('<Enter>', lambda e, name=t_name, descript=t_descript, cost=t_cost,
-                        item_id=i : self.setItemInfo(name, descript, cost, item_id,
-                                                     self.items[i][0].getItemRef()))
+        item_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript,
+                        uses=t_uses, cost=t_cost : self.setItemInfo(name, descript, uses, cost))
         item_frame.bind('<Enter>', lambda e, _i=i: self.highlight(_i, True))
         item_frame.bind('<Leave>', lambda e, _i=i: self.highlight(_i, False))
 
@@ -181,9 +180,8 @@ class Inventory():
         # user clicks on the image of the item
         new_item.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
                       self.selectItem(item_id, item_ref))
-        new_item.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost,
-                      item_id=i : self.setItemInfo(name, descript, cost, item_id,
-                                                   self.items[i][0].getItemRef()))
+        new_item.bind('<Enter>', lambda e, name=t_name, descript = t_descript,
+                      uses=t_uses, cost=t_cost : self.setItemInfo(name, descript, uses, cost))
 
 
     def remove_selected_item(self):
@@ -209,11 +207,11 @@ class Inventory():
         The item is prepped for the item manager panel on the right side of the GUI
         """
         # currently selected item is reset when the user selects a new item
-        if self.item_set and self.selected_item_ref != item:
+        if self.item_set:
             self.remove_selected_item()
 
         # make sure the item has not been deleted or used
-        if self.items[item_id][1] != None and self.selected_item_ref != item:
+        if self.items[item_id][1] != None:
             # selected item info goes in this frame
             self.selectedItemFrame = Frame(self.item_info_frame, borderwidth=0, style='select.TFrame')
             self.selectedItemFrame.grid(row=2, columnspan=2, sticky='news')
@@ -239,28 +237,34 @@ class Inventory():
     def sellItem(self, item_id, item):
         if item_id != None:  
             if self.items[item_id][1] != None:
-                MyInventory.api.sell_item(item.ID)
+                MyInventory.api.sell_item(item)
                 self.remove_item_from_inventory(item_id)
+                self.selceted_item_id = None
+                self.selected_item_ref = None
 
         
     def useItem(self, item_id, item):
         if item_id != None:
             if self.items[item_id][1] != None:
-                MyInventory.api.use_item(item.ID)
-                self.remove_item_from_inventory(item_id)
+                if MyInventory.api.use_item(item):
+                    self.remove_item_from_inventory(item_id)
+                self.selceted_item_id = None
+                self.selected_item_ref = None
 
             
-    def setItemInfo(self, name, descript, cost, item_id, item):
+    def setItemInfo(self, name, descript, uses, cost):
         """
         setItemInfo sets the info to be shown in the item
         information frame, right above the buy button
         """
+        name = "Name: " + name
         self.nameSelect.configure(text=name)
         descript = "Info: " + descript
         self.descriptSelect.configure(text=descript)
+        uses = "Uses: " + str(uses)
+        self.useSelect.configure(text=uses)
         cost = "Cost: $" + str(cost)
         self.costSelect.configure(text=cost)
-        self.buy_item_id = item_id
 
 
     def reposition(self):
@@ -371,10 +375,10 @@ class Inventory():
         self.useButton = Label(self.item_info_frame, text='use', padding='10 5 5 5', cursor='hand2')
         self.useButton.grid(sticky='news', row=1, column=1)
         self.useButton.configure(font='arial 14 bold', anchor=CENTER,
-                                 foreground='white', background='#710F0F')
+                                 foreground='white', background='#0F5A71')
         self.useButton.bind('<1>', lambda e: self.useItem(self.selceted_item_id, self.selected_item_ref))
-        self.useButton.bind('<Enter>', lambda e: self.useButton.configure(background='#C61A1A'))
-        self.useButton.bind('<Leave>', lambda e: self.useButton.configure(background='#710F0F'))
+        self.useButton.bind('<Enter>', lambda e: self.useButton.configure(background='#1795B9'))
+        self.useButton.bind('<Leave>', lambda e: self.useButton.configure(background='#0F5A71'))
 
         panel_color_bg = '#E8E2D0'
         
@@ -391,10 +395,15 @@ class Inventory():
         self.costSelect = Label(item_info_div, text='cost', padding='10 5 5 5')
         self.costSelect.grid(sticky='news', row=1, columnspan=2)
         self.costSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
+
+        # selected item's number of uses
+        self.useSelect = Label(item_info_div, text='uses', padding='10 5 5 5')
+        self.useSelect.grid(sticky='news', row=2, columnspan=2)
+        self.useSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
         
         # selected item's description
         self.descriptSelect = Label(item_info_div, text='description', wraplength=370, padding='10 5 5 5')
-        self.descriptSelect.grid(sticky='news', row=2, columnspan=2)
+        self.descriptSelect.grid(sticky='news', row=3, columnspan=2)
         self.descriptSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
         self.descriptSelect.grid_columnconfigure(1, weight=1)
 

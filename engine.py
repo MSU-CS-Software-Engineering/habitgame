@@ -591,23 +591,40 @@ class GUI(Frame):
         print(geom,self._geom)
         self.master.geometry(self._geom)
         self._geom=geom
-        
-    def use_item(self, item_ID):
-        self.character.items[item_ID].uses -= 1
-        if self.character.items[item_ID].uses == 0:
-            self.character.remove_item(item_ID)
-            self.character.set_item_IDs()
 
-    def sell_item(self, item_ID):
+        
+    def use_item(self, item):
+        item.uses = int(item.uses) - 1
+        if item.uses == 0:
+            self.character.remove_item(item.ID)
+            self.character.set_item_IDs()
+            self.update_item_count()
+            return True
+        
+        return False
+    
+    def buy_item(self, item):
+        if self.character.cash >= item.value:    
+            self.character.add_item(item)
+            self.character.cash -= item.value
+            self.character.set_item_IDs()
+            self.character_cash.set(self.character.cash)
+            self.update_item_count()
+            return item
+        else:
+           print("Not enough cash for " + item.name + "!")
+           return None
+        
+    def sell_item(self, item):
         """
         called in Inventory class, sell and remove item at 75% of full price
         """
-        item = self.character.items[item_ID]
         self.character.cash += int(float(item.value)*0.75)
-        self.character.remove_item(item_ID)
+        self.character.remove_item(item.ID)
         self.update_stats_banner()
         self.update_item_count()
-        
+
+
     def update_stats_banner(self):
         """
         this function is called in landing_page.py and work_space.py when the user
@@ -631,20 +648,11 @@ class GUI(Frame):
             self.character.exp = 0
             self.update_level()
             self.update_exp()
-        
-    def buy_item(self, item):
-        if self.character.cash >= item.value:    
-            self.character.add_item(item)
-            self.character.cash -= item.value
-            self.character.set_item_IDs()
-            self.character_cash.set(self.character.cash)
-            print(item.name + " bought!")
-            self.update_item_count()
-            return self.character.get_item(item.ID)
-        else:
-           print("Not enough cash for " + item.name + "!")
-           return None
 
+    def get_item_count(self):
+        print('item count: ' + str(len(self.character.get_all_items())))
+        return len(self.character.get_all_items())
+    
     def get_character_items(self):
         return self.character.get_all_items()
     

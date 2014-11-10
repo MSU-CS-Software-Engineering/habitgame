@@ -111,6 +111,11 @@ class Shop():
                                   5000, 1, "software"))
         
         self.items.append(SetItem('Penetrate', os.path.join("assets", "art", "penetrate.gif"),
+                                  "2x damage to bosses, receive 1/2 of habit reward "
+                                  "2x damage to bosses, receive 1/2 of habit reward "
+                                  "2x damage to bosses, receive 1/2 of habit reward "
+                                  "2x damage to bosses, receive 1/2 of habit reward "
+                                  "2x damage to bosses, receive 1/2 of habit reward "
                                   "2x damage to bosses, receive 1/2 of habit reward",
                                   7500, 1, "software"))
 
@@ -118,7 +123,7 @@ class Shop():
         # hardware items
         self.items.append(SetItem('Laptop', os.path.join("assets", "art", "laptop.gif"),
                                   "laptop description",
-                                  1250, 1, "hardware"))
+                                  1250, 2, "hardware"))
         
         self.items.append(SetItem('Desktop', os.path.join("assets", "art", "desktop.gif"),
                                   "desktop description",
@@ -287,7 +292,11 @@ class Shop():
     def buyItem(self):
         if self.itemName.get() != 'name':
             get_item = self.live_items[self.buy_item_id]
-            item = MyShop.api.buy_item(get_item)
+            item = MyShop.api.buy_item(Item(get_item.name,
+                                    get_item.description,
+                                    get_item.image,
+                                    get_item.value,
+                                    get_item.uses))
             if item != None:
                 MyInventory.my_inventory.addItem(item)
 
