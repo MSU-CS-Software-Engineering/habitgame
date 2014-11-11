@@ -196,6 +196,8 @@ class Inventory():
         uses_label = Label(item_frame, textvariable=str_uses, anchor=CENTER, foreground='#646464',
                      background=self.canvas_color, font='arial 10 bold italic')
         uses_label.grid(row=2, column=0, sticky='news')
+        uses_label.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
+                        self.selectItem(item_id, item_ref))
         self.uses_labels.append([str_uses, uses_label])
         
     def remove_selected_item(self):
