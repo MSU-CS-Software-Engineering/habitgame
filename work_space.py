@@ -106,8 +106,8 @@ class hack_frame(Frame):
         self.set_value_label_text()
 
     def delete(self):
-        self.top_class.delete_hack(self.ID)
-        self.destroy()
+        if self.top_class.delete_hack(self.ID):
+            self.destroy()
             
     def edit(self):
         self.top_class.edit_hack(self.ID)
@@ -360,9 +360,9 @@ class Work_Space(Frame):
         
     def delete_hack(self, hack_ID):
         answer = messagebox.askokcancel("Delete Hack", "Delete hack?")
-        if answer is True:
+        if answer:
             self.parent.delete_hack(hack_ID)
-            #REBUILD_HACK_LIST_ON_GUI()
+            return True
             
         else:
             #print("User clicked Cancel")
@@ -473,20 +473,14 @@ class Work_Space(Frame):
         confirmButton.pack(side="right")
         confirmButton.config(state = 'disabled')
 
-        ticket_name.bind('<FocusOut>', lambda event: self.check_input_validity(
+
+        for widge in [ticket_name, ticket_desc, ticket_value]:
+
+            widge.bind('<KeyRelease>', lambda event: self.check_input_validity(
                                                 name_warning_label, desc_warning_label, value_warning_label, 
                                                 ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
                                                 confirmButton)) 
 
-        ticket_desc.bind('<FocusOut>', lambda event: self.check_input_validity(
-                                                name_warning_label, desc_warning_label, value_warning_label, 
-                                                ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
-                                                confirmButton)) 
-
-        ticket_value.bind('<FocusOut>', lambda event: self.check_input_validity(
-                                                name_warning_label, desc_warning_label, value_warning_label, 
-                                                ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
-                                                confirmButton)) 
 
         self.style.configure('save.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#96FF48')

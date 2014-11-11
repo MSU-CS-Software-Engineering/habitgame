@@ -1,4 +1,4 @@
-from datetime import date #For Timestamps
+from datetime import date, timedelta #For Timestamps
 
 class Character:
     """
@@ -160,7 +160,7 @@ class Hack:
         self.title = title
         self.description = desc
         self.ID = -1
-        self.timestamp = date.today()
+        self.timestamp = date.today() - timedelta(hours=24)
         self.value = value
         self.exp = exp    #Temporarily defaults to 100.
 
