@@ -57,6 +57,9 @@ class SetInventoryItem():
     setter methods
     """
     
+    def setUses(self, uses):
+        self.uses = uses
+        
     def setRow(self, row):
         self.row = row
 
@@ -92,6 +95,10 @@ class Inventory():
         self.selceted_item_id = None
         self.selected_item_ref = None
         self.item_set = False
+
+        # used for visually updating the use count under each item object/image
+        self.uses_labels = []
+        
         
     def initInventory(self, char_items):
         row, col = 0, 0
@@ -129,7 +136,6 @@ class Inventory():
                 
             self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
                                                 item.uses, item.value, row, col, item), None])
-        
             self.makeItemFrame(len(self.items)-1)
             self.reposition()
 
@@ -138,7 +144,6 @@ class Inventory():
         # prep appropriate data for when the user clicks on a item
         t_name = self.items[i][0].getName()
         t_descript = self.items[i][0].getDescription()
-        t_uses = self.items[i][0].getUses()
         t_cost = self.items[i][0].getValue()
 
 
@@ -147,32 +152,34 @@ class Inventory():
         border_frame.grid(row=self.items[i][0].getRow(), column=self.items[i][0].getColumn(),
                           padx=7, pady=7, sticky='wn')
         self.style.configure('c.TFrame', background=self.canvas_color)
+
+        # Important step. This refer ence is used to visually delete the item from the inventory
         self.items[i][1] = border_frame
         
         # user clicks on the frame border
         border_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
                           self.selectItem(item_id, item_ref))
-        border_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript,
-                          uses=t_uses, cost=t_cost : self.setItemInfo(name, descript, uses, cost))
+        border_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost :
+                          self.setItemInfo(name, descript, self.items[i][0].getUses(), cost))
 
 
         # create frame for item data
-        item_frame = Frame(border_frame, style='itemFrame.TFrame', padding=4, cursor='hand2')
+        item_frame = Frame(border_frame, style='itemFrame.TFrame', padding=9, cursor='hand2')
         item_frame.grid(sticky='wn')
         self.style.configure('itemFrame.TFrame', background=self.canvas_color)
         
         # user clicks on the frame containing all of the item's info
         item_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
                         self.selectItem(item_id, item_ref))
-        item_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript,
-                        uses=t_uses, cost=t_cost : self.setItemInfo(name, descript, uses, cost))
+        item_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost :
+                        self.setItemInfo(name, descript, self.items[i][0].getUses(), cost))
         item_frame.bind('<Enter>', lambda e, _i=i: self.highlight(_i, True))
         item_frame.bind('<Leave>', lambda e, _i=i: self.highlight(_i, False))
-
+        
 
         # create label to hold the item's image
         img = PhotoImage(file=self.items[i][0].getFile())
-        new_item = Label(item_frame, padding=15, image=img, style='item.TLabel', cursor='hand2')
+        new_item = Label(item_frame, padding=10, image=img, style='item.TLabel', cursor='hand2')
         new_item.grid(row=1, column=0)
         new_item.image = img
         self.style.configure('item.TLabel', background=self.canvas_color)
@@ -180,13 +187,21 @@ class Inventory():
         # user clicks on the image of the item
         new_item.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
                       self.selectItem(item_id, item_ref))
-        new_item.bind('<Enter>', lambda e, name=t_name, descript = t_descript,
-                      uses=t_uses, cost=t_cost : self.setItemInfo(name, descript, uses, cost))
+        new_item.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost :
+                      self.setItemInfo(name, descript, self.items[i][0].getUses(), cost))
 
-
+        # create dynamic label for displaying the number of uses remaining for the given item
+        str_uses = StringVar()
+        str_uses.set("uses: " + str(self.items[i][0].getUses()))
+        uses_label = Label(item_frame, textvariable=str_uses, anchor=CENTER, foreground='#646464',
+                     background=self.canvas_color, font='arial 10 bold italic')
+        uses_label.grid(row=2, column=0, sticky='news')
+        self.uses_labels.append([str_uses, uses_label])
+        
     def remove_selected_item(self):
         """
-        remove the item from the panel on the right side of the inventory
+        remove the item from the panel on the
+        right side of the inventory
         """
         self.selectedItem.image = None
         self.selectedItem.destroy()
@@ -194,6 +209,10 @@ class Inventory():
 
         
     def remove_item_from_inventory(self, item_id):
+        """
+        remove the selected item from the inventory
+        on both sell and use commands
+        """
         self.remove_selected_item()
         self.items[item_id][1].destroy()
         self.items[item_id][1] = None
@@ -203,8 +222,9 @@ class Inventory():
         
     def selectItem(self, item_id, item):
         """
-        called when the user clicks on an item in the inventory panel.
-        The item is prepped for the item manager panel on the right side of the GUI
+        called when the user clicks on an item in the
+        inventory panel. The item is prepped for the
+        item manager panel on the right side of the GUI
         """
         # currently selected item is reset when the user selects a new item
         if self.item_set:
@@ -239,19 +259,35 @@ class Inventory():
             if self.items[item_id][1] != None:
                 MyInventory.api.sell_item(item)
                 self.remove_item_from_inventory(item_id)
+                
                 self.selceted_item_id = None
                 self.selected_item_ref = None
+                self.resetItemInfo()
 
         
     def useItem(self, item_id, item):
         if item_id != None:
             if self.items[item_id][1] != None:
+                new_uses = int(self.items[item_id][0].getUses()) - 1
+                self.items[item_id][0].setUses(str(new_uses))
+                self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())
+                
                 if MyInventory.api.use_item(item):
                     self.remove_item_from_inventory(item_id)
+                    
                 self.selceted_item_id = None
                 self.selected_item_ref = None
+                self.remove_selected_item()
+                self.resetItemInfo()
 
-            
+
+    def resetItemInfo(self):
+        self.nameSelect.configure(text='name')
+        self.descriptSelect.configure(text='description')
+        self.useSelect.configure(text='uses')
+        self.costSelect.configure(text='cost')
+
+        
     def setItemInfo(self, name, descript, uses, cost):
         """
         setItemInfo sets the info to be shown in the item
@@ -297,8 +333,10 @@ class Inventory():
             self.items[i][1].config(style='b.TFrame')
             if enter: # mouse enter
                 self.style.configure('b.TFrame', background='#26507D')
+                self.uses_labels[i][1].configure(foreground='#323232')
             else: # mouse leave
                 self.style.configure('b.TFrame', background=self.canvas_color)
+                self.uses_labels[i][1].configure(foreground='#646464')
 
                 
     def makeCanvas(self):

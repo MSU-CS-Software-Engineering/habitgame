@@ -331,7 +331,7 @@ class Landing_Page (Frame):
         self.go_to_tasks_button.pack(fill = X, side = 'bottom', expand = True, anchor = S)
 
 
-        
+
     def start(self):
         self.progress["value"] = 0
         self.max = 24
