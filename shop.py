@@ -296,7 +296,9 @@ class Shop():
                                     get_item.description,
                                     get_item.image,
                                     get_item.value,
-                                    get_item.uses))
+                                    get_item.uses,
+                                    get_item.item_type,
+                                    'False'))
             if item != None:
                 MyInventory.my_inventory.addItem(item)
 
@@ -357,7 +359,8 @@ class Shop():
                                     self.items[i].getDescription(),
                                     self.items[i].getFile(),
                                     self.items[i].getCost(),
-                                    self.items[i].getUses()))
+                                    self.items[i].getUses(),
+                                    self.items[i].getItemType(), False))
 
 
             #create frame border for item data

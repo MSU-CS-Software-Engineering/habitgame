@@ -195,18 +195,20 @@ class Item:
         image: Name of accompanying image                 (string)
         value: Currency value of item                     (int)
         uses: Uses before item expires [-1 for infinite]  (int)
-        effect: Special function that the item performs   (function)
+        item_type: 'hardware', 'component', 'software'    (string)
         active: Is the item in use or not                 (bool)
+        effect: Special function that the item performs   (function)
     """
-    def __init__(self, name, desc, image, value, uses, effect = None):
+    def __init__(self, name, desc, image, value, uses, item_type, active, effect = None):
         self.name = name
         self.ID = 0
         self.description = desc
         self.image = image
         self.value = value
         self.uses = uses
+        self.item_type = item_type
+        self.active = active
         self.effect = effect
-        self.active = False
 
     def serialize(self):
         """
@@ -219,6 +221,7 @@ class Item:
                       'image':self.image,
                       'value':self.value,
                       'uses':self.uses,
+                      'item_type':self.item_type,
                       'effect':self.effect,
                       'active':self.active}
         

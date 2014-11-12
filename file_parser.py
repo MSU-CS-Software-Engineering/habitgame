@@ -267,6 +267,7 @@ class file_parser:
             image_element = newdoc.createElement('image')
             value_element = newdoc.createElement('value')
             uses_element = newdoc.createElement('uses')
+            item_type_element = newdoc.createElement('item_type')
             effect_element = newdoc.createElement('effect')
             active_element = newdoc.createElement('active')
             
@@ -276,6 +277,7 @@ class file_parser:
             image_text_node = newdoc.createTextNode(item['image'])
             value_text_node = newdoc.createTextNode(str(item['value']))
             uses_text_node = newdoc.createTextNode(str(item['uses']))
+            item_type_text_node = newdoc.createTextNode(str(item['item_type']))
             effect_text_node = newdoc.createTextNode(str(item['effect']))
             active_text_node = newdoc.createTextNode(str(item['active']))
             
@@ -285,6 +287,7 @@ class file_parser:
             image_element.appendChild(image_text_node)
             value_element.appendChild(value_text_node)
             uses_element.appendChild(uses_text_node)
+            item_type_element.appendChild(item_type_text_node)
             effect_element.appendChild(effect_text_node)
             active_element.appendChild(active_text_node)
             
@@ -294,6 +297,7 @@ class file_parser:
             node.appendChild(image_element)
             node.appendChild(value_element)
             node.appendChild(uses_element)
+            node.appendChild(item_type_element)
             node.appendChild(effect_element)
             node.appendChild(active_element)
             

@@ -109,6 +109,8 @@ class Game_Data:
                                 item['image'],
                                 item['value'],
                                 item['uses'],
+                                item['item_type'],
+                                item['active'],
                                 item['effect'])
             
                 new_character.add_item(new_item)
@@ -210,8 +212,8 @@ class GUI(Frame):
         
         # link the shop so it can call GUI's buy_item()
         MyShop.setApi(self)
-        MyInventory.setApi(self)
-
+        MyInventory.setApi(self, self.items_frame)
+    
     def initUI(self):
         self.grid()
         self.current_visible_frame = None
@@ -232,6 +234,7 @@ class GUI(Frame):
 
         self.make_menu_bar()
         self.make_character_frame()
+        self.make_items_in_use_frame()
         self.make_banner()
         self.make_stats_banner()
         self.make_footer()
@@ -409,27 +412,48 @@ class GUI(Frame):
         
     def make_character_frame(self):
         # create character data frame
-        self.char_frame = Frame(self)
-        self.char_frame.grid(row=2, column=0, sticky='news')
+        self.char_frame_bg = Frame(self)
+        self.char_frame_bg.grid(row=2, column=0, sticky='news')
 
-        # place character menu buttons here, self.make_menu() will use this
-        self.char_buttons_frame = Frame(self.char_frame)
-        self.char_buttons_frame.grid(row=1, column=1, sticky='news')
-        
-        self.name_label = Label(self.char_frame, text="Player Name")
-        self.name_label.grid(row = 0, column = 0, sticky=W, pady=4, padx=5)
-        self.name_label.configure(font='arial 12')
-        
-        self.name = Label(self.char_frame, textvariable = self.character_name)
-        self.name.grid(row = 0, column = 1, sticky=W, pady=4, padx=5)
-        self.name.configure(font='arial 12 bold')
+        self.name = Label(self.char_frame_bg, textvariable = self.character_name)
+        self.name.grid(row = 0, column = 0, sticky=W, pady=4, padx=5)
+        self.name.configure(font='arial 14 bold')
+
+        self.char_frame = Frame(self.char_frame_bg)
+        self.char_frame.grid(row=1, column=0, sticky='news')
         
         # load character image
         char_img = PhotoImage(file=os.path.join("assets", "art", "main.gif"))
         self.character_image = Label(self.char_frame, image=char_img)
-        self.character_image.grid(row=1, column=0, stick=W, padx=5)
+        self.character_image.grid(row=0, column=0, stick=W, padx=5)
         self.character_image.image = char_img
 
+        # place character menu buttons here, self.make_menu() will use this
+        self.char_buttons_frame = Frame(self.char_frame)
+        self.char_buttons_frame.grid(row=0, column=1, sticky='news')
+
+
+    def make_items_in_use_frame(self):
+        self.items_frame = Frame(self, padding='40 0 0 0')
+        self.items_frame.grid(row=2, column=1, sticky='news')
+
+        self.items_in_use_title = Label(self.items_frame, text='Active Items')
+        self.items_in_use_title.grid(row=0, column=0, columnspan=5, sticky=W, pady=4, padx=5)
+        self.items_in_use_title.configure(font='arial 14 bold italic')
+        
+        self.software_label = Label(self.items_frame, text="Software:   ")
+        self.software_label.grid(row=1, column=0, sticky=W, pady=4, padx=5)
+        self.software_label.configure(font='arial 14')
+
+        self.hardware_label = Label(self.items_frame, text="Hardware:   ")
+        self.hardware_label.grid(row=2, column=0, sticky=W, pady=4, padx=5)
+        self.hardware_label.configure(font='arial 14')
+            
+        self.component_label = Label(self.items_frame, text="Components:   ")
+        self.component_label.grid(row=3, column=0, sticky=W, pady=4, padx=5)
+        self.component_label.configure(font='arial 14')
+        
+        
     def make_footer(self):
         # footer
         footer_frame_bg = Frame(self, style='footer.TFrame', padding=3)
@@ -499,7 +523,11 @@ class GUI(Frame):
         self.character_level.set(self.character.level)
 
     def update_item_count(self):
-        str_set = str("Inventory ( " +str(len(self.character.items))) + " )"
+        get_count = 0
+        for item in self.character.items:
+            if item.active == 'False':
+                get_count += 1
+        str_set = str("Inventory ( " + str(get_count) + " )")
         self.character_item_count.set(str_set)
         
     def add_hack(self, hack_data):
@@ -591,18 +619,16 @@ class GUI(Frame):
         print(geom,self._geom)
         self.master.geometry(self._geom)
         self._geom=geom
-
         
     def use_item(self, item):
         item.uses = int(item.uses) - 1
-        if item.uses == 0:
-            self.character.remove_item(item.ID)
-            self.character.set_item_IDs()
-            self.update_item_count()
-            return True
-        
-        return False
+        self.update_item_count()
     
+    def remove_item(self, item):
+        self.character.remove_item(item.ID)
+        self.character.set_item_IDs()
+        self.update_item_count()
+            
     def buy_item(self, item):
         if self.character.cash >= item.value:    
             self.character.add_item(item)

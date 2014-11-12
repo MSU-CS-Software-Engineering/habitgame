@@ -11,16 +11,18 @@ class SetInventoryItem():
     """
     
     def __init__(self, name, file, description, effect, uses,
-                 value, row, column, item_ref):
+                 value, item_type, active, row, column, item_ref):
         self.name = name
         self.file = file
         self.description = description
         self.effect = effect
         self.uses = uses
         self.value = value
+        self.item_type = item_type
         self.row = row
         self.column = column
         self.item_ref = item_ref
+        self.active = active
         
     """"
     getter methods
@@ -43,6 +45,9 @@ class SetInventoryItem():
 
     def getValue(self):
         return self.value
+
+    def getItemType(self):
+        return self.item_type
     
     def getRow(self):
         return self.row
@@ -53,12 +58,18 @@ class SetInventoryItem():
     def getItemRef(self):
         return self.item_ref
 
+    def getActive(self):
+        return self.active
+
     """
     setter methods
     """
     
     def setUses(self, uses):
         self.uses = uses
+
+    def setActive(self, active):
+        self.active = active
         
     def setRow(self, row):
         self.row = row
@@ -69,22 +80,188 @@ class SetInventoryItem():
 
 class MyInventory():
     """
-    this class is used for link the Inventory class with the GUI class
+    this class is used for linking the Inventory class with the GUI
+    class before creating the Inventory class object
     """
     
     api = None # reference to GUI class object
+    items_frame = None # reference to GUI class items in use frame
     my_inventory = None # Inventory class object stored here
+
+    # default active item limits
+    max_software = 5
+    max_hardware = 3 
+    max_components = 2
+
+    # current number of items active 
+    software_count = 0
+    hardware_count = 0
+    components_count = 0
+
+    # store each active item info here
+    software = []
+    software_items = []
+    
+    hardware = []
+    hardware_items = []
+    
+    components = []
+    component_items = []
     
     # called in work_space.py
     def setInventory(inventory_frame):
         MyInventory.my_inventory = Inventory(inventory_frame)
 
     # called at the end of engine/GUI's constructor function 
-    def setApi(api_ref):
+    def setApi(api_ref, items_frame_ref):
         MyInventory.api = api_ref
+        MyInventory.items_frame = items_frame_ref
+        MyInventory.makeItemSlots()
         MyInventory.my_inventory.initInventory(MyInventory.api.get_character_items())
+  
+    def makeItemSlots():
+        style = Style()
+        for i in range(MyInventory.max_software):
+            software_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
+            software_frame.grid(row=1, column=i+1, sticky=W, pady=4, padx=5)
+            style.configure('item.TFrame', background='#AEAEAE')
+            MyInventory.software.append(software_frame)
+            MyInventory.software_items.append([None, None])
 
+        for i in range(MyInventory.max_hardware):
+            hardware_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
+            hardware_frame.grid(row=2, column=i+1, sticky=W, pady=4, padx=5)
+            style.configure('item.TFrame', background='#AEAEAE')
+            MyInventory.hardware.append(hardware_frame)
+            MyInventory.hardware_items.append([None, None])
+            
+        for i in range(MyInventory.max_components):
+            component_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
+            component_frame.grid(row=3, column=i+1, sticky=W, pady=4, padx=5)
+            style.configure('item.TFrame', background='#AEAEAE')
+            MyInventory.components.append(component_frame)
+            MyInventory.component_items.append([None, None])
+   
+    def addSoftware(item):
+        if MyInventory.software_count < MyInventory.max_software:
+            i = MyInventory.software_count
+            
+            software_label = Label(MyInventory.software[MyInventory.software_count], text=item.name)
+            software_label.grid(sticky=W)
+            software_label.configure(font='arial 14', background='red', foreground='black')
+            
+            software_label.bind('<1>', lambda e, _id=i: MyInventory.removeSoftware(_id))
+            MyInventory.software_items[MyInventory.software_count] = [software_label, item]
         
+            MyInventory.software_count += 1
+            return True
+        else:
+            return False # software slots full
+
+    def resetSoftware(item, i):
+        software_label = Label(MyInventory.software[i-1], text=item.name)
+        software_label.grid(sticky=W)
+        software_label.configure(font='arial 14', background='red', foreground='black')
+            
+        software_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeSoftware(_id))
+        MyInventory.software_items[i-1] = [software_label, item]
+        
+    def removeSoftware(_id):
+        if MyInventory.software_items[_id][0] != None:
+            MyInventory.software_items[_id][0].destroy()
+            MyInventory.software_items[_id][0] = None
+            MyInventory.my_inventory.addItem(MyInventory.software_items[_id][1])
+            
+            for i in range(_id+1, MyInventory.max_software, 1):
+                if MyInventory.software_items[i][0] != None:
+                    MyInventory.resetSoftware(MyInventory.software_items[i][1], i)
+                    MyInventory.software_items[i][0].destroy()
+                    MyInventory.software_items[i][0] = None
+                    
+            if MyInventory.software_count > 0:
+                MyInventory.software_count -= 1
+            
+
+    def addHardware(item):
+        if MyInventory.hardware_count < MyInventory.max_hardware:
+            i = MyInventory.hardware_count
+            
+            hardware_label = Label(MyInventory.hardware[MyInventory.hardware_count], text=item.name)
+            hardware_label.grid(sticky=W)
+            hardware_label.configure(font='arial 14', background='yellow', foreground='black')
+            
+            hardware_label.bind('<1>', lambda e, _id=i: MyInventory.removeHardware(_id))
+            MyInventory.hardware_items[MyInventory.hardware_count] = [hardware_label, item]
+        
+            MyInventory.hardware_count += 1
+            return True
+        else:
+            return False # software slots full
+
+    def resetHardware(item, i):
+        hardware_label = Label(MyInventory.hardware[i-1], text=item.name)
+        hardware_label.grid(sticky=W)
+        hardware_label.configure(font='arial 14', background='yellow', foreground='black')
+            
+        hardware_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeHardware(_id))
+        MyInventory.hardware_items[i-1] = [hardware_label, item]
+        
+    def removeHardware(_id):
+        if MyInventory.hardware_items[_id][0] != None:
+            MyInventory.hardware_items[_id][0].destroy()
+            MyInventory.hardware_items[_id][0] = None
+            MyInventory.my_inventory.addItem(MyInventory.hardware_items[_id][1])
+
+            for i in range(_id+1, MyInventory.max_hardware, 1):
+                if MyInventory.hardware_items[i][0] != None:
+                    MyInventory.resetHardware(MyInventory.hardware_items[i][1], i)
+                    MyInventory.hardware_items[i][0].destroy()
+                    MyInventory.hardware_items[i][0] = None
+                    
+            if MyInventory.hardware_count > 0:
+                MyInventory.hardware_count -= 1
+
+    
+    def addComponent(item):
+        if MyInventory.components_count < MyInventory.max_components:
+            i = MyInventory.components_count
+            
+            component_label = Label(MyInventory.components[MyInventory.components_count], text=item.name)
+            component_label.grid(sticky=W)
+            component_label.configure(font='arial 14', background='blue', foreground='black')
+            
+            component_label.bind('<1>', lambda e, _id=i: MyInventory.removeComponent(_id))
+            MyInventory.component_items[MyInventory.components_count] = [component_label, item]
+        
+            MyInventory.components_count += 1
+            return True
+        else:
+            return False # software slots full
+
+    def resetComponent(item, i):
+        component_label = Label(MyInventory.components[i-1], text=item.name)
+        component_label.grid(sticky=W)
+        component_label.configure(font='arial 14', background='blue', foreground='black')
+            
+        component_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeComponent(_id))
+        MyInventory.component_items[i-1] = [component_label, item]
+        
+    def removeComponent(_id):
+        if MyInventory.component_items[_id][0] != None:
+            MyInventory.component_items[_id][0].destroy()
+            MyInventory.component_items[_id][0] = None
+            MyInventory.my_inventory.addItem(MyInventory.component_items[_id][1])
+            
+            for i in range(_id+1, MyInventory.max_components, 1):
+                if MyInventory.component_items[i][0] != None:
+                    MyInventory.resetComponent(MyInventory.component_items[i][1], i)
+                    MyInventory.component_items[i][0].destroy()
+                    MyInventory.component_items[i][0] = None
+                    
+            if MyInventory.components_count > 0:
+                MyInventory.components_count -= 1
+
+ 
 class Inventory():
     def __init__(self, inventory_plugin_frame):
         self.frame = inventory_plugin_frame
@@ -103,12 +280,25 @@ class Inventory():
     def initInventory(self, char_items):
         row, col = 0, 0
         for item in char_items:
-            self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
-                                                item.uses, item.value, row, col, item), None])
-            col += 1
-            if col == 5: # max of 5 items in a row
-                col = 0
-                row += 1
+            # item does not need to be added to the inventory since it's active
+            if item.active == 'True': # item.active is a string
+                item_type = item.item_type
+                # add to active item frame
+                if item_type == 'software':
+                    MyInventory.addSoftware(item)
+                elif item_type == 'hardware':
+                    MyInventory.addHardware(item)
+                elif item_type == 'component':
+                    MyInventory.addComponent(item)
+            else:
+                self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
+                                                    item.uses, item.value, item.item_type, item.active,
+                                                    row, col, item), None])
+
+                col += 1
+                if col == 5: # max of 5 items in a row
+                    col = 0
+                    row += 1
    
         self.makeLayout()
         self.createItems()
@@ -123,19 +313,21 @@ class Inventory():
     def addItem(self, item):
         if len(self.items) == 0:
             self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
-                                                item.uses, item.value, 0, 0, item), None])
+                                                item.uses, item.value, item.item_type, item.active,
+                                                0, 0, item), None])
             self.makeItemFrame(0)
         else:
             # this function is called when a new item is purchased
             col = self.items[len(self.items)-1][0].getColumn() + 1
             row = self.items[len(self.items)-1][0].getRow()
-        
+            
             if col == 5: # max of 5 items in a row
                 col = 0
                 row += 1
-                
+                    
             self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
-                                                item.uses, item.value, row, col, item), None])
+                                                item.uses, item.value, item.item_type, item.active,
+                                                row, col, item), None])
             self.makeItemFrame(len(self.items)-1)
             self.reposition()
 
@@ -270,17 +462,34 @@ class Inventory():
     def useItem(self, item_id, item):
         if item_id != None:
             if self.items[item_id][1] != None:
-                new_uses = int(self.items[item_id][0].getUses()) - 1
-                self.items[item_id][0].setUses(str(new_uses))
-                self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())
-                
-                if MyInventory.api.use_item(item):
-                    self.remove_item_from_inventory(item_id)
+                not_full = True
+                item_type = item.item_type
+
+                if item_type == 'software':
+                    item.active = True
+                    not_full = MyInventory.addSoftware(item)
+                elif item_type == 'hardware':
+                    item.active = True
+                    not_full = MyInventory.addHardware(item)
+                elif item_type == 'component':
+                    item.active = True
+                    not_full = MyInventory.addComponent(item)
+
+                # item slot not full, so add the item to the active items area of the GUI
+                if not_full:   
+                    new_uses = int(self.items[item_id][0].getUses()) - 1
+                    self.items[item_id][0].setUses(str(new_uses))
+                    self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())
                     
-                self.selceted_item_id = None
-                self.selected_item_ref = None
-                self.remove_selected_item()
-                self.resetItemInfo()
+                    MyInventory.api.use_item(item)
+                    self.remove_item_from_inventory(item_id)
+                        
+                    self.selceted_item_id = None
+                    self.selected_item_ref = None
+                    self.remove_selected_item()
+                    self.resetItemInfo()
+                else:
+                    item.active = False
 
 
     def resetItemInfo(self):
@@ -343,7 +552,7 @@ class Inventory():
                 
     def makeCanvas(self):
         # create a canvas to allow for scrolling of the shop Frame
-        self.inv_canvas = Canvas(self.frame, highlightthickness=0, background=self.canvas_color)
+        self.inv_canvas = Canvas(self.frame, highlightthickness=0, borderwidth=0, background=self.canvas_color)
         self.inv_canvas.grid(row=1, column=0, sticky='news')
 
         # create the inventory frame and place it inside the canvas
