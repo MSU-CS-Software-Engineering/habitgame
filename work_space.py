@@ -166,7 +166,7 @@ class Work_Space_Area(Canvas):
         self.scrollbar.grid(row = 1, column = 1, sticky = 'ns')
 
         #self.frame.bind("<Configure>", self.setup_habit_frame)
-        self.bind("<MouseWheel>", lambda e: self.scroll_habit(e))
+        #self.bind("<MouseWheel>", lambda e: self.scroll_habit(e))
 
     def remove_frames(self):
         for frame in self.frames:
