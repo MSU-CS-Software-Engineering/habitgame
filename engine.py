@@ -665,7 +665,7 @@ class GUI(Frame):
     def check_level(self):
         curr_level = int(self.character_level.get())
         exp = int(self.character_exp.get())
-        level_up = 30 * curr_level
+        level_up = 100 * curr_level
         
         if exp >= level_up and curr_level >0:
             #LEVEL UP! WOOOOOOOOOO HOOOOOOOOOOO!
@@ -674,6 +674,7 @@ class GUI(Frame):
             self.character.exp = 0
             self.update_level()
             self.update_exp()
+            self.notify("LEVEL UP! lvl"+str(self.character.level))
 
     def get_item_count(self):
         print('item count: ' + str(len(self.character.get_all_items())))

@@ -6,8 +6,8 @@
    <username>hacker_Joe20</username>
    <birthday>01-01-01</birthday>
    <cash>123</cash>
-   <exp>100</exp>
-   <level>0</level>
+   <exp>0</exp>
+   <level>1</level>
    <hacks/>
    <items/>
 </data>
