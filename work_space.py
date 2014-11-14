@@ -94,6 +94,14 @@ class hack_frame(Frame):
         self.complete_btn.grid(row = 0, column = 2, sticky = 'news')
         self.complete_btn.image = self.complete_img
 
+        self.columnconfigure(0, weight = 1)
+        self.name_label.columnconfigure(0, weight = 1)
+        self.description_label.columnconfigure(0, weight = 1)
+        self.value_label.columnconfigure(0, weight = 1)
+        self.btn_frame.columnconfigure(0, weight = 1)
+
+        
+
     
     def redraw(self, hack):
         '''
@@ -121,6 +129,7 @@ class Work_Space_Tab(Canvas):
         Canvas.__init__(self, parent)
         self.parent = parent
         self.configure(width = width, height = height)
+        
         
     def set_width(self, width):
         self.configure(width = width)
@@ -156,8 +165,8 @@ class Work_Space_Area(Canvas):
         self.create_window((0,0), anchor = 'nw', window = self.frame)
         self.scrollbar.grid(row = 1, column = 1, sticky = 'ns')
 
-        self.frame.bind("<Configure>", self.setup_habit_frame)
-        self.bind("<MouseWheel>", lambda e: self.scroll_habit(e))
+        #self.frame.bind("<Configure>", self.setup_habit_frame)
+        #self.bind("<MouseWheel>", lambda e: self.scroll_habit(e))
 
     def remove_frames(self):
         for frame in self.frames:
@@ -177,7 +186,7 @@ class Work_Space_Area(Canvas):
                                 sticky = 'ew', pady = (10,0))
            self.frames.append(individual_hack)
         
-    def setup_habit_frame(event):
+    def setup_habit_frame(self,event):
         # resets the scroll region for the frame inserted into the canvas
         self.configure(scrollregion = self.bbox("all"))
         
@@ -276,7 +285,7 @@ class Work_Space(Frame):
         self.tab_shop = Work_Space_Tab(frame, width=850, height=400)
         self.tab_inventory = Work_Space_Tab(frame, width=850, height=400)
         
-        self.tab_habits.pack(fill = BOTH, expand = YES)
+        self.tab_habits.grid(row = 0, column = 1,sticky = 'news')
         self.tab_dailies.pack(fill = BOTH, expand = YES)
         self.tab_tasks.pack(fill = BOTH, expand = YES)
         self.tab_shop.pack(fill = BOTH, expand = YES)
@@ -286,6 +295,14 @@ class Work_Space(Frame):
         self.delete_img = PhotoImage(file=os.path.join("assets", "art", "minus.gif"))
         self.edit_img = PhotoImage(file=os.path.join("assets", "art", "pencil.gif"))
         self.complete_img = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
+
+        plus_img = PhotoImage(file=os.path.join("assets", "art", "plus.gif"))
+        
+        add_habit_btn = Button(self.tab_habits, text = 'Add new habit', image=plus_img, compound="left",
+                               style = 'add_habit.TButton', cursor = 'hand2',
+                               command = lambda: self.add_hack('habit'))
+        add_habit_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
+        add_habit_btn.image = plus_img
 
         self.habit_canvas = Work_Space_Area(self.tab_habits) 
         self.daily_canvas = Work_Space_Area(self.tab_dailies)
@@ -306,13 +323,7 @@ class Work_Space(Frame):
         frame.add(self.tab_shop, text='Shop')
         frame.add(self.tab_inventory, text='Inventory')
         
-        plus_img = PhotoImage(file=os.path.join("assets", "art", "plus.gif"))
-        
-        add_habit_btn = Button(self.tab_habits, text = 'Add new habit', image=plus_img, compound="left",
-                               style = 'add_habit.TButton', cursor = 'hand2',
-                               command = lambda: self.add_hack('habit'))
-        add_habit_btn.grid(row = 0, column = 0, columnspan = 2, sticky = 'news')
-        add_habit_btn.image = plus_img
+
         
         add_task_btn = Button(self.tab_tasks, text = 'Add new task', image=plus_img, compound="left",
                               style = 'add_task.TButton', cursor = 'hand2',
@@ -346,6 +357,24 @@ class Work_Space(Frame):
         MyInventory.setInventory(self.tab_inventory)
         MyShop.setShop(self.tab_shop)
         self.main_frame.select(self.tab_shop)
+
+
+        frame.rowconfigure(0, weight = 1)
+        frame.columnconfigure(0, weight = 1)
+        self.tab_habits.rowconfigure(1, weight = 1)
+        self.tab_habits.columnconfigure(0, weight = 1)
+        #self.habit_canvas.rowconfigure(1, weight = 1)
+        self.habit_canvas.columnconfigure(0, weight = 1)
+        
+        self.tab_dailies.rowconfigure(1, weight = 1)
+        self.tab_dailies.columnconfigure(0, weight = 1)
+        #self.daily_canvas.rowconfigure(1, weight = 1)
+        self.daily_canvas.columnconfigure(0, weight = 1)
+        
+        self.tab_tasks.rowconfigure(1, weight = 1)
+        self.tab_tasks.columnconfigure(0, weight = 1)
+        #self.task_canvas.rowconfigure(1, weight = 1)
+        self.task_canvas.columnconfigure(0, weight = 1)
         
     def complete_hack(self, hack_ID):
         if(self.parent.complete_hack(hack_ID)):
@@ -542,4 +571,3 @@ def main():
 
 if __name__ == '__main__':
     main()  
-        
