@@ -8,6 +8,39 @@
    <cash>123</cash>
    <exp>0</exp>
    <level>1</level>
-   <hacks/>
+   <hacks>
+      <hack>
+         <h_type>task</h_type>
+         <title>a</title>
+         <desc>a</desc>
+         <ID>0</ID>
+         <value>123</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>task</h_type>
+         <title>2</title>
+         <desc>2</desc>
+         <ID>1</ID>
+         <value>123</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>task</h_type>
+         <title>123</title>
+         <desc>1233</desc>
+         <ID>2</ID>
+         <value>321</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>task</h_type>
+         <title>5</title>
+         <desc>5</desc>
+         <ID>3</ID>
+         <value>123</value>
+         <exp>100</exp>
+      </hack>
+   </hacks>
    <items/>
 </data>

@@ -508,7 +508,7 @@ class GUI(Frame):
         notification.grid(row=0, column=1, sticky = E)
         notification.configure(background = 'black', foreground = 'white', anchor = E, font='arial 16')
 
-        #notification_frame.after(2000, notification_frame.destroy())
+        notification_frame.after(2000, notification_frame.destroy)
 
 
 
