@@ -50,6 +50,9 @@ def __init__(self, name, file, item_type, description, cost, row, column, durati
 
     def getItemType(self):
         return self.component_type
+        
+    def getType(self):
+        return self.item_type
     
 # this class is used for link the shop class with the GUI class
 class MyShop():
@@ -326,8 +329,9 @@ class Shop():
                  self.items[i].getFile(),
                  self.items[i].getCost(),
                  self.items[i].getUses(),
+                 self.items[i].getType(),
+                 False, 
                  self.items[i].getEffect(),
-                 self.items[i].getItemType(),
                  self.items[i].getDuration()                       
                  ))
 
