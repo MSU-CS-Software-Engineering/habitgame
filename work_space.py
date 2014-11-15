@@ -286,7 +286,7 @@ class Work_Space(Frame):
         self.tab_inventory = Work_Space_Tab(frame, width=850, height=400)
         
         self.tab_habits.grid(row = 0, column = 1,sticky = 'news')
-        self.tab_dailies.pack(fill = BOTH, expand = YES)
+        self.tab_habits.pack(fill = BOTH, expand = YES)
         self.tab_tasks.pack(fill = BOTH, expand = YES)
         self.tab_shop.pack(fill = BOTH, expand = YES)
         self.tab_inventory.pack(fill = BOTH, expand = YES)
