@@ -624,8 +624,14 @@ class GUI(Frame):
         self.master.geometry(self._geom)
         self._geom=geom
 
+    def set_active(self, item, state):
+        self.character.items[item.ID].active = state
+        self.update_item_count()
+        
     def use_item(self, item):
         item.uses = int(item.uses) - 1
+        if item.item_type == 'food' or item.item_type == 'misc':
+            self.remove_item(item)
         self.update_item_count()
 
     def remove_item(self, item):

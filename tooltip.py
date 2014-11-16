@@ -1,6 +1,5 @@
 from tkinter import *
 from time import time
-from random import *
 
 class ToolTip(Toplevel):
     """
@@ -10,12 +9,12 @@ class ToolTip(Toplevel):
     delay: amount of time in seconds before the tooltip displays
     follow: If false, the tool tip won't follow the mouse movement
     """
-    def __init__(self, widget, text, text_funct=None, delay=0.5, follow=True):
+    def __init__(self, widget, text, text_funct=None, delay=0.25, follow=True):
         self.widget = widget
 
         # parent of the widget object
         self.parent = self.widget.master
-        Toplevel.__init__(self, self.parent, background='#4EAE0D', padx=2, pady=2)
+        Toplevel.__init__(self, self.parent, background='black', padx=2, pady=2)
         
         # hide tooltip initially
         self.withdraw()
@@ -35,15 +34,15 @@ class ToolTip(Toplevel):
         self.delay = delay
         self.follow = follow
         
-        tip = Label(self, textvariable=self.text, padx=5, pady=5,
-                    background='white', foreground='#373737', font='arial 12 bold')
-        tip.grid()
-
+        self.tip = Label(self, textvariable=self.text, padx=5, pady=5, wraplength=350,
+                         background='#FFFB9F', foreground='black', font='arial 12 bold')
+        self.tip.grid()
+        
         self.widget.bind('<Enter>', self.allow_for_display)
         self.widget.bind('<Leave>', self.hide_tip)
-        self.widget.bind('<Motion>', self.move_tip)
         
     def allow_for_display(self, event=None):
+        self.widget.bind_all('<Motion>', self.move_tip)
         self.visible = 1
         self.after(int(self.delay * 1000), self.display_tip)
         
@@ -62,7 +61,7 @@ class ToolTip(Toplevel):
             self.visible = 1
 
         # offset the tooltip message from mouse pointer
-        self.geometry('+%i+%i' % (event.x_root + 15, event.y_root - 13))
+        self.geometry('+%i+%i' % (event.x_root + 15, event.y_root))
         try:
             self.text.set(self.text_funct())
         except:
@@ -73,20 +72,3 @@ class ToolTip(Toplevel):
     def hide_tip(self, event=None):
         self.visible = 0
         self.withdraw()
-
-# testing function
-def randString():
-    val = randint(100000, 1000000)
-    return "number: " + str(val)
-
-def main():
-    root = Tk()
-    Button(root, text='hey', command=randString()).grid(row=1)
-    label = Label(root, text='hover over me!')
-    label.configure(cursor='hand2')
-    label.grid()
-    ToolTip(label, "high", randString)
-    root.mainloop()
-    
-if __name__ == '__main__':
-    main()

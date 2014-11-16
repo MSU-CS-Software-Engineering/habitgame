@@ -4,6 +4,9 @@ from tkinter import *
 from tkinter.ttk import *
 from hack_classes import Item
 import os.path
+from tooltip import ToolTip
+from tkinter import messagebox
+from random import *
 
 class SetInventoryItem():
     """
@@ -89,8 +92,8 @@ class MyInventory():
     my_inventory = None # Inventory class object stored here
 
     # default active item limits
-    max_software = 5
-    max_hardware = 3 
+    max_software = 2
+    max_hardware = 2 
     max_components = 2
 
     # current number of items active 
@@ -99,18 +102,23 @@ class MyInventory():
     components_count = 0
 
     # store each active item info here
-    software = []
+    software_frame = []
     software_items = []
+    software_tips = []
     
-    hardware = []
+    hardware_frame = []
     hardware_items = []
-    
-    components = []
+    hardware_tips = []
+
+    components_frame = []
     component_items = []
+    components_tips = []
+
     
     # called in work_space.py
     def setInventory(inventory_frame):
         MyInventory.my_inventory = Inventory(inventory_frame)
+
 
     # called at the end of engine/GUI's constructor function 
     def setApi(api_ref, items_frame_ref):
@@ -118,148 +126,242 @@ class MyInventory():
         MyInventory.items_frame = items_frame_ref
         MyInventory.makeItemSlots()
         MyInventory.my_inventory.initInventory(MyInventory.api.get_character_items())
-  
+
+
     def makeItemSlots():
         style = Style()
         for i in range(MyInventory.max_software):
             software_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
-            software_frame.grid(row=1, column=i+1, sticky=W, pady=4, padx=5)
+            software_frame.grid(row=1, column=i+1, sticky=W, pady=4, padx=4)
             style.configure('item.TFrame', background='#AEAEAE')
-            MyInventory.software.append(software_frame)
+            MyInventory.software_frame.append(software_frame)
             MyInventory.software_items.append([None, None])
+            MyInventory.software_tips.append(None)
 
         for i in range(MyInventory.max_hardware):
             hardware_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
-            hardware_frame.grid(row=2, column=i+1, sticky=W, pady=4, padx=5)
+            hardware_frame.grid(row=2, column=i+1, sticky=W, pady=4, padx=4)
             style.configure('item.TFrame', background='#AEAEAE')
-            MyInventory.hardware.append(hardware_frame)
+            MyInventory.hardware_frame.append(hardware_frame)
             MyInventory.hardware_items.append([None, None])
+            MyInventory.hardware_tips.append(None)
             
         for i in range(MyInventory.max_components):
             component_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
-            component_frame.grid(row=3, column=i+1, sticky=W, pady=4, padx=5)
+            component_frame.grid(row=3, column=i+1, sticky=W, pady=4, padx=4)
             style.configure('item.TFrame', background='#AEAEAE')
-            MyInventory.components.append(component_frame)
+            MyInventory.components_frame.append(component_frame)
             MyInventory.component_items.append([None, None])
-   
+            MyInventory.components_tips.append(None)
+
+
+    def getEmblemImage(name):
+        emblems = {'Motherboard':os.path.join("assets", "art", "emblem_mobo.gif"),
+                   'RAM 16gb':os.path.join("assets", "art", "emblem_ramred.gif"),
+                   'RAM 8gb':os.path.join("assets", "art", "emblem_ramgreen.gif"),
+                   'CPU fan':os.path.join("assets", "art", "emblem_fan.gif"),
+                   'CPU 3.5 Ghz':os.path.join("assets", "art", "emblem_cpu.gif"),
+                   'GPU 2gb':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'GPU 1gb':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Fortify':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Fork':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Smokescreen':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Penetrate':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Laptop':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Desktop':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Terminal':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Server':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Desk':os.path.join("assets", "art", "emblem_laptop.gif")}
+
+        return emblems[name]
+
+        
     def addSoftware(item):
         if MyInventory.software_count < MyInventory.max_software:
             i = MyInventory.software_count
             
-            software_label = Label(MyInventory.software[MyInventory.software_count], text=item.name)
+            img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
+            software_label = Label(MyInventory.software_frame[MyInventory.software_count], image=img)
             software_label.grid(sticky=W)
-            software_label.configure(font='arial 14', background='red', foreground='black')
-            
+            software_label.configure(font='arial 14', cursor='hand2', borderwidth=0, background='red', foreground='black')
             software_label.bind('<1>', lambda e, _id=i: MyInventory.removeSoftware(_id))
-            MyInventory.software_items[MyInventory.software_count] = [software_label, item]
-        
+            software_label.image = img
+            
+            MyInventory.software_tips[i] = ToolTip(software_label, item.name + ': ' + item.description)
+            MyInventory.software_items[i] = [software_label, item]
             MyInventory.software_count += 1
             return True
         else:
             return False # software slots full
 
+
     def resetSoftware(item, i):
-        software_label = Label(MyInventory.software[i-1], text=item.name)
+        img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
+        software_label = Label(MyInventory.software_frame[i-1], image=img)
         software_label.grid(sticky=W)
-        software_label.configure(font='arial 14', background='red', foreground='black')
-            
+        software_label.configure(font='arial 14', cursor='hand2', borderwidth=0, background='red', foreground='black')   
         software_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeSoftware(_id))
-        MyInventory.software_items[i-1] = [software_label, item]
+        software_label.image = img
         
+        MyInventory.software_tips[i-1] = ToolTip(software_label, item.name + ': ' + item.description)
+        MyInventory.software_items[i-1] = [software_label, item]
+
+                
     def removeSoftware(_id):
         if MyInventory.software_items[_id][0] != None:
-            MyInventory.software_items[_id][0].destroy()
-            MyInventory.software_items[_id][0] = None
-            MyInventory.my_inventory.addItem(MyInventory.software_items[_id][1])
+            uses_left = int(MyInventory.software_items[_id][1].uses)
+            item_name = MyInventory.software_items[_id][1].name
             
-            for i in range(_id+1, MyInventory.max_software, 1):
-                if MyInventory.software_items[i][0] != None:
-                    MyInventory.resetSoftware(MyInventory.software_items[i][1], i)
-                    MyInventory.software_items[i][0].destroy()
-                    MyInventory.software_items[i][0] = None
-                    
-            if MyInventory.software_count > 0:
-                MyInventory.software_count -= 1
+            msg = 'Move "' + item_name + '" to your inventory?'
+            if uses_left == 0:
+                msg = 'WARNING: 0 uses are left for "' + item_name + \
+                      '", this item will be deleted.' 
+            answer = messagebox.askokcancel("Remove Active Software Item", msg)
+            
+            if answer:
+                MyInventory.software_items[_id][0].destroy()
+                MyInventory.software_items[_id][0] = None
+                if uses_left > 0:
+                    MyInventory.my_inventory.addItem(MyInventory.software_items[_id][1])
+                    MyInventory.api.set_active(MyInventory.software_items[_id][1], 'False')
+                else:
+                    MyInventory.api.remove_item(MyInventory.software_items[_id][1])
+                
+                # shift all items to the left on the gui if any visual node gaps
+                for i in range(_id+1, MyInventory.max_software, 1):
+                    if MyInventory.software_items[i][0] != None:
+                        MyInventory.resetSoftware(MyInventory.software_items[i][1], i)
+                        MyInventory.software_items[i][0].destroy()
+                        MyInventory.software_items[i][0] = None
+                            
+                if MyInventory.software_count > 0:
+                    MyInventory.software_count -= 1
             
 
     def addHardware(item):
         if MyInventory.hardware_count < MyInventory.max_hardware:
             i = MyInventory.hardware_count
-            
-            hardware_label = Label(MyInventory.hardware[MyInventory.hardware_count], text=item.name)
+
+            img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
+            hardware_label = Label(MyInventory.hardware_frame[MyInventory.hardware_count], image=img)
             hardware_label.grid(sticky=W)
-            hardware_label.configure(font='arial 14', background='yellow', foreground='black')
-            
+            hardware_label.configure(font='arial 14', cursor='hand2', borderwidth=0, background='yellow', foreground='black')
             hardware_label.bind('<1>', lambda e, _id=i: MyInventory.removeHardware(_id))
-            MyInventory.hardware_items[MyInventory.hardware_count] = [hardware_label, item]
+            hardware_label.image = img
+            
+            MyInventory.hardware_tips[i] = ToolTip(hardware_label, item.name + ': ' + item.description)
+            MyInventory.hardware_items[i] = [hardware_label, item]
         
             MyInventory.hardware_count += 1
             return True
         else:
             return False # software slots full
 
+
     def resetHardware(item, i):
-        hardware_label = Label(MyInventory.hardware[i-1], text=item.name)
+        img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
+        hardware_label = Label(MyInventory.hardware_frame[i-1], image=img)
         hardware_label.grid(sticky=W)
-        hardware_label.configure(font='arial 14', background='yellow', foreground='black')
-            
+        hardware_label.configure(font='arial 14', cursor='hand2', borderwidth=0, background='yellow', foreground='black')
         hardware_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeHardware(_id))
-        MyInventory.hardware_items[i-1] = [hardware_label, item]
+        hardware_label.image = img
         
+        MyInventory.hardware_tips[i-1] = ToolTip(hardware_label, item.name + ': ' + item.description)
+        MyInventory.hardware_items[i-1] = [hardware_label, item]
+
+       
     def removeHardware(_id):
         if MyInventory.hardware_items[_id][0] != None:
-            MyInventory.hardware_items[_id][0].destroy()
-            MyInventory.hardware_items[_id][0] = None
-            MyInventory.my_inventory.addItem(MyInventory.hardware_items[_id][1])
+            uses_left = int(MyInventory.hardware_items[_id][1].uses)
+            item_name = MyInventory.hardware_items[_id][1].name
+            
+            msg = 'Move "' + item_name + '" to your inventory?'
+            if uses_left == 0:
+                msg = 'WARNING: 0 uses are left for "' + item_name + \
+                      '", this item will be deleted.' 
+            answer = messagebox.askokcancel("Remove Active Hardware Item", msg)
 
-            for i in range(_id+1, MyInventory.max_hardware, 1):
-                if MyInventory.hardware_items[i][0] != None:
-                    MyInventory.resetHardware(MyInventory.hardware_items[i][1], i)
-                    MyInventory.hardware_items[i][0].destroy()
-                    MyInventory.hardware_items[i][0] = None
+            if answer:
+                MyInventory.hardware_items[_id][0].destroy()
+                MyInventory.hardware_items[_id][0] = None
+                if uses_left > 0:
+                    MyInventory.my_inventory.addItem(MyInventory.hardware_items[_id][1])
+                    MyInventory.api.set_active(MyInventory.hardware_items[_id][1], 'False')
+                else:
+                    MyInventory.api.remove_item(MyInventory.hardware_items[_id][1])
                     
-            if MyInventory.hardware_count > 0:
-                MyInventory.hardware_count -= 1
+                # shift all items to the left on the gui if any visual node gaps
+                for i in range(_id+1, MyInventory.max_hardware, 1):
+                    if MyInventory.hardware_items[i][0] != None:
+                        MyInventory.resetHardware(MyInventory.hardware_items[i][1], i)
+                        MyInventory.hardware_items[i][0].destroy()
+                        MyInventory.hardware_items[i][0] = None
+                        
+                if MyInventory.hardware_count > 0:
+                    MyInventory.hardware_count -= 1
 
     
     def addComponent(item):
         if MyInventory.components_count < MyInventory.max_components:
             i = MyInventory.components_count
-            
-            component_label = Label(MyInventory.components[MyInventory.components_count], text=item.name)
+
+            img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
+            component_label = Label(MyInventory.components_frame[MyInventory.components_count], image=img)
             component_label.grid(sticky=W)
-            component_label.configure(font='arial 14', background='blue', foreground='black')
-            
+            component_label.configure(font='arial 14', cursor='hand2', borderwidth=0, background='blue', foreground='black')
             component_label.bind('<1>', lambda e, _id=i: MyInventory.removeComponent(_id))
-            MyInventory.component_items[MyInventory.components_count] = [component_label, item]
+            component_label.image = img
+            
+            MyInventory.components_tips[i] = ToolTip(component_label, item.name + ': ' + item.description)
+            MyInventory.component_items[i] = [component_label, item]
         
             MyInventory.components_count += 1
             return True
         else:
             return False # software slots full
 
+
     def resetComponent(item, i):
-        component_label = Label(MyInventory.components[i-1], text=item.name)
+        img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
+        component_label = Label(MyInventory.components_frame[i-1], image=img)
         component_label.grid(sticky=W)
-        component_label.configure(font='arial 14', background='blue', foreground='black')
-            
+        component_label.configure(font='arial 14', cursor='hand2', borderwidth=0, background='blue', foreground='black')
         component_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeComponent(_id))
-        MyInventory.component_items[i-1] = [component_label, item]
+        component_label.image = img
         
+        MyInventory.components_tips[i-1] = ToolTip(component_label, item.name + ': ' + item.description)
+        MyInventory.component_items[i-1] = [component_label, item]
+
+  
     def removeComponent(_id):
         if MyInventory.component_items[_id][0] != None:
-            MyInventory.component_items[_id][0].destroy()
-            MyInventory.component_items[_id][0] = None
-            MyInventory.my_inventory.addItem(MyInventory.component_items[_id][1])
+            uses_left = int(MyInventory.component_items[_id][1].uses)
+            item_name = MyInventory.component_items[_id][1].name
             
-            for i in range(_id+1, MyInventory.max_components, 1):
-                if MyInventory.component_items[i][0] != None:
-                    MyInventory.resetComponent(MyInventory.component_items[i][1], i)
-                    MyInventory.component_items[i][0].destroy()
-                    MyInventory.component_items[i][0] = None
-                    
-            if MyInventory.components_count > 0:
-                MyInventory.components_count -= 1
+            msg = 'Move "' + item_name + '" to your inventory?'
+            if uses_left == 0:
+                msg = 'WARNING: 0 uses are left for "' + item_name + \
+                      '", this item will be deleted.' 
+            answer = messagebox.askokcancel("Remove Active Component Item", msg)
+
+            if answer:
+                MyInventory.component_items[_id][0].destroy()
+                MyInventory.component_items[_id][0] = None
+                if uses_left > 0:
+                    MyInventory.my_inventory.addItem(MyInventory.component_items[_id][1])
+                    MyInventory.api.set_active(MyInventory.component_items[_id][1], 'False')
+                else:
+                    MyInventory.api.remove_item(MyInventory.component_items[_id][1])
+
+                # shift all items to the left on the gui if any visual node gaps
+                for i in range(_id+1, MyInventory.max_components, 1):
+                    if MyInventory.component_items[i][0] != None:
+                        MyInventory.resetComponent(MyInventory.component_items[i][1], i)
+                        MyInventory.component_items[i][0].destroy()
+                        MyInventory.component_items[i][0] = None
+                        
+                if MyInventory.components_count > 0:
+                    MyInventory.components_count -= 1
 
  
 class Inventory():
@@ -268,6 +370,7 @@ class Inventory():
         self.canvas_color = '#EBEDF1'
         
         self.items = [] # store all of the player's Item objects here
+        self.item_tips = []
         
         self.selceted_item_id = None
         self.selected_item_ref = None
@@ -337,8 +440,8 @@ class Inventory():
         t_name = self.items[i][0].getName()
         t_descript = self.items[i][0].getDescription()
         t_cost = self.items[i][0].getValue()
-
-
+        t_type = self.items[i][0].getItemType()
+        
         # create frame border for item
         border_frame = Frame(self.inventoryFrame, padding=2, cursor='hand2', style='c.TFrame')
         border_frame.grid(row=self.items[i][0].getRow(), column=self.items[i][0].getColumn(),
@@ -349,22 +452,21 @@ class Inventory():
         self.items[i][1] = border_frame
         
         # user clicks on the frame border
-        border_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
-                          self.selectItem(item_id, item_ref))
-        border_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost :
-                          self.setItemInfo(name, descript, self.items[i][0].getUses(), cost))
-
-
+        border_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef(),
+                          name=t_name, descript=t_descript, cost=t_cost, i_type=t_type :
+                          self.selectItem(item_id, item_ref, name, descript, self.items[i][0].getUses(), cost, i_type))
+        
+        self.item_tips.append(ToolTip(border_frame, t_name + ': ' + t_descript))
+        
         # create frame for item data
         item_frame = Frame(border_frame, style='itemFrame.TFrame', padding=9, cursor='hand2')
         item_frame.grid(sticky='wn')
         self.style.configure('itemFrame.TFrame', background=self.canvas_color)
         
         # user clicks on the frame containing all of the item's info
-        item_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
-                        self.selectItem(item_id, item_ref))
-        item_frame.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost :
-                        self.setItemInfo(name, descript, self.items[i][0].getUses(), cost))
+        item_frame.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef(),
+                        name=t_name, descript=t_descript, cost=t_cost, i_type=t_type :
+                        self.selectItem(item_id, item_ref, name, descript, self.items[i][0].getUses(), cost, i_type))
         item_frame.bind('<Enter>', lambda e, _i=i: self.highlight(_i, True))
         item_frame.bind('<Leave>', lambda e, _i=i: self.highlight(_i, False))
         
@@ -377,10 +479,9 @@ class Inventory():
         self.style.configure('item.TLabel', background=self.canvas_color)
         
         # user clicks on the image of the item
-        new_item.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
-                      self.selectItem(item_id, item_ref))
-        new_item.bind('<Enter>', lambda e, name=t_name, descript = t_descript, cost=t_cost :
-                      self.setItemInfo(name, descript, self.items[i][0].getUses(), cost))
+        new_item.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef(),
+                      name=t_name, descript=t_descript, cost=t_cost, i_type=t_type :
+                      self.selectItem(item_id, item_ref, name, descript, self.items[i][0].getUses(), cost, i_type))
 
         # create dynamic label for displaying the number of uses remaining for the given item
         str_uses = StringVar()
@@ -388,9 +489,11 @@ class Inventory():
         uses_label = Label(item_frame, textvariable=str_uses, anchor=CENTER, foreground='#646464',
                      background=self.canvas_color, font='arial 10 bold italic')
         uses_label.grid(row=2, column=0, sticky='news')
-        uses_label.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef():
-                        self.selectItem(item_id, item_ref))
+        uses_label.bind('<1>', lambda e, item_id=i, item_ref=self.items[i][0].getItemRef(),
+                        name=t_name, descript=t_descript, cost=t_cost, i_type=t_type :
+                        self.selectItem(item_id, item_ref, name, descript, self.items[i][0].getUses(), cost, i_type))
         self.uses_labels.append([str_uses, uses_label])
+        
         
     def remove_selected_item(self):
         """
@@ -411,15 +514,19 @@ class Inventory():
         self.items[item_id][1].destroy()
         self.items[item_id][1] = None
         self.reposition()
+        self.item_tips[item_id] = None
         self.item_set = False
 
         
-    def selectItem(self, item_id, item):
+    def selectItem(self, item_id, item, name, descript, uses, cost, item_type):
         """
         called when the user clicks on an item in the
         inventory panel. The item is prepped for the
         item manager panel on the right side of the GUI
         """
+        # set item info in the item manager
+        self.setItemInfo(name, descript, uses, cost, item_type)
+        
         # currently selected item is reset when the user selects a new item
         if self.item_set:
             self.remove_selected_item()
@@ -437,7 +544,9 @@ class Inventory():
             self.selectedItem.grid(row=0, columnspan=2, sticky='news')
             self.selectedItem.grid_columnconfigure(1, weight=1)
             img = PhotoImage(file=self.items[item_id][0].getFile())
-            self.selectedItem.configure(text='  Item ID: ' + str(item_id), image=img,
+
+            cost = int(float(self.items[item_id][0].getValue())*0.75)
+            self.selectedItem.configure(text='  Sell for: $' + str(cost), image=img,
                                         compound = 'left', font='arial 12 bold italic',
                                         foreground='black', background='#FCE081', padding='10 5 5 5')
             self.selectedItem.image = img
@@ -446,7 +555,7 @@ class Inventory():
             self.selected_item_ref = item
 
             self.item_set = True
-
+        
             
     def sellItem(self, item_id, item):
         if item_id != None:  
@@ -464,23 +573,13 @@ class Inventory():
             if self.items[item_id][1] != None:
                 not_full = True
                 item_type = item.item_type
-
-                if item_type == 'software':
-                    item.active = True
-                    not_full = MyInventory.addSoftware(item)
-                elif item_type == 'hardware':
-                    item.active = True
-                    not_full = MyInventory.addHardware(item)
-                elif item_type == 'component':
-                    item.active = True
-                    not_full = MyInventory.addComponent(item)
-
-                # item slot not full, so add the item to the active items area of the GUI
-                if not_full:   
+                
+                if item_type == 'food' or item_type == 'misc':
                     new_uses = int(self.items[item_id][0].getUses()) - 1
                     self.items[item_id][0].setUses(str(new_uses))
                     self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())
-                    
+
+                    item.active = 'False'
                     MyInventory.api.use_item(item)
                     self.remove_item_from_inventory(item_id)
                         
@@ -489,29 +588,57 @@ class Inventory():
                     self.remove_selected_item()
                     self.resetItemInfo()
                 else:
-                    item.active = False
+                    if item_type == 'software':
+                        item.active = 'True'
+                        not_full = MyInventory.addSoftware(item)
+                    elif item_type == 'hardware':
+                        item.active = 'True'
+                        not_full = MyInventory.addHardware(item)
+                    elif item_type == 'component':
+                        item.active = 'True'
+                        not_full = MyInventory.addComponent(item)
+
+                    # item slot not full, so add the item to the active items area of the GUI
+                    if not_full:   
+                        new_uses = int(self.items[item_id][0].getUses()) - 1
+                        self.items[item_id][0].setUses(str(new_uses))
+                        self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())
+                        
+                        MyInventory.api.use_item(item)
+                        self.remove_item_from_inventory(item_id)
+                            
+                        self.selceted_item_id = None
+                        self.selected_item_ref = None
+                        self.remove_selected_item()
+                        self.resetItemInfo()
+                    else:
+                        messagebox.showinfo('Active Space Full', 'Active ' + item_type + ' area full.')
+                        item.active = 'False'
 
 
     def resetItemInfo(self):
-        self.nameSelect.configure(text='name')
-        self.descriptSelect.configure(text='description')
-        self.useSelect.configure(text='uses')
-        self.costSelect.configure(text='cost')
+        self.nameSelect.configure(text='')
+        self.descriptSelect.configure(text='')
+        self.useSelect.configure(text='')
+        self.costSelect.configure(text='')
+        self.typeSelect.configure(text='')
 
         
-    def setItemInfo(self, name, descript, uses, cost):
+    def setItemInfo(self, name, descript, uses, cost, item_type):
         """
         setItemInfo sets the info to be shown in the item
         information frame, right above the buy button
         """
-        name = "Name: " + name
+        name = "Item name: " + name
         self.nameSelect.configure(text=name)
-        descript = "Info: " + descript
-        self.descriptSelect.configure(text=descript)
-        uses = "Uses: " + str(uses)
-        self.useSelect.configure(text=uses)
-        cost = "Cost: $" + str(cost)
+        cost = "Purchase price: $" + str(cost)
         self.costSelect.configure(text=cost)
+        uses = "Uses left: " + str(uses)
+        self.useSelect.configure(text=uses)
+        item_type = "Item type: " + item_type
+        self.typeSelect.configure(text=item_type)
+        descript = "Item effect: " + descript
+        self.descriptSelect.configure(text=descript)
 
 
     def reposition(self):
@@ -578,19 +705,23 @@ class Inventory():
             self.inv_canvas.configure(scrollregion=self.inv_canvas.bbox("all"))
             
         self.inventoryFrame.bind("<Configure>", setupCanvasFrame)
-
+        self.inv_canvas.bind("<Enter>", lambda e: self.setScrolling())
+        
         self.style = Style()
         self.style.configure('inventoryFrame.TFrame', background=self.canvas_color)
 
-        def scroll_m(event):
-            """ allows for mouse wheel scrolling """
-            try:
-                self.inv_canvas.yview_scroll(-1 * int(event.delta/120), "units")
-            except:
-                pass
 
-        self.inv_canvas.bind("<MouseWheel>", lambda e: scroll_m(e))
+    def scrollMouse(self, event):
+        """ allows for mouse wheel scrolling """
+        try:
+            self.inv_canvas.yview_scroll(-1 * int(event.delta/120), "units")
+        except:
+            pass
 
+            
+    def setScrolling(self):
+        self.inv_canvas.bind_all("<MouseWheel>", lambda e: self.scrollMouse(e))
+        
 
     def makeLayout(self):
         # Inventory title
@@ -629,30 +760,35 @@ class Inventory():
         self.useButton.bind('<Enter>', lambda e: self.useButton.configure(background='#1795B9'))
         self.useButton.bind('<Leave>', lambda e: self.useButton.configure(background='#0F5A71'))
 
-        panel_color_bg = '#E8E2D0'
+        panel_color_bg = '#0F0F0F'
         
         item_info_div = Frame(self.item_info_frame, borderwidth=0, style='Info.TFrame')
         item_info_div.grid(row=3, columnspan=2, sticky='news')
         self.style.configure('Info.TFrame', background=panel_color_bg)
 
         # item's name
-        self.nameSelect = Label(item_info_div, text='name', width=30, padding='10 10 5 5')
+        self.nameSelect = Label(item_info_div, text='', width=30, padding='10 10 5 5')
         self.nameSelect.grid(sticky='news', row=0, columnspan=2)
-        self.nameSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
+        self.nameSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
+
+        # selected item's type
+        self.typeSelect = Label(item_info_div, text='', padding='10 5 5 5')
+        self.typeSelect.grid(sticky='news', row=1, columnspan=2)
+        self.typeSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
         
         # selected item's cost
-        self.costSelect = Label(item_info_div, text='cost', padding='10 5 5 5')
-        self.costSelect.grid(sticky='news', row=1, columnspan=2)
-        self.costSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
+        self.costSelect = Label(item_info_div, text='', padding='10 5 5 5')
+        self.costSelect.grid(sticky='news', row=2, columnspan=2)
+        self.costSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
 
         # selected item's number of uses
-        self.useSelect = Label(item_info_div, text='uses', padding='10 5 5 5')
-        self.useSelect.grid(sticky='news', row=2, columnspan=2)
-        self.useSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
+        self.useSelect = Label(item_info_div, text='', padding='10 5 5 5')
+        self.useSelect.grid(sticky='news', row=3, columnspan=2)
+        self.useSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
         
         # selected item's description
-        self.descriptSelect = Label(item_info_div, text='description', wraplength=370, padding='10 5 5 5')
-        self.descriptSelect.grid(sticky='news', row=3, columnspan=2)
-        self.descriptSelect.configure(font='arial 12 bold', foreground='black', background=panel_color_bg)
+        self.descriptSelect = Label(item_info_div, text='', wraplength=370, padding='10 5 5 5')
+        self.descriptSelect.grid(sticky='news', row=4, columnspan=2)
+        self.descriptSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
         self.descriptSelect.grid_columnconfigure(1, weight=1)
 
