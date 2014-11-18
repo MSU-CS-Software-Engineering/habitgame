@@ -663,7 +663,6 @@ class GUI(Frame):
         self.update_cash()
         self.update_exp()
         self.check_level()
-        self.check_rank()
 
     def check_level(self):
         curr_level = int(self.character_level.get())
@@ -678,15 +677,22 @@ class GUI(Frame):
             self.update_level()
             self.update_exp()
             GUI.notify("type", "LEVEL UP! lvl"+str(self.character.level))
+            self.check_rank_up()
 
-    def check_rank(self):
+    def check_rank_up(self):
         curr_level = int(self.character_level.get())
         rank_up = 3
 
         if curr_level >= rank_up:
             #new rank get
-            GUI.notify("type", "RANK UP!")
+            curr_rank = self.rank_name()
+            GUI.notify("type", "RANK UP TO " + str(curr_rank))
 
+    def rank_name(self):
+        #just numbers 0-7 for now, actual ranks in data_assets.py
+        ranking = int(self.character.level / 3)
+        return ranking
+        
     def get_item_count(self):
         print('item count: ' + str(len(self.character.get_all_items())))
         return len(self.character.get_all_items())
