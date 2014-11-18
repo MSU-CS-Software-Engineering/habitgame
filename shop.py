@@ -4,6 +4,7 @@ from enum import Enum
 from hack_classes import Item
 from inventory import MyInventory
 import os.path
+from tooltip import ToolTip
 
 # Each item in the store is placed in an Item object
 class SetItem():
@@ -183,39 +184,31 @@ class Shop():
 
 
         # create a canvas to allow for scrolling of the shop Frame
-        sh_canvas = Canvas(shop_plugin_frame, highlightthickness=0, background='#EBEDF1')
-        sh_canvas.grid(row=4, column=0, sticky='news')
+        self.sh_canvas = Canvas(shop_plugin_frame, highlightthickness=0, borderwidth=0, background='#EBEDF1')
+        self.sh_canvas.grid(row=1, column=0, sticky='news')
 
         # create the shop frame and place it inside the canvas
-        self.shopFrame = Frame(sh_canvas, borderwidth=0, style='shopFrame.TFrame', padding=10) 
+        self.shopFrame = Frame(self.sh_canvas, borderwidth=0, style='shopFrame.TFrame', padding=10) 
         self.shopFrame.grid(sticky='news')
         
-        self.scrollBar = Scrollbar(shop_plugin_frame, orient="vertical", command=sh_canvas.yview)
-        sh_canvas.configure(yscrollcommand=self.scrollBar.set)
+        self.scrollBar = Scrollbar(shop_plugin_frame, orient="vertical", command=self.sh_canvas.yview)
+        self.sh_canvas.configure(yscrollcommand=self.scrollBar.set)
         
         shop_plugin_frame.grid_columnconfigure(0, weight=1)
-        shop_plugin_frame.grid_rowconfigure(4, weight=1)
+        shop_plugin_frame.grid_rowconfigure(1, weight=1)
         
-        sh_canvas.create_window((0,0), window=self.shopFrame, anchor='nw', tags='self.shopFrame')
-        self.scrollBar.grid(row=0, column=1, rowspan=5, sticky='ns')
+        self.sh_canvas.create_window((0,0), window=self.shopFrame, anchor='nw', tags='self.shopFrame')
+        self.scrollBar.grid(row=1, column=1, rowspan=2, sticky='ns')
 
         def setupCanvasFrame(event):
             # resets the scroll region for the frame inserted into the canvas
-            sh_canvas.configure(scrollregion=sh_canvas.bbox("all"))
+            self.sh_canvas.configure(scrollregion=self.sh_canvas.bbox("all"))
             
         self.shopFrame.bind("<Configure>", setupCanvasFrame)
-
+        self.sh_canvas.bind("<Enter>", lambda e: self.setScrolling())
+        
         self.style = Style()
         self.style.configure('shopFrame.TFrame', background='#EBEDF1')
-
-        def scroll_m(event):
-            """ allows for mouse wheel scrolling """
-            try:
-                sh_canvas.yview_scroll(-1 * int(event.delta/120), "units")
-            except:
-                pass
-
-        sh_canvas.bind("<MouseWheel>", lambda e: scroll_m(e))
 
         
         # shop divider labels
@@ -241,53 +234,76 @@ class Shop():
 
         
         self.itemName = StringVar()
-        self.itemName.set('name')
+        self.itemName.set('')
         
         self.itemDesc = StringVar()
-        self.itemDesc.set('description')
+        self.itemDesc.set('')
         
         self.itemCost = StringVar()
-        self.itemCost.set('cost')
+        self.itemCost.set('')
+
+        # shop title
+        self.shopTitle = Label(shop_plugin_frame, text='Daily Hack Shop', padding='10 5 5 5')
+        self.shopTitle.grid(sticky='news', row=0, columnspan=3)
+        self.shopTitle.configure(font='arial 14 bold', foreground='#FFD237', background='#1E1E1E')
         
-        # selected item's name
-        self.itemSelect = Label(shop_plugin_frame, textvariable=self.itemName,
-                                wraplength=800, padding='10 5 5 5')
-        self.itemSelect.grid(sticky='news', row=0)
-        self.itemSelect.configure(font='arial 14 bold', foreground='#FFD237', background='#1E1E1E')
+        self.item_info_frame = Frame(shop_plugin_frame, borderwidth=0, style='itemInfo.TFrame')
+        self.item_info_frame.grid(row=1, column=2, rowspan=3, sticky='news')
+        self.item_info_frame.grid_columnconfigure(2, weight=1)
+
+        # item panel title
+        self.panelTitle = Label(self.item_info_frame, text='Item Checkout',
+                                anchor=CENTER, width=32, padding='10 5 5 5')
+        self.panelTitle.grid(sticky='news')
+        self.panelTitle.configure(font='arial 16 bold italic', foreground='#F5F5F5', background='#282828')
+        
+        # selected item's name 
+        self.itemSelect = Label(self.item_info_frame, textvariable=self.itemName, padding='10 10 5 5')
+        self.itemSelect.grid(sticky='news', row=2)
+        self.itemSelect.configure(font='arial 12 bold', foreground='#48D220', background='#0F0F0F')
+
+        # selected item's cost
+        self.costSelect = Label(self.item_info_frame, textvariable=self.itemCost, padding='10 5 5 5')
+        self.costSelect.grid(sticky='news', row=3)
+        self.costSelect.configure(font='arial 12 bold', foreground='#48D220', background='#0F0F0F')
         
         # selected item's description
-        self.descriptSelect = Label(shop_plugin_frame, textvariable=self.itemDesc,
-                                    wraplength=800, padding='10 5 5 5')
-        self.descriptSelect.grid(sticky='news', row=1)
-        self.descriptSelect.configure(font='arial 12 bold', foreground='white', background='#444444')
+        self.descriptSelect = Label(self.item_info_frame, textvariable=self.itemDesc,
+                                    wraplength=370, padding='10 5 5 5')
+        self.descriptSelect.grid(sticky='news', row=4)
+        self.descriptSelect.configure(font='arial 12 bold', foreground='#48D220', background='#0F0F0F')
         
-        # selected item's cost
-        self.costSelect = Label(shop_plugin_frame, textvariable=self.itemCost,
-                                wraplength=800, padding='10 5 5 5')
-        self.costSelect.grid(sticky='news', row=2)
-        self.costSelect.configure(font='arial 12 bold', foreground='white', background='#444444')
-        
-        
+
         # create a 'buy' label to act as a button
-        self.buy_button = Label(shop_plugin_frame, text='Buy', style='buy.TLabel', anchor='center', padding=5)
-        self.buy_button.grid(sticky='news', row=3)
+        self.buy_button = Label(self.item_info_frame, text='Buy', style='buy.TLabel', anchor='center', padding=5)
+        self.buy_button.grid(sticky='news', row=1)
 
         def buy_on_off(buy):
-            if self.itemName.get() != 'name' and buy:
-                self.style.configure('buy.TLabel', background='#B6DE61')
-            elif self.itemName.get() !='name' and not buy:
-                self.style.configure('buy.TLabel', background='#82AE24')
+            if self.itemName.get() != '' and buy:
+                self.style.configure('buy.TLabel', background='#00B3FF')
+            elif self.itemName.get() != '' and not buy:
+                self.style.configure('buy.TLabel', background='#0086BF')
             
         self.buy_button.bind('<Enter>', lambda e: buy_on_off(True))
         self.buy_button.bind('<Leave>', lambda e: buy_on_off(False))
         self.buy_button.bind('<1>', lambda e: self.buyItem())
         
-        self.style.configure('buy.TLabel', background='#646464',
-                             foreground='#1E1E1E', font='arial 14 bold')
-
+        self.style.configure('buy.TLabel', background='#505050',
+                             foreground='black', font='arial 14 bold')
+        self.style.configure('itemInfo.TFrame', background='#0F0F0F')
+        
         # populate store with items
         self.createItems()
 
+    def scrollMouse(self, event):
+        """ allows for mouse wheel scrolling """
+        try:
+            self.sh_canvas.yview_scroll(-1 * int(event.delta/120), "units")
+        except:
+            pass
+            
+    def setScrolling(self):
+        self.sh_canvas.bind_all("<MouseWheel>", lambda e: self.scrollMouse(e))
             
     def buyItem(self):
         if self.itemName.get() != 'name':
@@ -309,8 +325,9 @@ class Shop():
         information frame, right above the buy button
         """
         self.buy_button.configure(cursor='hand2')
-        self.style.configure('buy.TLabel', background='#82AE24',
-                             foreground='#1E1E1E', font='arial 14 bold')
+        self.style.configure('buy.TLabel', background='#0086BF',
+                             foreground='black', font='arial 14 bold')
+        name = "Name: " + name
         self.itemName.set(name)
         descript = "Info: " + descript
         self.itemDesc.set(descript)
@@ -369,6 +386,8 @@ class Shop():
             border_frame.grid(row=divs_id[1], column=divs_id[2], padx=7, pady=7, sticky='wn')
             self.style.configure('c.TFrame', background='#EBEDF1')
 
+            ToolTip(border_frame, t_name + ': ' + t_descript)
+            
             # increment columns and rows
             divs_id[2] += 1
             if divs_id[2] >= 5: # max of 5 items per row

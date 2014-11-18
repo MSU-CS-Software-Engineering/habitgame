@@ -286,7 +286,7 @@ class Work_Space(Frame):
         self.tab_inventory = Work_Space_Tab(frame, width=850, height=400)
         
         self.tab_habits.grid(row = 0, column = 1,sticky = 'news')
-        self.tab_dailies.pack(fill = BOTH, expand = YES)
+        self.tab_habits.pack(fill = BOTH, expand = YES)
         self.tab_tasks.pack(fill = BOTH, expand = YES)
         self.tab_shop.pack(fill = BOTH, expand = YES)
         self.tab_inventory.pack(fill = BOTH, expand = YES)
@@ -385,7 +385,6 @@ class Work_Space(Frame):
     def add_hack(self, h_type):
         ''' Calls input window; Adds result to hack list '''
         self.input_hack_data(h_type)
-        #REBUILD_HACK_LIST_ON_GUI
         
     def delete_hack(self, hack_ID):
         answer = messagebox.askokcancel("Delete Hack", "Delete hack?")
@@ -394,7 +393,6 @@ class Work_Space(Frame):
             return True
             
         else:
-            #print("User clicked Cancel")
             return False
 
             
@@ -403,7 +401,6 @@ class Work_Space(Frame):
             hack_data = self.character.get_hack(hack_ID)
             self.input_hack_data(hack_data.h_type, hack_data)
             
-            #REBUILD_HACK_LIST_ON_GUI()
         except:
             print("Failed to pass hack to input_hack_data")           
 
@@ -447,8 +444,8 @@ class Work_Space(Frame):
 
         ticket_desc = Text(desc_frame, width=40, height=4)
 
-        if hack_data != None:
-            ticket_desc.insert(INSERT, hack_data.description)
+        #if hack_data:
+        #    ticket_desc.insert(INSERT, hack_data.description)
 
         ticket_desc.pack(side="bottom", pady=5)
 
@@ -479,56 +476,25 @@ class Work_Space(Frame):
         self.style.configure('cancel.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#FF4848')
         
-        if hack_data == None:
-            confirmButton = Button(button_frame, text="Save", style = 'save.TButton', cursor = 'hand2',
-                command=lambda: 
-                    self.save_new_hack(data_window, Hack(
-                                            h_type,
-                                            ticket_name.get(),
-                                            ticket_desc.get(1.0, END).strip('\t\n'),
-                                            ticket_value.get())))
-        else:
+        if hack_data:
             ticket_name.insert(INSERT, hack_data.title)
             ticket_value.insert(INSERT, str(hack_data.value))
+            ticket_desc.insert(INSERT, hack_data.description)
 
-            confirmButton = Button(button_frame, text="Save", style = 'save.TButton', cursor = 'hand2',
-                command=lambda: 
-                    self.save_edited_hack(data_window, hack_data.ID, Hack(
-                                          h_type,
-                                          ticket_name.get(),
-                                          ticket_desc.get(1.0, END).strip('\t\n'),
-                                          ticket_value.get())))
-
+        confirmButton = Button(button_frame, text="Save", style = 'save.TButton', cursor = 'hand2',
+            command=lambda: self.check_input_validity(data_window, h_type, name_warning_label, 
+                                            desc_warning_label, value_warning_label, ticket_name.get(), 
+                                            ticket_desc.get(1.0, END), ticket_value.get(), hack_data)) 
         confirmButton.pack(side="right")
-        confirmButton.config(state = 'disabled')
-
-
-        for widge in [ticket_name, ticket_desc, ticket_value]:
-
-            widge.bind('<KeyRelease>', lambda event: self.check_input_validity(
-                                                name_warning_label, desc_warning_label, value_warning_label, 
-                                                ticket_name.get(), ticket_desc.get(1.0, END), ticket_value.get(), 
-                                                confirmButton)) 
 
 
         self.style.configure('save.TButton', font = 'arial 14 bold', relief = 'flat',
                               padding = 5, foreground = 'black', background = '#96FF48')
         
-    #Helper functions for input_hack_data
-    def save_new_hack(self, window, hack_data):
-        self.parent.add_hack(hack_data)
-        window.destroy()
-        messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
-                            ' hack has been saved!')
+    #Helper function for input_hack_data
 
-    def save_edited_hack(self, window, hack_ID, hack_data):
-        self.parent.edit_hack(hack_ID, hack_data)
-        window.destroy()
-        messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
-                            ' hack has been saved!')
-
-    def check_input_validity(self, title_label, desc_label, value_label, 
-                                title_string, desc_string, value_string, confirmButton):
+    def check_input_validity(self, window, h_type, title_label, desc_label, value_label, 
+                             title_string, desc_string, value_string, hack_data):
 
         error_triggered = False
 
@@ -555,10 +521,22 @@ class Work_Space(Frame):
             error_triggered = True
 
         if error_triggered:
-            confirmButton.config(state = 'disabled')
+            return
 
         else:
-            confirmButton.config(state = 'normal')
+
+            submitted_hack = Hack(h_type, title_string,
+                                  desc_string.strip('\t\n'), value_string)
+
+            if not hack_data:
+                self.parent.add_hack(submitted_hack)
+
+            else:
+                self.parent.edit_hack(hack_data.ID, submitted_hack)
+
+        window.destroy()
+        self.parent.notify("Your " + str(submitted_hack.get_hack_type()) +
+                            " has been saved!")
 
 def main():
     #For Testing purposes

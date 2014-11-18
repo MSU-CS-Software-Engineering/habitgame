@@ -254,6 +254,14 @@ class GUI(Frame):
         self.frames['Landing_Page'] = landing_page_frame
         self.show_frame('Landing_Page')
 
+        #create the notification frame. it's a class variable so we can reference
+        #it and directly modify its children from the notify function
+        GUI.notification_frame = Frame(GUI.master2, style='footer.TFrame')
+        GUI.notification_frame.config(height=50, width=300)
+        GUI.notification_frame.place(relx=0.9967, y=230, anchor="se")
+
+        GUI.notify('put_type_here', 'Welcome to your Daily <Hack>!')        
+
     def make_menu_bar(self):
         """
         create menu bar with file, edit, and help drop down tabs
@@ -466,11 +474,6 @@ class GUI(Frame):
         footer_frame = Frame(footer_frame_bg, style='footer.TFrame')
         footer_frame.grid(row=0, column=0)
 
-        #create the notification frame. it's a class variable so we can reference
-        #it and directly modify its children from the notify function
-        #GUI.notification_frame = Frame(footer_frame_bg, style='footer.TFrame')
-        #GUI.notification_frame.grid(row=0, column=1)
-
         self.style.configure('footer.TFrame', background='black')
 
         # archetype logo
@@ -484,33 +487,19 @@ class GUI(Frame):
         footer.grid(row=0, column=1, sticky = (N, E, W, S))
         footer.configure(background = 'black', foreground = 'white', anchor = CENTER, font='arial 12')
 
-        #set the initial notification area message
-        #notification = Label(GUI.notification_frame, text='Notification Area')
-        #notification.grid(row=0, column=1, sticky = E)
-        #notification.configure(background = 'black', foreground = 'white', anchor = E, font='arial 12')
-
     def notify(type, message):
 
         #type will be used later to add a small icon to the notifications
         #(a coin for money, save icon, etc)
 
         #destroy the previous message
-        #for child in GUI.notification_frame.winfo_children():
-        #    child.destroy()
+        for child in GUI.notification_frame.winfo_children():
+            child.destroy()
 
-        notification_frame = Frame(GUI.master2, style='footer.TFrame')
-        notification_frame.config(height=50, width=300)
-        notification_frame.place(relx=0.9967, y=230, anchor="se")
-        #notification_frame.place(relx=0.9967, y=230, anchor="se")
-
-        notification = Message(notification_frame, text=message, width=200)
-        #notification.config(height=2, width=20)
+        #create a new message and attach it to the GUI.notification_frame
+        notification = Message(GUI.notification_frame, text=message, width=200)
         notification.grid(row=0, column=1, sticky = E)
         notification.configure(background = 'black', foreground = 'white', anchor = E, font='arial 16')
-
-        notification_frame.after(2000, notification_frame.destroy)
-
-
 
     def bind_buttons(self):
         #Navigation Buttons
@@ -624,8 +613,14 @@ class GUI(Frame):
         self.master.geometry(self._geom)
         self._geom=geom
 
+    def set_active(self, item, state):
+        self.character.items[item.ID].active = state
+        self.update_item_count()
+        
     def use_item(self, item):
         item.uses = int(item.uses) - 1
+        if item.item_type == 'food' or item.item_type == 'misc':
+            self.remove_item(item)
         self.update_item_count()
 
     def remove_item(self, item):
@@ -751,8 +746,7 @@ def main():
 
     root = Tk()
     app = GUI(root)
-    GUI.notify('put_type_here', 'Call GUI.notify today, for all your user-notification needs!')
-
+    
     root.mainloop()
 
 if __name__ == "__main__":
