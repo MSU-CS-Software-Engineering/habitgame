@@ -274,7 +274,7 @@ class Item:
                       'item_type':self.item_type,
                       'effect':self.effect,
                       'active':self.active, 
-                      'duration':self.duration
+                      'duration':self.duration,
                       'component':self.component}
         
         return item_dict
