@@ -315,10 +315,14 @@ class GUI(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home())
         self.style.configure('hack_logo.TLabel', background='black')
 
-        self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
+        #self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
+        #self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
+        #                       self.go_to_dailies, self.go_to_generic,
+        #                       self.go_to_shop, self.go_to_inventory]
+        self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'Shop', 'Inventory']
         self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
-                               self.go_to_dailies, self.go_to_generic,
-                               self.go_to_shop, self.go_to_inventory]
+                               self.go_to_dailies, self.go_to_shop, 
+                               self.go_to_inventory]
 
         self.menu_link_buttons = []
 

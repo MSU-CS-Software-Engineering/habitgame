@@ -249,8 +249,11 @@ class Work_Space(Frame):
             elif tabs[tab] == tabs['daily']:
                 self.parent.go_to_dailies(True)
             
+            for frame_tab in self.main_frame.tabs():
+                self.main_frame.tab(frame_tab, state='hidden')
+
             self.main_frame.select(tabs[tab])
-            
+
         except:
             messagebox.showerror("Error", "Couldn't change tabs")
 
@@ -317,14 +320,13 @@ class Work_Space(Frame):
         self.task_canvas.set_frames(self.tasks_dict)
         
         
-        frame.add(self.tab_habits, text='Habits')
-        frame.add(self.tab_tasks, text='Tasks')
-        frame.add(self.tab_dailies, text='Dailies')
-        frame.add(self.tab_shop, text='Shop')
-        frame.add(self.tab_inventory, text='Inventory')
-        
+        frame.add(self.tab_habits, state='hidden')
+        frame.add(self.tab_tasks, state='hidden')
+        frame.add(self.tab_dailies, state='hidden')
+        frame.add(self.tab_shop, state='hidden')
+        frame.add(self.tab_inventory, state='hidden')
 
-        
+
         add_task_btn = Button(self.tab_tasks, text = 'Add new task', image=plus_img, compound="left",
                               style = 'add_task.TButton', cursor = 'hand2',
                               command = lambda: self.add_hack('task'))
@@ -376,6 +378,8 @@ class Work_Space(Frame):
         #self.task_canvas.rowconfigure(1, weight = 1)
         self.task_canvas.columnconfigure(0, weight = 1)
         
+            
+
     def complete_hack(self, hack_ID):
         if(self.parent.complete_hack(hack_ID)):
             return True
@@ -535,7 +539,7 @@ class Work_Space(Frame):
                 self.parent.edit_hack(hack_data.ID, submitted_hack)
 
         window.destroy()
-        self.parent.notify("Your " + str(submitted_hack.get_hack_type()) +
+        GUI.notify("Your " + str(submitted_hack.get_hack_type()) +
                             " has been saved!")
 
 def main():

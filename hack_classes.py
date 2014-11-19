@@ -80,8 +80,9 @@ class Character:
 
         if hack.h_type == "daily":
             if hack.timestamp < date.today():
-                self.hacks[hack_id].timestamp = date.today()
+                self.hacks[hack_ID].timestamp = date.today()
             else:
+                GUI.notify("exclamation", "Dailies can only be completed once a day.")
                 return False
 
         elif hack.h_type == "task":
