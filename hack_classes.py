@@ -150,9 +150,9 @@ class Character:
         return item.ID
     
     def use_item(self, item):
-        self.items[item.item_ID].uses -= 1
-        if self.items[item.item_ID].uses == 0:
-            self.remove_item(item.item_ID)
+        self.items[item.ID].uses -= 1
+        if self.items[item.ID].uses == 0:
+            self.remove_item(item.ID)
         if item.duration != 0:
             item.duration = (item.duration * 60 * 60 * 24) + time.time()
             self.effects[item.item_type] = item
