@@ -74,7 +74,7 @@ class Character:
             self.hacks[hack.ID] = hack
             self.hack_index = max(self.hacks.keys()) + 1
             return True
-        return False print('Can not add more Hacks at this time.')
+        return False 
 
     def edit_hack(self, hack_ID, hack):
         try:
