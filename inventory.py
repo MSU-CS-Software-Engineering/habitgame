@@ -150,7 +150,7 @@ class MyInventory():
             software_label.grid(sticky=W)
             software_label.configure(font='arial 14', background='red', foreground='black')
             
-            software_label.bind('<1>', lambda e, _id=i: MyInventory.removeSoftware(_id))
+            software_label.bind('<1>', lambda e, _id=i: MyInventory.removeSoftware(_id, item))
             MyInventory.software_items[MyInventory.software_count] = [software_label, item]
         
             MyInventory.software_count += 1
@@ -163,10 +163,10 @@ class MyInventory():
         software_label.grid(sticky=W)
         software_label.configure(font='arial 14', background='red', foreground='black')
             
-        software_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeSoftware(_id))
+        software_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeSoftware(_id, item))
         MyInventory.software_items[i-1] = [software_label, item]
         
-    def removeSoftware(_id):
+    def removeSoftware(_id, item):
         if MyInventory.software_items[_id][0] != None:
             MyInventory.software_items[_id][0].destroy()
             MyInventory.software_items[_id][0] = None
@@ -180,7 +180,8 @@ class MyInventory():
                     
             if MyInventory.software_count > 0:
                 MyInventory.software_count -= 1
-            
+                
+            MyInventory.api.remove_effect(item)
 
     def addHardware(item):
         if MyInventory.hardware_count < MyInventory.max_hardware:
@@ -190,7 +191,7 @@ class MyInventory():
             hardware_label.grid(sticky=W)
             hardware_label.configure(font='arial 14', background='yellow', foreground='black')
             
-            hardware_label.bind('<1>', lambda e, _id=i: MyInventory.removeHardware(_id))
+            hardware_label.bind('<1>', lambda e, _id=i: MyInventory.removeHardware(_id, item))
             MyInventory.hardware_items[MyInventory.hardware_count] = [hardware_label, item]
         
             MyInventory.hardware_count += 1
@@ -203,10 +204,10 @@ class MyInventory():
         hardware_label.grid(sticky=W)
         hardware_label.configure(font='arial 14', background='yellow', foreground='black')
             
-        hardware_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeHardware(_id))
+        hardware_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeHardware(_id, item))
         MyInventory.hardware_items[i-1] = [hardware_label, item]
         
-    def removeHardware(_id):
+    def removeHardware(_id, item):
         if MyInventory.hardware_items[_id][0] != None:
             MyInventory.hardware_items[_id][0].destroy()
             MyInventory.hardware_items[_id][0] = None
@@ -220,7 +221,8 @@ class MyInventory():
                     
             if MyInventory.hardware_count > 0:
                 MyInventory.hardware_count -= 1
-
+                
+            MyInventory.api.unequipe_item(item)
     
     def addComponent(item):
         if MyInventory.components_count < MyInventory.max_components:
@@ -260,7 +262,8 @@ class MyInventory():
                     
             if MyInventory.components_count > 0:
                 MyInventory.components_count -= 1
-
+                
+            MyInventory.api.unequipe_item(item)
  
 class Inventory():
     def __init__(self, inventory_plugin_frame):
@@ -463,11 +466,12 @@ class Inventory():
         if item_id != None:
             if self.items[item_id][1] != None:
                 not_full = True
-                item_type = item.item_type
+                item_type = item.component
 
                 if item_type == 'software':
-                    item.active = True
-                    not_full = MyInventory.addSoftware(item)
+                    if item.item_type != 'smokescreen':
+                        item.active = True
+                        not_full = MyInventory.addSoftware(item)
                 elif item_type == 'hardware':
                     item.active = True
                     not_full = MyInventory.addHardware(item)
