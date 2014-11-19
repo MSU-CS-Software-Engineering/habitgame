@@ -522,10 +522,15 @@ class Work_Space(Frame):
                             ' hack has been saved!')
 
     def save_edited_hack(self, window, hack_ID, hack_data):
-        self.parent.edit_hack(hack_ID, hack_data)
+        check = self.parent.add_hack(hack_data)
         window.destroy()
-        messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
+
+        if check:
+            messagebox.showinfo('Hack Saved', 'Your ' + str(hack_data.get_hack_type()) +
                             ' hack has been saved!')
+        else:
+            messagebox.showinfo('Hacks Full', 'Your ' + str(hack_data.get_hack_type()) +
+                            ' hack has not been saved! Buy a stick of RAM to increase your maximum number of hacks!')
 
     def check_input_validity(self, title_label, desc_label, value_label, 
                                 title_string, desc_string, value_string, confirmButton):
