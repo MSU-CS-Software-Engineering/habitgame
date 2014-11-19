@@ -245,10 +245,10 @@ class MyInventory():
         component_label.grid(sticky=W)
         component_label.configure(font='arial 14', background='blue', foreground='black')
             
-        component_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeComponent(_id))
+        component_label.bind('<1>', lambda e, _id=i-1: MyInventory.removeComponent(_id, item))
         MyInventory.component_items[i-1] = [component_label, item]
         
-    def removeComponent(_id):
+    def removeComponent(_id, item):
         if MyInventory.component_items[_id][0] != None:
             MyInventory.component_items[_id][0].destroy()
             MyInventory.component_items[_id][0] = None
