@@ -1,5 +1,6 @@
 from datetime import date, timedelta #For Timestamps
-
+import time
+from math import *
 class Character:
     """
       Class for Habit character profile
@@ -72,9 +73,8 @@ class Character:
                 hack.ID = self.hack_index
             self.hacks[hack.ID] = hack
             self.hack_index = max(self.hacks.keys()) + 1
-            return hack.ID
-        else:
-            print('Can not add more Hacks at this time.')
+            return True
+        return False print('Can not add more Hacks at this time.')
 
     def edit_hack(self, hack_ID, hack):
         try:
@@ -122,9 +122,9 @@ class Character:
             self.remove_hack(hack_ID)
 
         if int(hack.value) > 0:
-            self.exp += int(hack.exp) * exp_mult
+            self.exp += ceil(float(hack.exp) * exp_mult)
 
-        self.cash += int(hack.value * value_mult)
+        self.cash += ceil(float(hack.value) * value_mult)
         
         if hack.h_type == "habit":
             return False
@@ -149,27 +149,18 @@ class Character:
         self.items.append(item)
         return item.ID
     
-        def use_item(self, item):
+    def use_item(self, item):
         self.items[item.item_ID].uses -= 1
         if self.items[item.item_ID].uses == 0:
             self.remove_item(item.item_ID)
         if item.duration != 0:
             item.duration = (item.duration * 60 * 60 * 24) + time.time()
             self.effects[item.item_type] = item
-        else:
-
-            if item.item_type == 'smokescreen':
-                None
-
-            elif item.item_type == 'money':
+        elif item.item_type == 'money':
                 self.exp += item.effect
 
-            elif item.item_type == 'user_def':
-                None 
                 
     def equipe_item(self, item):
-        self.add_item(self.equiped[item.item_type])
-        self.remove_item(item.ID)
         self.effects[item.item_type] = item
     
     def remove_item(self, item_ID):
@@ -267,6 +258,7 @@ class Item:
         self.active = active
         self.effect = effect
         self.duration = duration
+        self.component = component
 
     def serialize(self):
         """
@@ -282,6 +274,7 @@ class Item:
                       'item_type':self.item_type,
                       'effect':self.effect,
                       'active':self.active, 
-                      'duration':self.duration}
+                      'duration':self.duration
+                      'component':self.component}
         
         return item_dict
