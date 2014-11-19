@@ -260,13 +260,17 @@ class Shop():
     def buyItem(self):
         if self.itemName.get() != 'name':
             get_item = self.live_items[self.buy_item_id]
-            item = MyShop.api.buy_item(Item(get_item.name,
-                                    get_item.description,
-                                    get_item.image,
-                                    get_item.value,
-                                    get_item.uses,
-                                    get_item.item_type,
-                                    'False'))
+            item = MyShop.api.buy_item(Item(
+                 get_item.name,
+                 get_item.description,
+                 get_item.image,
+                 get_item.value,
+                 get_item.uses,
+                 get_item.item_type,
+                 False, 
+                 get_item.effect,
+                 get_item.duration,
+                 get_item.component))
             if item != None:
                 MyInventory.my_inventory.addItem(item)
 
