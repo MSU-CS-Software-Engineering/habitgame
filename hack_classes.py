@@ -247,7 +247,7 @@ class Item:
         active: Is the item in use or not                 (bool)
         effect: Special function that the item performs   (function)
     """
-    def __init__(self, name, desc, image, value, uses, item_type, active, effect, duration):
+    def __init__(self, name, desc, image, value, uses, item_type, active, effect, duration, component):
         self.name = name
         self.ID = 0
         self.description = desc
