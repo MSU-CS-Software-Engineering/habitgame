@@ -232,7 +232,7 @@ class MyInventory():
             component_label.grid(sticky=W)
             component_label.configure(font='arial 14', background='blue', foreground='black')
             
-            component_label.bind('<1>', lambda e, _id=i: MyInventory.removeComponent(_id))
+            component_label.bind('<1>', lambda e, _id=i: MyInventory.removeComponent(_id, item))
             MyInventory.component_items[MyInventory.components_count] = [component_label, item]
         
             MyInventory.components_count += 1
