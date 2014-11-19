@@ -194,6 +194,7 @@ class GUI(Frame):
         self.character_exp = StringVar()
         self.character_cash = StringVar()
         self.character_level = StringVar()
+        self.character_rank = StringVar()
         self.character_item_count = StringVar()
         self.update_item_count()
 
@@ -201,6 +202,7 @@ class GUI(Frame):
         self.update_exp()
         self.update_cash()
         self.update_level()
+        self.update_rank()
 
         self._geom='800x600+0+0'
         #master.geometry('{0}x{1}+0+0'.format(
@@ -420,6 +422,14 @@ class GUI(Frame):
         level = Label(self.stats_frame, textvariable = self.character_level)
         level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
         level.configure(background="#283D57", font="arial 12 bold", foreground='#FF7F2A')
+        
+        # add rank stats info
+        rank_label = Label(self.stats_frame, text="class:", style="statsLabel.TLabel")
+        rank_label.grid(row = 0, column=6, sticky='nesw', pady=4, padx=5)
+        
+        rank = Label(self.stats_frame, textvariable = self.character_rank)
+        rank.grid(row = 0, column=7, sticky='nesw', pady=4, padx=5)
+        rank.configure(background="#283D57", font="arial 12 bold", foreground='#3C2AFF')
 
         self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
         self.style.configure("statsFrame.TFrame", background="#283D57")
@@ -523,6 +533,9 @@ class GUI(Frame):
 
     def update_level(self):
         self.character_level.set(self.character.level)
+
+    def update_rank(self):
+        self.character_rank.set(self.get_rank_name())
 
     def update_item_count(self):
         get_count = 0
@@ -677,18 +690,38 @@ class GUI(Frame):
             self.check_rank_up()
 
     def check_rank_up(self):
-        curr_level = int(self.character_level.get())
-        rank_up = 3
+        curr_rank = self.get_rank_number()
+        # if current rank is not max, check if this level allows a new rank
+        if curr_rank < 8:
+            rank_up_level = 3 * curr_rank
+            curr_level = self.character.level
+            if int(curr_level) == rank_up_level:
+                #new rank get
+                self.update_rank()
+                rank_name = self.get_rank_name()
+                GUI.notify("type", "CLASS CHANGE TO " + rank_name)
 
-        if curr_level >= rank_up:
-            #new rank get
-            curr_rank = self.rank_name()
-            GUI.notify("type", "RANK UP TO " + str(curr_rank))
+    def get_rank_number(self):
+        curr_rank = int(self.character.level / 3)
+        if curr_rank > 8:
+            return 8
+        else:
+            return curr_rank
 
-    def rank_name(self):
-        #just numbers 0-7 for now, actual ranks in data_assets.py
-        ranking = int(self.character.level / 3)
-        return ranking
+    def get_rank_name(self):
+        rank_list = [
+        "N00b",
+        "Script Kiddie",
+        "Programming Neophyte",
+        "Code Poet",
+        "Initiate Hacker",
+        "Journeyman Hacker",
+        "Open Sourceeror",
+        "Hacker Elite",
+        "Grandmaster of the Internet",
+        ]
+        ranking = self.get_rank_number()
+        return rank_list[ranking]
         
     def get_item_count(self):
         print('item count: ' + str(len(self.character.get_all_items())))
