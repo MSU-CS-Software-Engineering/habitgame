@@ -315,10 +315,14 @@ class GUI(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home())
         self.style.configure('hack_logo.TLabel', background='black')
 
-        self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
+        #self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
+        #self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
+        #                       self.go_to_dailies, self.go_to_generic,
+        #                       self.go_to_shop, self.go_to_inventory]
+        self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'Shop', 'Inventory']
         self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
-                               self.go_to_dailies, self.go_to_generic,
-                               self.go_to_shop, self.go_to_inventory]
+                               self.go_to_dailies, self.go_to_shop, 
+                               self.go_to_inventory]
 
         self.menu_link_buttons = []
 
@@ -335,6 +339,7 @@ class GUI(Frame):
         """
         self.button_selected = True
         self.select_id = not_clear
+
         self.menu_link_buttons[not_clear].configure(background='#283D57', foreground='#79DB44')
         for i in range(len(self.menu_link_buttons)):
                 if i != not_clear:
@@ -370,21 +375,18 @@ class GUI(Frame):
 
         if 'Inventory' != menu_title:
             menu_link = Label(self.banner, padding='12 7 12 7', cursor='hand2', text=menu_title)
+            menu_link.grid(row=0, column=col_number+1, sticky='e')
         elif 'Inventory' == menu_title:
             menu_link = Label(self.char_buttons_frame, padding='12 7 12 7', cursor='hand2',
                          textvariable=self.character_item_count)
+            menu_link.grid(row=1, column=1, padx=5, sticky='e')
 
         menu_link.configure(background='black', foreground='#EBEBEB', font='arial 12 bold')
 
         menu_link.bind('<Enter>', lambda e: mouse_enter())
         menu_link.bind('<Leave>', lambda e: mouse_leave())
         menu_link.bind('<1>', lambda e: go_to())
-
-        if 'Inventory' != menu_title:
-            menu_link.grid(row=0, column=col_number+1, sticky='e')
-        elif 'Inventory' == menu_title:
-            menu_link.grid(row=1, column=1, padx=5, sticky='e')
-
+            
         self.menu_link_buttons.append(menu_link)
 
     def make_stats_banner(self):
@@ -720,11 +722,11 @@ class GUI(Frame):
         self.show_frame('Generic')
 
     def go_to_shop(self):
-        self.clear_menus(5)
+        self.clear_menus(4)
         self.show_frame('shop')
 
     def go_to_inventory(self):
-        self.clear_menus(6)
+        self.clear_menus(5)
         self.show_frame('inventory')
 
     def save_game(self):
