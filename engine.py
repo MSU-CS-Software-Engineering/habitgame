@@ -625,7 +625,30 @@ class GUI(Frame):
         self._geom=geom
 
     def use_item(self, item):
-        item.uses = int(item.uses) - 1
+        if item.component == 'software':
+            self.character.use_item(item)
+            self.update_item_count()
+        elif item.component == 'hardware':
+            self.character.equipe_item(item)
+            self.update_item_count()
+        elif item.component == 'component':
+            self.character.equipe_item(item)
+            self.update_item_count()
+        elif item.component == 'misc':
+            self.character.use_item(item)
+            self.update_exp()
+        elif item.component == 'food':
+            messagebox.showinfo('Break Time', 'Go enjoy some ' + str(item.description))
+            self.remove_item(item)
+        
+
+
+    def unequipe_item(self, item):
+        self.character.equiped.pop(item.item_type, None)
+        self.character.add_item(item)
+        
+    def remove_effect(self, item):
+        self.character.effects.pop(item.item_type, None)
         self.update_item_count()
 
     def remove_item(self, item):
