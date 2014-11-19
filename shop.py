@@ -7,7 +7,7 @@ import os.path
 
 # Each item in the store is placed in an Item object
 class SetItem():
-def __init__(self, name, file, item_type, description, cost, row, column, duration, effect, uses, component):
+    def __init__(self, name, file, item_type, description, cost, row, column, duration, effect, uses, component):
         self.name = name
         self.file = file
         self.item_type = item_type
@@ -336,7 +336,8 @@ class Shop():
                  self.items[i].getType(),
                  False, 
                  self.items[i].getEffect(),
-                 self.items[i].getDuration()                       
+                 self.items[i].getDuration(),
+                 self.items[i].getItemType()
                  ))
 
 
