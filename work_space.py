@@ -6,12 +6,12 @@ from hack_classes import Hack
 from shop import MyShop
 from inventory import MyInventory
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
-
+from engine import GUI
 
 class hack_frame(Frame):
-
-    def __init__(self, parent, hack):
-        Frame.__init__(self, parent)
+    def __init__(self, parent, canvas_frame, hack):
+        Frame.__init__(self, canvas_frame)
+        self.canvas_frame = canvas_frame
         self.parent = parent
         self.ID = hack.ID
         self.hack_type = hack.h_type
@@ -47,10 +47,10 @@ class hack_frame(Frame):
                               background = '#87DC5F')
                               
         self.name_label = Label(self, text = hack.title)
-        self.name_label.grid(row = 0, column = 0, sticky = 'ew')
+        self.name_label.grid(row = 0, column = 0, sticky = 'news')
         self.name_label.configure(foreground = 'white', background = '#323232',
                                   padding = 5, font = 'arial 14 bold', anchor = CENTER)
-        
+
         self.description_label = Label(self, text = hack.description, wraplength = 800)
         self.description_label.grid(row = 1, column = 0, sticky = 'ew')
         self.description_label.configure(foreground = '#373737', background = '#D9D9D9',
@@ -141,17 +141,19 @@ class Work_Space_Tab(Canvas):
 class Work_Space_Area(Canvas):
     def __init__(self, parent):
         Canvas.__init__(self, parent)
+        Canvas.grid(self, sticky='news')
+        
         self.configure(highlightthickness = 0,
                        background = '#EBEDF1')
         
         self.parent = parent
         self.frame = Frame(self, style = "W.TFrame",
-                           borderwidth = 0, padding = 10)
+                           borderwidth = 0, padding='10 10 0 0')
         self.frame.grid(row = 0, column = 0, sticky = 'news')
         self.frames = []
-        
-        canvas_style = Style()
 
+        canvas_style = Style()
+        
         canvas_style.configure("W.TFrame", background='#EBEDF1',
                               pady = (10,0), padx =3)
         
@@ -161,19 +163,21 @@ class Work_Space_Area(Canvas):
                                    command = self.yview)
         
         self.configure(yscrollcommand = self.scrollbar.set)
-
+        
         self.create_window((0,0), anchor = 'nw', window = self.frame)
-        self.scrollbar.grid(row = 1, column = 1, sticky = 'ns')
+        self.scrollbar.grid(row = 1, column = 1, rowspan=2, sticky = 'ns')
+        
+        self.bind("<Enter>", lambda e: self.set_scrolling())
+        self.frame.bind("<Configure>", self.setup_habit_frame)
 
-        #self.frame.bind("<Configure>", self.setup_habit_frame)
-        #self.bind("<MouseWheel>", lambda e: self.scroll_habit(e))
-
+    def set_scrolling(self):
+        self.bind_all("<MouseWheel>", lambda e: self.scroll_habit(e))
+        
     def remove_frames(self):
         for frame in self.frames:
             frame.destroy()
 
         self.frames = []
-
 
     def redraw(self, hack_dict):
         self.remove_frames()
@@ -181,17 +185,17 @@ class Work_Space_Area(Canvas):
             
     def set_frames(self, hack_dict):
         for hack in hack_dict.values():
-           individual_hack = hack_frame(self, hack) 
+           individual_hack = hack_frame(self, self.frame, hack) 
            individual_hack.grid(row = hack.ID, column = 0,
-                                sticky = 'ew', pady = (10,0))
+                                sticky = 'ew', pady = (0,10))
            self.frames.append(individual_hack)
         
-    def setup_habit_frame(self,event):
+    def setup_habit_frame(self, event):
         # resets the scroll region for the frame inserted into the canvas
         self.configure(scrollregion = self.bbox("all"))
         
         
-    def scroll_habit(event):
+    def scroll_habit(self, event):
         """ allows for mouse wheel scrolling """
         try:
             self.yview_scroll(-1 * int(event.delta/120), "units")
@@ -288,7 +292,7 @@ class Work_Space(Frame):
         self.tab_shop = Work_Space_Tab(frame, width=850, height=400)
         self.tab_inventory = Work_Space_Tab(frame, width=850, height=400)
         
-        self.tab_habits.grid(row = 0, column = 1,sticky = 'news')
+        #self.tab_habits.grid(row = 0, column = 1,sticky = 'news')
         self.tab_habits.pack(fill = BOTH, expand = YES)
         self.tab_tasks.pack(fill = BOTH, expand = YES)
         self.tab_shop.pack(fill = BOTH, expand = YES)
@@ -539,7 +543,7 @@ class Work_Space(Frame):
                 self.parent.edit_hack(hack_data.ID, submitted_hack)
 
         window.destroy()
-        GUI.notify("Your " + str(submitted_hack.get_hack_type()) +
+        GUI.notify('put_type_here', "Your " + str(submitted_hack.get_hack_type()) +
                             " has been saved!")
 
 def main():
