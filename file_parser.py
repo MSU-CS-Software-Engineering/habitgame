@@ -43,7 +43,7 @@ class file_parser:
     #This list is used to check parsed values for conversion
     #purposes (everything is parsed in as a string initially)
     integer_types = ['ID', 'cash', 'level', 'exp']
-
+    float_types = ['version']
 
     def parse_simple(self, tag):
         """
@@ -57,8 +57,12 @@ class file_parser:
         
         if self.nodes[0].nodeName in self.integer_types:
             return int(self.nodes[0].firstChild.data)
-        
-        return self.nodes[0].firstChild.data
+
+        elif self.nodes[0].nodeName in self.float_types:
+            return float(self.nodes[0].firstChild.data)
+
+        else:
+            return self.nodes[0].firstChild.data
 
 
     def parse_firstname(self):
@@ -76,6 +80,9 @@ class file_parser:
     def parse_token(self):
         return self.parse_simple('token')
 
+    def parse_version(self):
+        return self.parse_simple('version')
+    
     def parse_exp(self):
         return self.parse_simple('exp')
 
@@ -85,6 +92,8 @@ class file_parser:
     def parse_cash(self):
         return self.parse_simple('cash')
 
+    def parse_boss(self):
+        return self.parse_simple('boss')
 
     def parse_hacks(self):
         """
@@ -214,43 +223,51 @@ class file_parser:
         char_lname = char['lastname']
         char_birthday = char['birthday']
         char_token = char['token']
+        char_version = str(char['version'])
         char_name = char['name']
         char_cash = str(char['cash'])
         char_level = str(char['level'])
         char_exp = str(char['exp'])
+        char_boss = char['boss']
         char_hacks = char['hacks']
         char_items = char['items']
 
         #Create XML Node Elements
         root_element = newdoc.createElement('data')
         token_element = newdoc.createElement('token')
+        version_element = newdoc.createElement('version')
         firstname_element = newdoc.createElement('firstname')
         lastname_element = newdoc.createElement('lastname')
         username_element = newdoc.createElement('username')
         birthday_element = newdoc.createElement('birthday')
         cash_element = newdoc.createElement('cash')
         exp_element = newdoc.createElement('exp')
+        boss_element = newdoc.createElement('boss')
         level_element = newdoc.createElement('level')
         hacks_element = newdoc.createElement('hacks')
         items_element = newdoc.createElement('items')
            
         #Create text nodes for elements
         token_text = newdoc.createTextNode(char_token)
+        version_text = newdoc.createTextNode(char_version)
         firstname_text = newdoc.createTextNode(char_fname)
         lastname_text = newdoc.createTextNode(char_lname)
         username_text = newdoc.createTextNode(char_name)
         birthday_text = newdoc.createTextNode(char_birthday)
         cash_text = newdoc.createTextNode(char_cash)
         exp_text = newdoc.createTextNode(char_exp)
+        boss_text = newdoc.createTextNode(char_boss)
         level_text = newdoc.createTextNode(char_level)
             
         #Append text nodes to elements
         token_element.appendChild(token_text)
+        version_element.appendChild(version_text)
         firstname_element.appendChild(firstname_text)
         lastname_element.appendChild(lastname_text)
         username_element.appendChild(username_text)
         birthday_element.appendChild(birthday_text)
         cash_element.appendChild(cash_text)
+        boss_element.appendChild(boss_text)
         exp_element.appendChild(exp_text)
         level_element.appendChild(level_text)
         
@@ -305,6 +322,7 @@ class file_parser:
         
         #Append elements to root element
         root_element.appendChild(token_element)
+        root_element.appendChild(version_element)
         root_element.appendChild(firstname_element)
         root_element.appendChild(lastname_element)
         root_element.appendChild(username_element)
@@ -312,6 +330,7 @@ class file_parser:
         root_element.appendChild(cash_element)
         root_element.appendChild(exp_element)
         root_element.appendChild(level_element)
+        root_element.appendChild(boss_element)
         root_element.appendChild(hacks_element)
         root_element.appendChild(items_element)
         newdoc.appendChild(root_element)
@@ -336,9 +355,11 @@ class file_parser:
     
 
     def __init__(self, filename):
+        try:
+            self.doc = xml.dom.minidom.parse(filename)
 
-        self.doc = xml.dom.minidom.parse(filename)
-        
+        except FileNotFoundError:
+            self.doc = xml.dom.minidom.Document()
 
 #unit tests, aww yiss
 if __name__ == "__main__":

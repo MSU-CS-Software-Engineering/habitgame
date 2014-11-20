@@ -268,6 +268,7 @@ class Work_Space(Frame):
         self.daily_canvas.redraw(self.dailies_dict)
         self.task_canvas.redraw(self.tasks_dict)
         
+
             
     def set_work_window(self):
 
@@ -539,7 +540,7 @@ class Work_Space(Frame):
                 self.parent.edit_hack(hack_data.ID, submitted_hack)
 
         window.destroy()
-        GUI.notify("Your " + str(submitted_hack.get_hack_type()) +
+        self.parent.inst_notify("type", "Your " + str(submitted_hack.get_hack_type()) +
                             " has been saved!")
 
 def main():

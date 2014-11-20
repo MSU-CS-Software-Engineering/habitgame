@@ -13,6 +13,8 @@ from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 
 from hack_classes import *
+from updater import *
+from boss import *
 from landing_page import *
 from generic_list import *
 from work_space import *
@@ -31,12 +33,13 @@ class Game_Data:
         self.character_data['lastname'] = ''
         self.character_data['birthday'] = ''
         self.token = ''
+        self.version = 0.0
         self.parser = file_parser(self.savefile)
 
     def show_character_data(self):
         print(self.character_data)
 
-    def save_data(self, character):
+    def save_data(self, character, boss):
         """
         Saves the current character data to
         Game_Data's character_data
@@ -46,7 +49,8 @@ class Game_Data:
         self.character_data['lastname'] = self.lastname
         self.character_data['birthday'] = self.birthday
         self.character_data['token'] = self.token
-
+        self.character_data['boss'] = boss.serialize()
+        self.character_data['version'] = self.version
         print("Character data saved")
 
     def save_to_file(self):
@@ -72,10 +76,20 @@ class Game_Data:
             self.character_data['name'] = self.parser.parse_name()
             self.birthday = self.parser.parse_birthday()
             self.token = self.parser.parse_token()
+            self.version = self.parser.parse_version()
+
             self.character_data['level'] = self.parser.parse_level()
             self.character_data['exp'] = self.parser.parse_exp()
             self.character_data['cash'] = self.parser.parse_cash()
             self.character_data['items'] = self.parser.parse_items()
+
+            boss_data = self.parser.parse_boss()
+
+            if boss_data == 0:
+                self.character_data['boss'] = ''
+
+            else:
+                self.character_data['boss'] = boss_data
 
         except:
             self.error('Failed to load data')
@@ -124,6 +138,29 @@ class Game_Data:
         except:
             self.error("Failed to build character from" \
                        " default character data")
+
+    def build_boss(self, parent):
+        '''
+        Returns a boss character from a base64 encoded string
+        '''
+
+        if len(self.character_data['boss']) > 0:
+            boss_dict = eval(base64.b64decode(bytes(self.character_data['boss'], 'utf-8')).decode())
+            options = {'health':boss_dict['health'],
+                       'new':boss_dict['new'],
+                       'distance_from_character':boss_dict['distance'],
+                       'active':boss_dict['active']}
+
+            new_boss = Boss(parent,
+                            boss_dict['level'],
+                            options)
+
+            return new_boss
+
+        else:
+            '''Default boss configuration'''
+            return Boss(parent, 1)
+
 
     def error(self, error_message):
         print("ERROR:", error_message)
@@ -181,8 +218,18 @@ class GUI(Frame):
 
         self.game_data = Game_Data()
         self.game_data.load_data()
+
+        #Check for software updater
+        self.updater = Updater(self.game_data.version,
+                               master)
+        self.updater.check_update()
+
+        #bring back root window
+        master.deiconify()
+
         self.character = self.game_data.build_character()
 
+        self.boss = self.game_data.build_boss(self)
         #Hacks and Items for debugging
         #for hack in load_hacks():
         #    self.character.add_hack(hack)
@@ -219,6 +266,11 @@ class GUI(Frame):
         # link the shop so it can call GUI's buy_item()
         MyShop.setApi(self)
         MyInventory.setApi(self, self.items_frame)
+
+        self.check_boss()
+
+    def inst_notify(self, type, message):
+        GUI.notify(type, message)
 
     def initUI(self):
         self.grid()
@@ -674,6 +726,23 @@ class GUI(Frame):
         self.update_exp()
         self.check_level()
 
+    def attack_boss(self, amount):
+        self.boss.damage(amount)
+        if self.boss.helath < 1:
+            self.defeat_boss()
+
+    def defeat_boss(self):
+        GUI.notify("type", "Oh no! You were cyber robbed by",
+                   self.boss.get_title())
+        pass
+
+    def check_boss(self):
+        if self.boss.active == 1:
+            if self.boss.new == 1:
+                GUI.notify("type",
+                           self.boss.display_message())
+                print("BOSS:", self.boss.display_message())
+
     def check_level(self):
         curr_level = int(self.character_level.get())
         exp = int(self.character_exp.get())
@@ -688,6 +757,10 @@ class GUI(Frame):
             self.update_exp()
             GUI.notify("type", "LEVEL UP! lvl"+str(self.character.level))
             self.check_rank_up()
+        self.check_boss()
+
+    def damage_character(self):
+        pass
 
     def check_rank_up(self):
         curr_rank = self.get_rank_number()
@@ -764,7 +837,7 @@ class GUI(Frame):
 
     def save_game(self):
         messagebox.showinfo("Save", "Game Saved!")
-        self.game_data.save_data(self.character)
+        self.game_data.save_data(self.character, self.boss)
         self.game_data.save_to_file()
 
     def no_where(self):
@@ -775,7 +848,7 @@ def main():
     """
       Stub for main function
     """
-    #db = authenticate.db()
+    db = authenticate.db()
 
     #main_character = load('Tester')
 
