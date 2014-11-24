@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 '''
   Habit game core
 
@@ -20,6 +22,9 @@ from generic_list import *
 from work_space import *
 import authenticate
 from tkinter import filedialog # open/save file
+from time import sleep
+import threading
+import queue
 
 
 class Game_Data:
@@ -206,6 +211,60 @@ def load_items():
     return items
 
 
+class Notification(threading.Thread):
+    
+    def __init__(self, notify_queue, master):
+        threading.Thread.__init__(self)
+        self.notify_queue = notify_queue
+        self.master = master
+
+    def run(self):
+
+        while True:
+            
+            
+            #this blocks until an item is available in the queue.
+            #not a problem; since this thread's only purpose is to handle
+            #notifications it can sit there forever for all we care
+            msg = self.notify_queue.get()
+            
+            notification_frame = Frame(self.master, style='footer.TFrame')
+            notification_frame.config(height=50, width=300)
+            notification_frame.place(relx=0.9967, y=230, anchor="se")
+            
+            notification = Message(notification_frame, text=msg, width=200)
+            notification.grid(row=0, column=1, sticky = E)
+            #background='black'
+            notification.configure(background='#0f0f0f', foreground = 'white', anchor = E, font='arial 16')
+            #GUI.notification_frame.configure(background='#550505')
+            
+            
+            #alpha_val = 0.4
+            #notification.attributes('-alpha', alpha_val)
+            
+            #fade in
+            for i in range(0, 5):
+                sleep(0.15)
+                #alpha_val += 0.1
+                #notification.attributes('-alpha', alpha_val)
+                
+            #wait a few seconds at full alpha
+            sleep(0.75)
+            
+            #longer messages delay a little bit longer to allow the user to read it
+            if len(msg) > 10:
+                sleep(0.5)
+                
+            #fade out
+            for i in range(0, 5):
+                sleep(0.15)
+                #alpha_val -= 0.1
+                #notification.attributes('-alpha', alpha_val)
+                
+            notification_frame.destroy()
+            
+
+
 # Placed here to resolve import loop issues with work_space, engine, and
 # shop.
 from work_space import *
@@ -259,7 +318,8 @@ class GUI(Frame):
             master.winfo_screenwidth()-850, master.winfo_screenheight()-350))
         master.bind('<Escape>',self.toggle_geom)
         self.master = master
-        GUI.master2 = master
+        GUI.notification_queue = queue.Queue()
+        
         self.initUI()
         self.bind_buttons()
 
@@ -308,11 +368,9 @@ class GUI(Frame):
         self.frames['Landing_Page'] = landing_page_frame
         self.show_frame('Landing_Page')
 
-        #create the notification frame. it's a class variable so we can reference
-        #it and directly modify its children from the notify function
-        GUI.notification_frame = Frame(GUI.master2, style='footer.TFrame')
-        GUI.notification_frame.config(height=50, width=300)
-        GUI.notification_frame.place(relx=0.9967, y=230, anchor="se")
+        #create the notification handler. this is threaded so the whole program
+        #doesn't hang when we make the frame wait.
+        Notification(GUI.notification_queue, self.master).start()
 
         GUI.notify('put_type_here', 'Welcome to your Daily <Hack>!')        
 
@@ -556,14 +614,9 @@ class GUI(Frame):
         #type will be used later to add a small icon to the notifications
         #(a coin for money, save icon, etc)
 
-        #destroy the previous message
-        for child in GUI.notification_frame.winfo_children():
-            child.destroy()
-
-        #create a new message and attach it to the GUI.notification_frame
-        notification = Message(GUI.notification_frame, text=message, width=200)
-        notification.grid(row=0, column=1, sticky = E)
-        notification.configure(background = 'black', foreground = 'white', anchor = E, font='arial 16')
+        #the notification handler waits for new messages to be put in this queue
+        #(it's a blocking wait, so it'll just sit there)
+        GUI.notification_queue.put(message)
 
     def bind_buttons(self):
         #Navigation Buttons
