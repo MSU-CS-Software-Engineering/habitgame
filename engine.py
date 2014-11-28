@@ -10,7 +10,9 @@
 #import landing_page.py
 import os.path
 from file_parser import *
+
 from tkinter  import *
+from tkinter import Frame as Frame
 from tkinter.ttk import *
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders
 
@@ -222,9 +224,8 @@ class Notification(threading.Thread):
 
         while True:
             
-            
-            #this blocks until an item is available in the queue.
-            #not a problem; since this thread's only purpose is to handle
+            #in python, .get() blocks until an item is available in the queue.
+            #Not a problem; since this thread's only purpose is to handle
             #notifications it can sit there forever for all we care
             msg = self.notify_queue.get()
             
@@ -234,37 +235,78 @@ class Notification(threading.Thread):
             
             notification = Message(notification_frame, text=msg, width=200)
             notification.grid(row=0, column=1, sticky = E)
-            #background='black'
-            notification.configure(background='#0f0f0f', foreground = 'white', anchor = E, font='arial 16')
-            #GUI.notification_frame.configure(background='#550505')
+            notification.configure(background='#d9d9d9', foreground = '#d9d9d9', anchor = E, font='arial 16')
             
-            
-            #alpha_val = 0.4
-            #notification.attributes('-alpha', alpha_val)
-            
-            #fade in
-            for i in range(0, 5):
-                sleep(0.15)
-                #alpha_val += 0.1
-                #notification.attributes('-alpha', alpha_val)
+            #fade in. since frames don't support alpha, it simulates real alpha
+            #by simply changing the background color from the original to black
+            sleep(0.05)
+            notification.configure(background='#c9c9c9')
+            sleep(0.05)
+            notification.configure(background='#b9b9b9')
+            sleep(0.05)
+            notification.configure(background='#a9a9a9')
+            sleep(0.05)
+            notification.configure(background='#999999')
+            sleep(0.05)
+            notification.configure(background='#898989')
+            sleep(0.05)
+            notification.configure(background='#797979')
+            sleep(0.05)
+            notification.configure(background='#696969')
+            sleep(0.05)
+            notification.configure(background='#595959')
+            sleep(0.05)
+            notification.configure(background='#494949')
+            sleep(0.05)
+            notification.configure(background='#393939')
+            sleep(0.05)
+            notification.configure(background='#292929')
+            sleep(0.05)
+            notification.configure(background='#191919')
                 
             #wait a few seconds at full alpha
-            sleep(0.75)
+            sleep(1)
             
             #longer messages delay a little bit longer to allow the user to read it
-            if len(msg) > 10:
+            if len(msg) > 15:
                 sleep(0.5)
-                
+            if len(msg) > 30:
+                sleep(1.5)
+            if len(msg) > 35:
+                sleep(1)
+            
             #fade out
-            for i in range(0, 5):
-                sleep(0.15)
-                #alpha_val -= 0.1
-                #notification.attributes('-alpha', alpha_val)
-                
+            notification.configure(background='#191919')
+            sleep(0.05)
+            notification.configure(background='#292929')
+            sleep(0.05)
+            notification.configure(background='#393939')
+            sleep(0.05)
+            notification.configure(background='#494949')
+            sleep(0.05)
+            notification.configure(background='#595959')
+            sleep(0.05)
+            notification.configure(background='#696969')
+            sleep(0.05)
+            notification.configure(background='#797979')
+            sleep(0.05)
+            notification.configure(background='#898989')
+            sleep(0.05)
+            notification.configure(background='#999999')
+            sleep(0.05)
+            notification.configure(background='#a9a9a9')
+            sleep(0.05)
+            notification.configure(background='#b9b9b9')
+            sleep(0.05)
+            notification.configure(background='#c9c9c9')
+            sleep(0.05)
+            notification.configure(background='#d9d9d9')
+            
             notification_frame.destroy()
             
-
-
+            #delay just a smidgeon between messages.
+            sleep(0.3)
+            
 # Placed here to resolve import loop issues with work_space, engine, and
 # shop.
 from work_space import *
