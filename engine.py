@@ -239,6 +239,7 @@ class GUI(Frame):
 
         self.character_name = StringVar()
         self.character_exp = StringVar()
+        self.character_to_next_level = StringVar()
         self.character_cash = StringVar()
         self.character_level = StringVar()
         self.character_rank = StringVar()
@@ -247,6 +248,7 @@ class GUI(Frame):
 
         self.update_name()
         self.update_exp()
+        self.update_to_next_level()
         self.update_cash()
         self.update_level()
         self.update_rank()
@@ -460,27 +462,34 @@ class GUI(Frame):
         exp.grid(row = 0, column=1, sticky='nesw', pady=4, padx=5)
         exp.configure(background="#283D57", font="arial 12 bold", foreground='#C5BD25')
 
+        exp_max_label = Label(self.stats_frame, text="/", style="statsLabel.TLabel")
+        exp_max_label.grid(row=0, column=2, sticky='nesw', pady=4, padx=5)
+        
+        exp_max = Label(self.stats_frame, textvariable = self.character_to_next_level)
+        exp_max.grid(row = 0, column=3, sticky='nesw', pady=4, padx=5)
+        exp_max.configure(background="#283D57", font="arial 12 bold", foreground='#C5BD25')
+        
         # add cash stats info
         cash_label = Label(self.stats_frame, text="cash:", style="statsLabel.TLabel")
-        cash_label.grid(row = 0, column =2 ,sticky='nesw', pady=4, padx=5)
+        cash_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
         cash = Label(self.stats_frame, textvariable=self.character_cash)
-        cash.grid(row = 0, column =3, sticky='nesw', pady=4, padx=5)
+        cash.grid(row = 0, column =5, sticky='nesw', pady=4, padx=5)
         cash.configure(background="#283D57", font="arial 12 bold", foreground='#3BB623')
 
         # add level stats info
         level_label = Label(self.stats_frame, text="level:", style="statsLabel.TLabel")
-        level_label.grid(row = 0, column =4 ,sticky='nesw', pady=4, padx=5)
+        level_label.grid(row = 0, column =6 ,sticky='nesw', pady=4, padx=5)
 
         level = Label(self.stats_frame, textvariable = self.character_level)
-        level.grid(row = 0, column =5 ,sticky='nesw', pady=4, padx=5)
+        level.grid(row = 0, column =7 ,sticky='nesw', pady=4, padx=5)
         level.configure(background="#283D57", font="arial 12 bold", foreground='#FF7F2A')
         
         # add rank stats info
         rank_label = Label(self.stats_frame, text="class:", style="statsLabel.TLabel")
-        rank_label.grid(row = 0, column=6, sticky='nesw', pady=4, padx=5)
+        rank_label.grid(row = 0, column=8, sticky='nesw', pady=4, padx=5)
         
         rank = Label(self.stats_frame, textvariable = self.character_rank)
-        rank.grid(row = 0, column=7, sticky='nesw', pady=4, padx=5)
+        rank.grid(row = 0, column=9, sticky='nesw', pady=4, padx=5)
         rank.configure(background="#283D57", font="arial 12 bold", foreground='#3C2AFF')
 
         self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
@@ -582,6 +591,9 @@ class GUI(Frame):
 
     def update_exp(self):
         self.character_exp.set(self.character.exp)
+
+    def update_to_next_level(self):
+        self.character_to_next_level.set(self.character.level * 100)
 
     def update_level(self):
         self.character_level.set(self.character.level)
@@ -755,6 +767,7 @@ class GUI(Frame):
             self.character.exp = 0
             self.update_level()
             self.update_exp()
+            self.update_to_next_level()
             GUI.notify("type", "LEVEL UP! lvl"+str(self.character.level))
             self.check_rank_up()
         self.check_boss()
@@ -776,7 +789,7 @@ class GUI(Frame):
 
     def get_rank_number(self):
         curr_rank = int(self.character.level / 3)
-        if curr_rank > 8:
+        if curr_rank > 7:
             return 8
         else:
             return curr_rank
