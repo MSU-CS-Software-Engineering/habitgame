@@ -447,8 +447,10 @@ class GUI(Frame):
         self.options_menu = Menu(self.menu, tearoff=0)
         self.options_menu.add_command(label="Enable Debug Mode", command=self.enable_debug)
         self.options_menu.add_command(label="Advance to Next Day", command=self.advance_to_next_day)
+        self.options_menu.add_command(label="Set player stats", command=self.set_player_stats)
         self.menu.add_cascade(label="DEBUG", menu=self.options_menu)
         self.options_menu.entryconfig(1, state="disabled")
+        self.options_menu.entryconfig(2, state="disabled")
 
         self.help_menu = Menu(self.menu, tearoff=0)
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
@@ -460,6 +462,7 @@ class GUI(Frame):
     def enable_debug(self):
         self.options_menu.entryconfig(0, state="disabled")
         self.options_menu.entryconfig(1, state="normal")
+        self.options_menu.entryconfig(2, state="normal")
 
     def advance_to_next_day(self):
         global current_date
@@ -485,6 +488,129 @@ class GUI(Frame):
                 plural_string = ""
             self.inst_notify("Exclamation", "You failed to complete " 
                 + str(missed_dailies) + " daily hack" + plural_string + "!")
+
+    def set_player_stats(self):
+        data_window = Toplevel(self)
+
+        window_bg = Frame(data_window, style='popup_bg.TFrame')
+        window_bg.pack()
+
+        #Exp
+        exp_frame = Frame(window_bg, style='popup_bg.TFrame')
+        exp_frame.pack(side="top")
+
+        self.style.configure('popup_bg.TFrame', background="#D9D9D9")
+
+        exp_label = Label(exp_frame, text="Exp", padding='150 5 150 5',
+                           foreground='white', background='#283D57', font='arial 12 bold')
+        exp_label.pack(side="top")
+
+        exp_warning_label = Label(exp_frame, text = "Value cannot be empty!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        exp_warning_label.pack(side="top", padx = 10, pady=10)
+        exp_warning_label.pack_forget() #Start invisible
+
+        char_exp = Entry(exp_frame, justify=CENTER)
+        char_exp.pack(side="bottom", pady=5)
+
+        #Cash
+        cash_frame = Frame(window_bg, style='popup_bg.TFrame')
+        cash_frame.pack(side="top")
+
+        self.style.configure('popup_bg.TFrame', background="#D9D9D9")
+
+        cash_label = Label(cash_frame, text="Cash", padding='150 5 150 5',
+                           foreground='white', background='#283D57', font='arial 12 bold')
+        cash_label.pack(side="top")
+
+        cash_warning_label = Label(cash_frame, text = "Value cannot be empty!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        cash_warning_label.pack(side="top", padx = 10, pady=10)
+        cash_warning_label.pack_forget() #Start invisible
+
+        char_cash = Entry(cash_frame, justify=CENTER)
+        char_cash.pack(side="bottom", pady=5)
+
+        #Level
+        level_frame = Frame(window_bg, style='popup_bg.TFrame')
+        level_frame.pack(side="top")
+
+        self.style.configure('popup_bg.TFrame', background="#D9D9D9")
+
+        level_label = Label(level_frame, text="Level", padding='150 5 150 5',
+                           foreground='white', background='#283D57', font='arial 12 bold')
+        level_label.pack(side="top")
+
+        level_warning_label = Label(level_frame, text = "Value must be a positive integer!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        level_warning_label.pack(side="top", padx = 10, pady=10)
+        level_warning_label.pack_forget() #Start invisible
+
+        char_level = Entry(level_frame, justify=CENTER)
+        char_level.pack(side="bottom", pady=5)
+
+        #Buttons
+        button_frame = Frame(window_bg, width=100)
+        button_frame.grid_propagate(100)
+        button_frame.pack(side="bottom", padx=10, pady=10)
+
+        cancelButton = Button(button_frame, text="Cancel", style = 'cancel.TButton',
+                              cursor = 'hand2', command=data_window.destroy)
+        cancelButton.pack(side="left")
+        self.style.configure('cancel.TButton', font = 'arial 14 bold', relief = 'flat',
+                              padding = 5, foreground = 'black', background = '#FF4848')
+
+        char_exp.insert(INSERT, self.character.exp)
+        char_cash.insert(INSERT, self.character.cash)
+        char_level.insert(INSERT, self.character.level)
+
+        confirmButton = Button(button_frame, text="Save", style = 'save.TButton', cursor = 'hand2',
+            command=lambda: self.check_debug_validity( data_window, 
+                            char_exp.get(), char_cash.get(), char_level.get(),
+                            exp_warning_label, cash_warning_label, level_warning_label))
+
+        confirmButton.pack(side="right")
+
+        self.style.configure('save.TButton', font = 'arial 14 bold', relief = 'flat',
+                             padding = 5, foreground = 'black', background = '#96FF48')
+
+    def check_debug_validity(self, window, exp, cash, level, exp_label, cash_label, level_label):
+        error_triggered = False
+
+        try:
+            int(exp)
+            exp_label.pack_forget()
+
+        except:
+            exp_label.pack()
+            error_triggered = True
+
+        try:
+            int(cash)
+            cash_label.pack_forget()
+
+        except:
+            cash_label.pack()
+            error_triggered = True
+
+        try:
+            int(level)
+            level_label.pack_forget()
+
+        except:
+            level_label.pack()
+            error_triggered = True
+
+        if error_triggered:
+            return
+
+        else:
+            self.character.exp = int(exp)
+            self.character.cash = int(cash)
+            self.character.level = int(level)
+            self.redraw()
+            self.update_stats_banner()
+            window.destroy()
 
     def make_banner(self):
         """
