@@ -112,12 +112,7 @@ class Shop():
                                   5000, 1, "software"))
         
         self.items.append(SetItem('Penetrate', os.path.join("assets", "art", "penetrate.gif"),
-                                  "2x damage to bosses, receive 1/2 of habit reward "
-                                  "2x damage to bosses, receive 1/2 of habit reward "
-                                  "2x damage to bosses, receive 1/2 of habit reward "
-                                  "2x damage to bosses, receive 1/2 of habit reward "
-                                  "2x damage to bosses, receive 1/2 of habit reward "
-                                  "2x damage to bosses, receive 1/2 of habit reward",
+                                  "2x damage to bosses, receive 1/2 of habit reward ",
                                   7500, 1, "software"))
 
         

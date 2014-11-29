@@ -29,6 +29,8 @@ import threading
 import queue
 from tooltip import *
 
+current_date = date.today()
+
 class Game_Data:
     """
     Class for main game functions
@@ -443,9 +445,10 @@ class GUI(Frame):
         self.menu.add_cascade(label="EDIT", menu=self.edit_menu)
 
         self.options_menu = Menu(self.menu, tearoff=0)
-        self.options_menu.add_command(label="Game", command=self.no_where)
-        self.options_menu.add_command(label="Settings", command=self.no_where)
-        self.menu.add_cascade(label="OPTIONS", menu=self.options_menu)
+        self.options_menu.add_command(label="Enable Debug Mode", command=self.enable_debug)
+        self.options_menu.add_command(label="Advance to Next Day", command=self.advance_to_next_day)
+        self.menu.add_cascade(label="DEBUG", menu=self.options_menu)
+        self.options_menu.entryconfig(1, state="disabled")
 
         self.help_menu = Menu(self.menu, tearoff=0)
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
@@ -453,6 +456,35 @@ class GUI(Frame):
         self.menu.add_cascade(label="HELP", menu=self.help_menu)
 
         self.master.config(menu=self.menu)
+
+    def enable_debug(self):
+        self.options_menu.entryconfig(0, state="disabled")
+        self.options_menu.entryconfig(1, state="normal")
+
+    def advance_to_next_day(self):
+        global current_date
+        current_date += timedelta(hours=24)
+        missed_dailies = 0
+
+        for hack in self.character.hacks.values():
+            if hack.h_type == "daily" and (hack.timestamp < 
+                (current_date - timedelta(hours=24))):
+
+                missed_dailies += 1
+                days_missed = (date.today() - hack.timestamp).days
+                self.character.cash -= int(hack.value)*days_missed
+                self.character.health -= 5*days_missed #FIXME Needs boss attack multiplier
+                self.redraw()
+                self.update_stats_banner()
+                self.change_character_emotion(1, "mainMad.gif")
+
+        if missed_dailies:
+            if missed_dailies > 1:
+                plural_string = "s"
+            else:
+                plural_string = ""
+            self.inst_notify("Exclamation", "You failed to complete " 
+                + str(missed_dailies) + " daily hack" + plural_string + "!")
 
     def make_banner(self):
         """
@@ -766,9 +798,10 @@ class GUI(Frame):
         #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
         if(self.character.complete_hack(hack_ID)):
             self.redraw()
-        self.update_stats_banner()
-        self.change_character_emotion(1, "mainHappy.gif")
-        self.attack_boss(100)
+            self.update_stats_banner()
+            self.change_character_emotion(1, "mainHappy.gif")
+            self.attack_boss(100)
+            return True
 
 
     def delete_hack(self, hack_ID):
@@ -787,9 +820,6 @@ class GUI(Frame):
 
         elif page == 'task':
             self.show_frame('task')
-
-        else:
-            pass
 
     def redraw(self):
         """
@@ -885,14 +915,13 @@ class GUI(Frame):
 
     def attack_boss(self, amount):
         self.boss.damage(amount)
-        if self.boss.helath < 1:
+        if self.boss.health < 1:
             self.defeat_boss()
             self.update_boss_name()
 
     def defeat_boss(self):
-        GUI.notify("type", "Oh no! You were cyber robbed by",
-                   self.boss.get_title())
-        pass
+        self.inst_notify("exclamation", "Oh no! You were cyber robbed by " +
+                   self.boss.get_title() + "!")
 
     def check_boss(self):
         if self.boss.active == 1:

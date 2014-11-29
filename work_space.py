@@ -386,9 +386,11 @@ class Work_Space(Frame):
             
 
     def complete_hack(self, hack_ID):
-        if(self.parent.complete_hack(hack_ID)):
+        if self.parent.complete_hack(hack_ID):
             return True
         else:
+            if self.parent.character.get_hack(hack_ID).h_type == "daily":
+                self.parent.inst_notify("exclamation", "Dailies can only be completed once a day.")
             return False
         
     def add_hack(self, h_type):
@@ -545,7 +547,7 @@ class Work_Space(Frame):
 
         window.destroy()
 
-        GUI.notify('put_type_here', "Your " + str(submitted_hack.get_hack_type()) +
+        self.parent.inst_notify('put_type_here', "Your " + str(submitted_hack.get_hack_type()) +
                             " has been saved!")
 
 def main():

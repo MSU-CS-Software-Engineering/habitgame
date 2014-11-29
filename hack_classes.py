@@ -9,9 +9,9 @@ class Character:
         cash: Total currency          (int)
         exp: Total experience points  (int)
         level: Current level          (int)
-        habits: Current habits        (list of Habit objects)
-        tasks:                        (list of Task objects)
-        dailies:                      (list of Daily objects)
+        health: "Health" of character (int)
+        Attack Multiplier: Damage modifier to bosses: (float)
+        hacks: Current hacks          (list of Hack objects)
         items: Owned (soft|hard)ware  (list of Item objects)
     """
     def __init__(self, name):
@@ -20,6 +20,8 @@ class Character:
         self.cash = 0
         self.exp = 0
         self.level = 1
+        self.health = 100
+        self.attack_multiplier = 1.0
         self.hacks = {}
         self.items = []
 
@@ -82,7 +84,6 @@ class Character:
             if hack.timestamp < date.today():
                 self.hacks[hack_ID].timestamp = date.today()
             else:
-                GUI.notify("exclamation", "Dailies can only be completed once a day.")
                 return False
 
         elif hack.h_type == "task":
@@ -142,6 +143,13 @@ class Character:
     def show_items(self):
         for item in self.items:
             self.show_item(item.ID)
+
+    def modify_health(self, value_change):
+        self.health += value_change
+
+    def set_attack_multiplier(self, new_mult):
+        self.attack_multiplier = new_mult
+        
 
 class Hack:
     """
