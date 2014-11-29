@@ -25,7 +25,7 @@ from tkinter import filedialog # open/save file
 from time import sleep
 import threading
 import queue
-
+from tooltip import *
 
 class Game_Data:
     """
@@ -304,6 +304,11 @@ class GUI(Frame):
         self.character_item_count = StringVar()
         self.update_item_count()
 
+        self.boss_name = StringVar()
+        self.boss_health = StringVar()
+        self.boss_distance = StringVar()
+        self.boss_time = StringVar()
+        
         self.update_name()
         self.update_exp()
         self.update_cash()
@@ -353,6 +358,7 @@ class GUI(Frame):
         self.make_menu_bar()
         self.make_character_frame()
         self.make_items_in_use_frame()
+        self.make_boss_frame()
         self.make_banner()
         self.make_stats_banner()
         self.make_footer()
@@ -371,7 +377,6 @@ class GUI(Frame):
         #create the notification handler. this is threaded so the whole program
         #doesn't hang when we make the frame wait.
         Notification(GUI.notification_queue, self.master).start()
-
         GUI.notify('put_type_here', 'Welcome to your Daily <Hack>!')        
 
     def make_menu_bar(self):
@@ -544,6 +549,53 @@ class GUI(Frame):
         self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
         self.style.configure("statsFrame.TFrame", background="#283D57")
 
+    def make_boss_frame(self):
+        # create boss data frame
+        boss_frame_bg = Frame(self, padding = '40 0 0 0')
+        boss_frame_bg.grid(row = 2, column = 2, sticky = 'news')
+        
+        self.update_boss_name()
+        boss_name = Label(boss_frame_bg, textvariable = self.boss_name)
+        boss_name.grid(row = 0, column = 0, sticky = W, pady = 4, padx = 5)
+        boss_name.configure(font = 'arial 14 bold')
+
+        boss_frame = Frame(boss_frame_bg)
+        boss_frame.grid(row = 1, column = 0, sticky = 'news')
+        
+        # load boss image
+        boss_file = PhotoImage(file = self.boss.get_boss_img())
+        boss_image = Label(boss_frame, image = boss_file, cursor = 'hand2')
+        boss_image.grid(row = 0, column = 0, stick = W, padx = 5)
+        boss_image.image = boss_file
+        
+        ToolTip(boss_image, self.boss.display_message(), self.update_boss_msg, '#CD3D3D')
+
+        boss_stats_frame = Frame(boss_frame)
+        boss_stats_frame.grid(row = 0, column = 1, sticky = 'news')
+
+        self.boss_health.set("Health: " + str(self.boss.get_health()))
+        self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
+        self.boss_time.set("Time: " + str(self.boss.get_time()))
+        
+        boss_health = Label(boss_stats_frame, textvariable = self.boss_health)
+        boss_health.grid(row = 0, column = 0, sticky = W)
+        boss_health.configure(font = 'arial 12 bold')
+
+        boss_distance = Label(boss_stats_frame, textvariable = self.boss_distance)
+        boss_distance.grid(row = 1, column = 0, sticky = W)
+        boss_distance.configure(font = 'arial 12 bold')
+
+        boss_time = Label(boss_stats_frame, textvariable = self.boss_time)
+        boss_time.grid(row = 2, column = 0, sticky = W)
+        boss_time.configure(font = 'arial 12 bold')
+        
+        
+    def update_boss_name(self):
+        self.boss_name.set(self.boss.get_title())
+        
+    def update_boss_msg(self):
+        return self.boss.get_message()
+        
     def make_character_frame(self):
         # create character data frame
         self.char_frame_bg = Frame(self)
@@ -555,17 +607,23 @@ class GUI(Frame):
 
         self.char_frame = Frame(self.char_frame_bg)
         self.char_frame.grid(row=1, column=0, sticky='news')
-
-        # load character image
-        char_img = PhotoImage(file=os.path.join("assets", "art", "main.gif"))
-        self.character_image = Label(self.char_frame, image=char_img)
-        self.character_image.grid(row=0, column=0, stick=W, padx=5)
-        self.character_image.image = char_img
-
+        
         # place character menu buttons here, self.make_menu() will use this
         self.char_buttons_frame = Frame(self.char_frame)
         self.char_buttons_frame.grid(row=0, column=1, sticky='news')
+        
+        self.change_character_emotion(0, "main.gif")
 
+    def change_character_emotion(self, i, img_str):
+        # load character image
+        char_img = PhotoImage(file = os.path.join("assets", "art", img_str))
+        character_image = Label(self.char_frame, image = char_img, cursor = "hand2")
+        character_image.grid(row = 0, column = 0, stick = W, padx = 5)
+        character_image.image = char_img
+
+        char_messages = ["Hi, I'm hacker JOE!", "We are doing great!", "I AM FURIOUS!"]
+        ToolTip(character_image, char_messages[i], None, '#6BCD3D')
+        
     def make_items_in_use_frame(self):
         self.items_frame = Frame(self, padding='40 0 0 0')
         self.items_frame.grid(row=2, column=1, sticky='news')
@@ -667,12 +725,16 @@ class GUI(Frame):
         if(self.character.complete_hack(hack_ID)):
             self.redraw()
         self.update_stats_banner()
+        self.change_character_emotion(1, "mainHappy.gif")
+        self.attack_boss(100)
+
 
     def delete_hack(self, hack_ID):
         #messagebox.showinfo("Hack Info", "Deleted Hack "+str(ID))
         self.character.remove_hack(hack_ID)
         self.update_stats_banner()
         self.redraw()
+        self.change_character_emotion(2, "mainMad.gif")
 
     def page_navigator(self, page):
         if page == 'habit':
@@ -783,6 +845,7 @@ class GUI(Frame):
         self.boss.damage(amount)
         if self.boss.helath < 1:
             self.defeat_boss()
+            self.update_boss_name()
 
     def defeat_boss(self):
         GUI.notify("type", "Oh no! You were cyber robbed by",
