@@ -1,5 +1,6 @@
 import base64
 from datetime import datetime
+import os
 
 class Boss:
     def __init__(self, parent, level, options=None):
@@ -7,14 +8,13 @@ class Boss:
         self.parent = parent
 
         self.boss_list = {
-            '1':["FBI Cybercrimes Unit",2],
-            '2':["PLA Unit 61398",1],
-            '3':["Cult of the Dead Cow",.5],
-            '4':["Kevin Mitnick",.3],
-            '5':["Hacker1",.2],
+            '1':["FBI Cybercrimes Unit",2,os.path.join("assets", "art", "fbi.gif")],
+            '2':["PLA Unit 61398",1,os.path.join("assets", "art", "pla.gif")],
+            '3':["Cult of the Dead Cow",.5,os.path.join("assets", "art", "cult.gif")],
+            '4':["Kevin Mitnick",.3,os.path.join("assets", "art", "kevin.gif")],
+            '5':["Hacker1",.2,os.path.join("assets", "art", "hacker.gif")],
         }
 
-        
         if isinstance(options, dict):
             health = options['health']
             active = options['active']
@@ -61,6 +61,18 @@ class Boss:
     def get_title(self):
         return self.boss_list[str(self.level)][0]
 
+    def get_boss_img(self):
+        return self.boss_list[str(self.level)][2]
+
+    def get_message(self):
+        return self.messages[self.level-1]
+
+    def get_health(self):
+        return self.health
+
+    def get_distance(self):
+        return self.distance_from_character
+    
     def get_time(self):
         return datetime.now().time()
         

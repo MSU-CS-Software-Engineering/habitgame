@@ -202,6 +202,8 @@ class db:
 
         self.root = Tk()
         self.root.title("User Information")
+        self.root.resizable(0,0)
+        self.root.protocol("WM_DELETE_WINDOW", lambda : None)
 
         self.main_window = ttk.Frame(self.root, padding = "3 3 12 12")
         self.main_window.grid(column=0, row=0, stick = 'nesw')

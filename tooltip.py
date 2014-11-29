@@ -6,10 +6,11 @@ class ToolTip(Toplevel):
     widget: tooltip is applied to this object
     text: tooltip display message
     text_funct: function reference that updates tooltip text
+    color: background color of the tool tip
     delay: amount of time in seconds before the tooltip displays
     follow: If false, the tool tip won't follow the mouse movement
     """
-    def __init__(self, widget, text, text_funct=None, delay=0.25, follow=True):
+    def __init__(self, widget, text, text_funct=None, color=None, delay=0.25, follow=True):
         self.widget = widget
 
         # parent of the widget object
@@ -34,8 +35,12 @@ class ToolTip(Toplevel):
         self.delay = delay
         self.follow = follow
         
+        bg_color = '#FFFB9F'
+        if color != None:
+            bg_color = color
+            
         self.tip = Label(self, textvariable=self.text, padx=5, pady=5, wraplength=350,
-                         background='#FFFB9F', foreground='black', font='arial 12 bold')
+                         background=bg_color, foreground='black', font='arial 12 bold')
         self.tip.grid()
         
         self.widget.bind('<Enter>', self.allow_for_display)
