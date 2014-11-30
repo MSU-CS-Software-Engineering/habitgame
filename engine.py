@@ -1046,8 +1046,10 @@ class GUI(Frame):
             self.update_boss_name()
 
     def defeat_boss(self):
-        self.inst_notify("exclamation", "Oh no! You were cyber robbed by " +
-                   self.boss.get_title() + "!")
+        self.inst_notify("exclamation", self.boss.get_title() + 
+                            " attacks your systems!")
+        self.character.health -= 5
+        
 
     def check_boss(self):
         if self.boss.active == 1:
