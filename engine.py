@@ -1017,7 +1017,7 @@ class GUI(Frame):
             self.update_item_count()
             return item
         else:
-           print("Not enough cash for " + item.name + "!")
+           self.inst_notify("exclamation", "Not enough cash for " + item.name + "!")
            return None
 
     def sell_item(self, item):
