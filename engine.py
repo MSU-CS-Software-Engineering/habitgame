@@ -351,7 +351,6 @@ class GUI(Frame):
         self.boss_name = StringVar()
         self.boss_health = StringVar()
         self.boss_distance = StringVar()
-        self.boss_time = StringVar()
         
         self.update_name()
         self.update_exp()
@@ -632,10 +631,6 @@ class GUI(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home())
         self.style.configure('hack_logo.TLabel', background='black')
 
-        #self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
-        #self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
-        #                       self.go_to_dailies, self.go_to_generic,
-        #                       self.go_to_shop, self.go_to_inventory]
         self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'Shop', 'Inventory']
         self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
                                self.go_to_dailies, self.go_to_shop, 
@@ -670,7 +665,7 @@ class GUI(Frame):
         highlight independently regardless of which link is currently selected.
         """
         self.button_selected = False
-        self.select_id = 0
+        self.select_id = -1
 
         def mouse_leave():
             if not self.button_selected or col_number != self.select_id:
@@ -754,7 +749,7 @@ class GUI(Frame):
         boss_frame_bg = Frame(self, padding = '40 0 0 0')
         boss_frame_bg.grid(row = 2, column = 2, sticky = 'news')
         
-        self.update_boss_name()
+        self.update_boss_data()
         boss_name = Label(boss_frame_bg, textvariable = self.boss_name)
         boss_name.grid(row = 0, column = 0, sticky = W, pady = 4, padx = 5)
         boss_name.configure(font = 'arial 14 bold')
@@ -770,12 +765,11 @@ class GUI(Frame):
         
         ToolTip(boss_image, self.boss.display_message(), self.update_boss_msg, '#CD3D3D')
 
+        # create boss data frame for defenses and distance variables
         boss_stats_frame = Frame(boss_frame)
         boss_stats_frame.grid(row = 0, column = 1, sticky = 'news')
 
-        self.boss_health.set("Health: " + str(self.boss.get_health()))
-        self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
-        self.boss_time.set("Time: " + str(self.boss.get_time()))
+        self.update_boss_data()
         
         boss_health = Label(boss_stats_frame, textvariable = self.boss_health)
         boss_health.grid(row = 0, column = 0, sticky = W)
@@ -784,16 +778,15 @@ class GUI(Frame):
         boss_distance = Label(boss_stats_frame, textvariable = self.boss_distance)
         boss_distance.grid(row = 1, column = 0, sticky = W)
         boss_distance.configure(font = 'arial 12 bold')
-
-        boss_time = Label(boss_stats_frame, textvariable = self.boss_time)
-        boss_time.grid(row = 2, column = 0, sticky = W)
-        boss_time.configure(font = 'arial 12 bold')
         
-        
-    def update_boss_name(self):
+    def update_boss_data(self):
+        # call when the boss name, defenses, or distance changes
         self.boss_name.set(self.boss.get_title())
+        self.boss_health.set("Defenses: " + str(self.boss.get_health()))
+        self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
         
     def update_boss_msg(self):
+        # used for updating the boss image tool tip message
         return self.boss.get_message()
         
     def make_character_frame(self):
@@ -1163,7 +1156,7 @@ def main():
     """
       Stub for main function
     """
-    db = authenticate.db()
+    #db = authenticate.db()
 
     #main_character = load('Tester')
 
