@@ -211,6 +211,8 @@ class Landing_Page (Frame):
         #self.rowconfigure (4, weight =1)
         #self.rowconfigure (5, weight = 1)
         self.rowconfigure (6, weight = 1)
+        
+        
 
         self.habit_dict = {k:self.character.hacks[k]
                            for k in self.character.hacks
@@ -326,9 +328,13 @@ class Landing_Page (Frame):
                                      foreground ='#54C9EB',
                                      background = '#283D57')
         
-        self.go_to_habits_button.grid(row = 10, column = 0, sticky = 'ews')
-        self.go_to_dailies_button.pack(fill = X, side = 'bottom', expand = True, anchor = S)
-        self.go_to_tasks_button.pack(fill = X, side = 'bottom', expand = True, anchor = S)
+        self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
+        
+
+        
+ 
 
 
 
