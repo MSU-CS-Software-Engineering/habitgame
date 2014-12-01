@@ -29,6 +29,8 @@ import threading
 import queue
 from tooltip import *
 
+current_date = date.today()
+
 class Game_Data:
     """
     Class for main game functions
@@ -350,7 +352,6 @@ class GUI(Frame):
         self.boss_name = StringVar()
         self.boss_health = StringVar()
         self.boss_distance = StringVar()
-        self.boss_time = StringVar()
         
         self.update_name()
         self.update_exp()
@@ -445,9 +446,12 @@ class GUI(Frame):
         self.menu.add_cascade(label="EDIT", menu=self.edit_menu)
 
         self.options_menu = Menu(self.menu, tearoff=0)
-        self.options_menu.add_command(label="Game", command=self.no_where)
-        self.options_menu.add_command(label="Settings", command=self.no_where)
-        self.menu.add_cascade(label="OPTIONS", menu=self.options_menu)
+        self.options_menu.add_command(label="Enable Debug Mode", command=self.enable_debug)
+        self.options_menu.add_command(label="Advance to Next Day", command=self.advance_to_next_day)
+        self.options_menu.add_command(label="Set player stats", command=self.set_player_stats)
+        self.menu.add_cascade(label="DEBUG", menu=self.options_menu)
+        self.options_menu.entryconfig(1, state="disabled")
+        self.options_menu.entryconfig(2, state="disabled")
 
         self.help_menu = Menu(self.menu, tearoff=0)
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
@@ -455,6 +459,159 @@ class GUI(Frame):
         self.menu.add_cascade(label="HELP", menu=self.help_menu)
 
         self.master.config(menu=self.menu)
+
+    def enable_debug(self):
+        self.options_menu.entryconfig(0, state="disabled")
+        self.options_menu.entryconfig(1, state="normal")
+        self.options_menu.entryconfig(2, state="normal")
+
+    def advance_to_next_day(self):
+        global current_date
+        current_date += timedelta(hours=24)
+        missed_dailies = 0
+
+        for hack in self.character.hacks.values():
+            if hack.h_type == "daily" and (hack.timestamp < 
+                (current_date - timedelta(hours=24))):
+
+                missed_dailies += 1
+                days_missed = (date.today() - hack.timestamp).days
+                self.character.cash -= int(hack.value)*days_missed
+                self.character.health -= 5*days_missed #FIXME Needs boss attack multiplier
+                self.redraw()
+                self.update_stats_banner()
+                self.change_character_emotion(1, "mainMad.gif")
+
+        if missed_dailies:
+            if missed_dailies > 1:
+                plural_string = "s"
+            else:
+                plural_string = ""
+            self.inst_notify("Exclamation", "You failed to complete " 
+                + str(missed_dailies) + " daily hack" + plural_string + "!")
+
+    def set_player_stats(self):
+        data_window = Toplevel(self)
+
+        window_bg = Frame(data_window, style='popup_bg.TFrame')
+        window_bg.pack()
+
+        #Exp
+        exp_frame = Frame(window_bg, style='popup_bg.TFrame')
+        exp_frame.pack(side="top")
+
+        self.style.configure('popup_bg.TFrame', background="#D9D9D9")
+
+        exp_label = Label(exp_frame, text="Exp", padding='150 5 150 5',
+                           foreground='white', background='#283D57', font='arial 12 bold')
+        exp_label.pack(side="top")
+
+        exp_warning_label = Label(exp_frame, text = "Value cannot be empty!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        exp_warning_label.pack(side="top", padx = 10, pady=10)
+        exp_warning_label.pack_forget() #Start invisible
+
+        char_exp = Entry(exp_frame, justify=CENTER)
+        char_exp.pack(side="bottom", pady=5)
+
+        #Cash
+        cash_frame = Frame(window_bg, style='popup_bg.TFrame')
+        cash_frame.pack(side="top")
+
+        self.style.configure('popup_bg.TFrame', background="#D9D9D9")
+
+        cash_label = Label(cash_frame, text="Cash", padding='150 5 150 5',
+                           foreground='white', background='#283D57', font='arial 12 bold')
+        cash_label.pack(side="top")
+
+        cash_warning_label = Label(cash_frame, text = "Value cannot be empty!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        cash_warning_label.pack(side="top", padx = 10, pady=10)
+        cash_warning_label.pack_forget() #Start invisible
+
+        char_cash = Entry(cash_frame, justify=CENTER)
+        char_cash.pack(side="bottom", pady=5)
+
+        #Level
+        level_frame = Frame(window_bg, style='popup_bg.TFrame')
+        level_frame.pack(side="top")
+
+        self.style.configure('popup_bg.TFrame', background="#D9D9D9")
+
+        level_label = Label(level_frame, text="Level", padding='150 5 150 5',
+                           foreground='white', background='#283D57', font='arial 12 bold')
+        level_label.pack(side="top")
+
+        level_warning_label = Label(level_frame, text = "Value must be a positive integer!", padding = 5,
+                                    foreground = "red", font='arial 12 bold', state = DISABLED)
+        level_warning_label.pack(side="top", padx = 10, pady=10)
+        level_warning_label.pack_forget() #Start invisible
+
+        char_level = Entry(level_frame, justify=CENTER)
+        char_level.pack(side="bottom", pady=5)
+
+        #Buttons
+        button_frame = Frame(window_bg, width=100)
+        button_frame.grid_propagate(100)
+        button_frame.pack(side="bottom", padx=10, pady=10)
+
+        cancelButton = Button(button_frame, text="Cancel", style = 'cancel.TButton',
+                              cursor = 'hand2', command=data_window.destroy)
+        cancelButton.pack(side="left")
+        self.style.configure('cancel.TButton', font = 'arial 14 bold', relief = 'flat',
+                              padding = 5, foreground = 'black', background = '#FF4848')
+
+        char_exp.insert(INSERT, self.character.exp)
+        char_cash.insert(INSERT, self.character.cash)
+        char_level.insert(INSERT, self.character.level)
+
+        confirmButton = Button(button_frame, text="Save", style = 'save.TButton', cursor = 'hand2',
+            command=lambda: self.check_debug_validity( data_window, 
+                            char_exp.get(), char_cash.get(), char_level.get(),
+                            exp_warning_label, cash_warning_label, level_warning_label))
+
+        confirmButton.pack(side="right")
+
+        self.style.configure('save.TButton', font = 'arial 14 bold', relief = 'flat',
+                             padding = 5, foreground = 'black', background = '#96FF48')
+
+    def check_debug_validity(self, window, exp, cash, level, exp_label, cash_label, level_label):
+        error_triggered = False
+
+        try:
+            int(exp)
+            exp_label.pack_forget()
+
+        except:
+            exp_label.pack()
+            error_triggered = True
+
+        try:
+            int(cash)
+            cash_label.pack_forget()
+
+        except:
+            cash_label.pack()
+            error_triggered = True
+
+        try:
+            int(level)
+            level_label.pack_forget()
+
+        except:
+            level_label.pack()
+            error_triggered = True
+
+        if error_triggered:
+            return
+
+        else:
+            self.character.exp = int(exp)
+            self.character.cash = int(cash)
+            self.character.level = int(level)
+            self.redraw()
+            self.update_stats_banner()
+            window.destroy()
 
     def make_banner(self):
         """
@@ -476,10 +633,6 @@ class GUI(Frame):
         logo_image.bind('<1>', lambda e: self.go_to_home())
         self.style.configure('hack_logo.TLabel', background='black')
 
-        #self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'List', 'Shop', 'Inventory']
-        #self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
-        #                       self.go_to_dailies, self.go_to_generic,
-        #                       self.go_to_shop, self.go_to_inventory]
         self.menu_titles = ['Home', 'Habits', 'Tasks', 'Dailies', 'Shop', 'Inventory']
         self.menu_functions = [self.go_to_home, self.go_to_habits, self.go_to_tasks,
                                self.go_to_dailies, self.go_to_shop, 
@@ -514,7 +667,7 @@ class GUI(Frame):
         highlight independently regardless of which link is currently selected.
         """
         self.button_selected = False
-        self.select_id = 0
+        self.select_id = -1
 
         def mouse_leave():
             if not self.button_selected or col_number != self.select_id:
@@ -605,7 +758,7 @@ class GUI(Frame):
         boss_frame_bg = Frame(self, padding = '40 0 0 0')
         boss_frame_bg.grid(row = 2, column = 2, sticky = 'news')
         
-        self.update_boss_name()
+        self.update_boss_data()
         boss_name = Label(boss_frame_bg, textvariable = self.boss_name)
         boss_name.grid(row = 0, column = 0, sticky = W, pady = 4, padx = 5)
         boss_name.configure(font = 'arial 14 bold')
@@ -621,12 +774,11 @@ class GUI(Frame):
         
         ToolTip(boss_image, self.boss.display_message(), self.update_boss_msg, '#CD3D3D')
 
+        # create boss data frame for defenses and distance variables
         boss_stats_frame = Frame(boss_frame)
         boss_stats_frame.grid(row = 0, column = 1, sticky = 'news')
 
-        self.boss_health.set("Health: " + str(self.boss.get_health()))
-        self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
-        self.boss_time.set("Time: " + str(self.boss.get_time()))
+        self.update_boss_data()
         
         boss_health = Label(boss_stats_frame, textvariable = self.boss_health)
         boss_health.grid(row = 0, column = 0, sticky = W)
@@ -635,16 +787,15 @@ class GUI(Frame):
         boss_distance = Label(boss_stats_frame, textvariable = self.boss_distance)
         boss_distance.grid(row = 1, column = 0, sticky = W)
         boss_distance.configure(font = 'arial 12 bold')
-
-        boss_time = Label(boss_stats_frame, textvariable = self.boss_time)
-        boss_time.grid(row = 2, column = 0, sticky = W)
-        boss_time.configure(font = 'arial 12 bold')
         
-        
-    def update_boss_name(self):
+    def update_boss_data(self):
+        # call when the boss name, defenses, or distance changes
         self.boss_name.set(self.boss.get_title())
+        self.boss_health.set("Defenses: " + str(self.boss.get_health()))
+        self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
         
     def update_boss_msg(self):
+        # used for updating the boss image tool tip message
         return self.boss.get_message()
         
     def make_character_frame(self):
@@ -778,9 +929,10 @@ class GUI(Frame):
         #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
         if(self.character.complete_hack(hack_ID)):
             self.redraw()
-        self.update_stats_banner()
-        self.change_character_emotion(1, "mainHappy.gif")
-        self.attack_boss(100)
+            self.update_stats_banner()
+            self.change_character_emotion(1, "mainHappy.gif")
+            self.attack_boss(100)
+            return True
 
 
     def delete_hack(self, hack_ID):
@@ -799,9 +951,6 @@ class GUI(Frame):
 
         elif page == 'task':
             self.show_frame('task')
-
-        else:
-            pass
 
     def redraw(self):
         """
@@ -873,7 +1022,7 @@ class GUI(Frame):
             self.update_item_count()
             return item
         else:
-           print("Not enough cash for " + item.name + "!")
+           self.inst_notify("exclamation", "Not enough cash for " + item.name + "!")
            return None
 
     def sell_item(self, item):
@@ -897,14 +1046,15 @@ class GUI(Frame):
 
     def attack_boss(self, amount):
         self.boss.damage(amount)
-        if self.boss.helath < 1:
+        if self.boss.health < 1:
             self.defeat_boss()
             self.update_boss_name()
 
     def defeat_boss(self):
-        GUI.notify("type", "Oh no! You were cyber robbed by",
-                   self.boss.get_title())
-        pass
+        self.inst_notify("exclamation", self.boss.get_title() + 
+                            " attacks your systems!")
+        self.character.health -= 5
+        
 
     def check_boss(self):
         if self.boss.active == 1:
@@ -1019,7 +1169,7 @@ def main():
     """
       Stub for main function
     """
-    db = authenticate.db()
+    #db = authenticate.db()
 
     #main_character = load('Tester')
 

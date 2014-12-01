@@ -33,6 +33,7 @@ class Boss:
         self.current_timestamp = self.get_time()
         self.previous_attack = None
         self.attack_timeout = 0
+        self.attack_multiplier = 1.0 #Used by items to modify boss attack power.
         self.new = new
         self.messages = []
         self.set_messages()
@@ -75,6 +76,9 @@ class Boss:
     
     def get_time(self):
         return datetime.now().time()
+
+    def set_attack_multiplier(self, new_mult):
+        self.attack_multiplier = new_mult
         
     def check_character_status(self, character):
         pass
@@ -82,6 +86,7 @@ class Boss:
     def serialize(self):
         boss_dict = {'health':self.health,
                      'level':self.level,
+                     'attackMult':self.attack_multiplier,
                      'active':self.active,
                      'distance':self.distance_from_character,
                      'new':self.new}
@@ -118,6 +123,7 @@ class Boss:
         print("Title: ", self.get_title())
         print("Level: ", self.level)
         print("Health: ", self.health)
+        print("Attack multiplier: ", self.attack_multipler)
         print("Active: ", self.active)
         print("Distance from character: ", self.distance_from_character)
         
