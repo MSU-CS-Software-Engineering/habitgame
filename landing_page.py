@@ -195,7 +195,7 @@ class Landing_Area_Frame(Frame):
                 hack_frame.set_date_time_label(str(hack.timestamp))
                 
                 self.frames.append(hack_frame)
-                    
+  
 class Landing_Page (Frame):
     def __init__(self, parent, character):
         Frame.__init__(self, parent)
@@ -225,9 +225,40 @@ class Landing_Page (Frame):
                            if self.character.hacks[k].h_type == 'task'}
 
         self.set_landing_window()
+        self.go_to_habits_button = Button(self.habit_area,
+                                          text = 'GO TO HABITS',
+                                          cursor = 'hand2',
+                                          style = 'go_to_button.TButton')
+                                                  
+        self.go_to_dailies_button = Button(self.daily_area,
+                                           text = 'GO TO DAILIES',
+                                           cursor = 'hand2',
+                                           style = 'go_to_button.TButton')
+                                           
+        self.go_to_tasks_button = Button(self.task_area,
+                                         text='GO TO TASKS',
+                                         cursor = 'hand2',
+                                         style = 'go_to_button.TButton')
+                                        
+        
+        go_to_button_style = Style()
+
+        go_to_button_style.configure('go_to_button.TButton',
+                                     font = 'arial 14 bold',
+                                     relief = 'flat',
+                                     padding = 5,
+                                     foreground ='#54C9EB',
+                                     background = '#283D57')
+        
+        self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
 
 
     def redraw(self, character):
+        self.go_to_habits_button.destroy()
+        self.go_to_dailies_button.destroy()
+        self.go_to_tasks_button.destroy()
         #Update class' character data instance
         self.character = character
         self.habit_dict = {k:self.character.hacks[k]
@@ -249,6 +280,35 @@ class Landing_Page (Frame):
         self.habit_area.set_frames(self.habit_dict)
         self.daily_area.set_frames(self.dailies_dict)
         self.task_area.set_frames(self.tasks_dict)
+        self.go_to_habits_button = Button(self.habit_area,
+                                          text = 'GO TO HABITS',
+                                          cursor = 'hand2',
+                                          style = 'go_to_button.TButton')
+                                                  
+        self.go_to_dailies_button = Button(self.daily_area,
+                                           text = 'GO TO DAILIES',
+                                           cursor = 'hand2',
+                                           style = 'go_to_button.TButton')
+                                           
+        self.go_to_tasks_button = Button(self.task_area,
+                                         text='GO TO TASKS',
+                                         cursor = 'hand2',
+                                         style = 'go_to_button.TButton')
+                                        
+        
+        go_to_button_style = Style()
+
+        go_to_button_style.configure('go_to_button.TButton',
+                                     font = 'arial 14 bold',
+                                     relief = 'flat',
+                                     padding = 5,
+                                     foreground ='#54C9EB',
+                                     background = '#283D57')
+        
+        self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
+
         
         
     def set_landing_window(self):
@@ -303,34 +363,7 @@ class Landing_Page (Frame):
 
         
         #Bottom go to buttons
-        self.go_to_habits_button = Button(self.habit_area,
-                                          text = 'GO TO HABITS',
-                                          cursor = 'hand2',
-                                          style = 'go_to_button.TButton')
-                                                  
-        self.go_to_dailies_button = Button(self.daily_area,
-                                           text = 'GO TO DAILIES',
-                                           cursor = 'hand2',
-                                           style = 'go_to_button.TButton')
-                                           
-        self.go_to_tasks_button = Button(self.task_area,
-                                         text='GO TO TASKS',
-                                         cursor = 'hand2',
-                                         style = 'go_to_button.TButton')
-                                        
-        
-        go_to_button_style = Style()
 
-        go_to_button_style.configure('go_to_button.TButton',
-                                     font = 'arial 14 bold',
-                                     relief = 'flat',
-                                     padding = 5,
-                                     foreground ='#54C9EB',
-                                     background = '#283D57')
-        
-        self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
-        self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
-        self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
         
 
         
