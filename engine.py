@@ -42,7 +42,7 @@ class Game_Data:
         self.character_data['lastname'] = ''
         self.character_data['birthday'] = ''
         self.token = ''
-        self.version = 0.0
+        self.version = 1.1
         self.parser = file_parser(self.savefile)
 
     def show_character_data(self):
@@ -115,6 +115,9 @@ class Game_Data:
             new_character.level = character_data['level']
             new_character.exp = character_data['exp']
             new_character.cash = character_data['cash']
+        
+            if new_character.level < 1:
+                new_character.level = 1
 
 
             for hack in character_data['hacks']:
@@ -219,6 +222,7 @@ class Notification(threading.Thread):
     
     def __init__(self, notify_queue, master):
         threading.Thread.__init__(self)
+        self.setDaemon(True) 
         self.notify_queue = notify_queue
         self.master = master
 
@@ -1043,6 +1047,7 @@ class GUI(Frame):
         self.update_cash()
         self.update_exp()
         self.check_level()
+        self.update_level()
 
     def attack_boss(self, amount):
         self.boss.damage(amount)
@@ -1157,7 +1162,8 @@ class GUI(Frame):
         self.show_frame('inventory')
 
     def save_game(self):
-        messagebox.showinfo("Save", "Game Saved!")
+        #messagebox.showinfo("Save", "Game Saved!")
+        GUI.notify("", "Game data saved!")
         self.game_data.save_data(self.character, self.boss)
         self.game_data.save_to_file()
 
@@ -1169,7 +1175,7 @@ def main():
     """
       Stub for main function
     """
-    #db = authenticate.db()
+    db = authenticate.db()
 
     #main_character = load('Tester')
 
