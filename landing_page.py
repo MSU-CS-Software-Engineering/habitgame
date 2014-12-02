@@ -249,16 +249,20 @@ class Landing_Page (Frame):
                                      padding = 5,
                                      foreground ='#54C9EB',
                                      background = '#283D57')
-        
         self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
         self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
         self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
+
+
 
 
     def redraw(self, character):
         self.go_to_habits_button.destroy()
         self.go_to_dailies_button.destroy()
         self.go_to_tasks_button.destroy()
+        
+
+        
         #Update class' character data instance
         self.character = character
         self.habit_dict = {k:self.character.hacks[k]
@@ -280,6 +284,7 @@ class Landing_Page (Frame):
         self.habit_area.set_frames(self.habit_dict)
         self.daily_area.set_frames(self.dailies_dict)
         self.task_area.set_frames(self.tasks_dict)
+
         self.go_to_habits_button = Button(self.habit_area,
                                           text = 'GO TO HABITS',
                                           cursor = 'hand2',
@@ -304,12 +309,11 @@ class Landing_Page (Frame):
                                      padding = 5,
                                      foreground ='#54C9EB',
                                      background = '#283D57')
-        
         self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
         self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
         self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
 
-        
+        self.parent.bind_buttons()
         
     def set_landing_window(self):
         #label above progress bar
