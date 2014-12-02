@@ -1,5 +1,6 @@
 from datetime import date, timedelta #For Timestamps
-
+import time
+from math import *
 class Character:
     """
       Class for Habit character profile
@@ -20,11 +21,10 @@ class Character:
         self.cash = 0
         self.exp = 0
         self.level = 1
-        self.health = 100
-        self.attack_multiplier = 1.0
         self.hacks = {}
         self.items = []
-
+        self.effects = {}
+        self.equiped = {}
 
     def serialize(self):
         """
@@ -36,10 +36,14 @@ class Character:
                           'exp' : self.exp,
                           'level' : self.level,
                           'hacks': None,
-                          'items': None}
+                          'items': None,
+                          'effects': None,
+                          'equiped': None }
 
         hacks_list = []
         items_list = []
+        effect_list = []
+        equiped_list = []
         
         for hack in self.hacks.values():
             hacks_list.append(hack.serialize())
@@ -47,27 +51,33 @@ class Character:
         for item in self.items:
             items_list.append(item.serialize())
 
+        for effect in self.effects:
+            effect_list.append(effect.serialize())
+
+        for equiped in self.equiped:
+            equiped_list.append(equiped.serialize())
+
         character_dict['hacks'] = hacks_list
         character_dict['items'] = items_list
+        character_dict['effects'] = effect_list
+        character_dict['equiped'] = effect_list
         
         return character_dict
 
     def add_hack(self, hack):
-        if hack.ID == -1:
-            hack.ID = self.hack_index
-        self.hacks[hack.ID] = hack
-        self.hack_index = max(self.hacks.keys()) + 1
-        return hack.ID
-
-    def edit_hack(self, hack_ID, hack):
-        try:
-            self.remove_hack(hack_ID)
-            hack.ID = hack_ID
-            self.add_hack(hack)
+        hack_limit = 4
+        if 'RAM' in self.equiped:
+            hack_limit = self.equiped['RAM'].effect
+        if len(self.hacks) < hack_limit:
+            if hack.ID == -1:
+                hack.ID = self.hack_index
+            self.hacks[hack.ID] = hack
+            self.hack_index = max(self.hacks.keys()) + 1
             return True
-        except:
-            print("Edit failed!")
-            return False
+        
+        return False
+
+
 
     def remove_hack(self, hack_ID):
         try:
@@ -80,9 +90,20 @@ class Character:
     def complete_hack(self, hack_ID):
         hack = self.get_hack(hack_ID)
 
+        value_mult = 1
+        exp_mult = 1
+        if 'motherboard' in self.equiped:
+            exp_mult *= self.equiped['motherboard'].effect
+        if 'GPU' in self.equiped:
+            value_mult *= self.equiped['GPU'].effect
+        if 'fork' in self.effects:
+            value_mult *= self.effects['fork'].effect
+        if 'penetrate' in self.effects:
+            value_mult /= self.effects['penetrate'].effect
+ 
         if hack.h_type == "daily":
             if hack.timestamp < date.today():
-                self.hacks[hack_ID].timestamp = date.today()
+                self.hacks[hack_id].timestamp = date.today()
             else:
                 return False
 
@@ -90,9 +111,9 @@ class Character:
             self.remove_hack(hack_ID)
 
         if int(hack.value) > 0:
-            self.exp += int(hack.exp)
+            self.exp += ceil(float(hack.exp) * exp_mult)
 
-        self.cash += int(hack.value)
+        self.cash += ceil(float(hack.value) * value_mult)
         
         if hack.h_type == "habit":
             return False
@@ -116,6 +137,20 @@ class Character:
         
         self.items.append(item)
         return item.ID
+
+    def use_item(self, item):
+        self.items[item.ID].uses -= 1
+        if self.items[item.ID].uses == 0:
+            self.remove_item(item.ID)
+        if item.duration != 0:
+            item.duration = (item.duration * 60 * 60 * 24) + time.time()
+            self.effects[item.item_type] = item
+        if item.item_type == 'money':
+                self.exp += item.effect
+        
+    def equip_item(self, item):
+        
+        self.equiped[item.item_type] = item
 
     def remove_item(self, item_ID):
         try:
@@ -208,7 +243,7 @@ class Item:
         active: Is the item in use or not                 (bool)
         effect: Special function that the item performs   (function)
     """
-    def __init__(self, name, desc, image, value, uses, item_type, active, effect = None):
+    def __init__(self, name, desc, image, value, uses, item_type, active, effect, duration, component):
         self.name = name
         self.ID = 0
         self.description = desc
@@ -218,6 +253,8 @@ class Item:
         self.item_type = item_type
         self.active = active
         self.effect = effect
+        self.duration = duration
+        self.component = component
 
     def serialize(self):
         """
@@ -232,6 +269,8 @@ class Item:
                       'uses':self.uses,
                       'item_type':self.item_type,
                       'effect':self.effect,
-                      'active':self.active}
+                      'active':self.active, 
+                      'duration':self.duration,
+                      'component':self.component}
         
         return item_dict

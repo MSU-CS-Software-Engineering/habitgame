@@ -24,7 +24,7 @@ from generic_list import *
 from work_space import *
 import authenticate
 from tkinter import filedialog # open/save file
-from time import sleep
+from time import sleep, time
 import threading
 import queue
 from tooltip import *
@@ -1034,6 +1034,7 @@ class GUI(Frame):
             self.update_stats_banner()
             self.change_character_emotion(1, "mainHappy.gif")
             self.attack_boss(5)
+            self.check_time()
             return True
 
 
@@ -1105,10 +1106,33 @@ class GUI(Frame):
         self.update_item_count()
         
     def use_item(self, item):
-        item.uses = int(item.uses) - 1
-        if item.item_type == 'food' or item.item_type == 'misc':
+        
+        if item.component == 'software':
+            if item.item_type == 'smokescreen':
+                self.boss.push_back(item.effect)
+                self.update_boss_data()
+            else:
+                self.character.use_item(item)
+                self.update_item_count()
+        elif item.component == 'hardware':
+            self.character.equip_item(item)
+            self.update_item_count()
+        elif item.component == 'component':
+            self.character.equip_item(item)
+            self.update_item_count()
+        elif item.component == 'misc':
+            self.character.use_item(item)
+            self.update_exp()
+        elif item.component == 'food':
+            messagebox.showinfo('Break Time', 'Go enjoy some ' + str(item.description))
             self.remove_item(item)
         self.update_item_count()
+
+    def unequip_item(self, item):
+        return self.character.equiped.pop(item.item_type, None)
+        
+    def remove_effect(self, item):
+        return self.character.effects.pop(item.item_type, None)
 
     def remove_item(self, item):
         self.character.remove_item(item.ID)
@@ -1126,6 +1150,15 @@ class GUI(Frame):
         else:
            self.inst_notify("exclamation", "Not enough cash for " + item.name + "!")
            return None
+
+    def check_time(self):
+        None
+        """
+        for i in self.character.effects:
+            if self.character.effects[i].duration < time.time():
+                #something here to connect to time_up() in the inventory
+                self.character.effects.pop(i)
+        """
 
     def sell_item(self, item):
         """
@@ -1149,11 +1182,17 @@ class GUI(Frame):
 
     #BOSS Methods
     def attack_boss(self, amount):
-        self.boss.damage(amount)
-        self.update_boss_data()
-        
+        damage_mult = 1
+        if 'CPU' in self.character.equiped:
+            damage_mult *= self.character.equiped['CPU'].effect
+
+        if 'penetrate' in self.character.effects:
+            damage_mult *= self.character.effects['penetrate'].effect
+            
+        self.boss.damage(amount * damage_mult)
         if self.boss.health < 1:
             self.defeat_boss()
+        self.check_time()
 
     #def defeat_boss(self):
     #    self.inst_notify("exclamation", self.boss.get_title() + 

@@ -92,9 +92,9 @@ class MyInventory():
     my_inventory = None # Inventory class object stored here
 
     # default active item limits
-    max_software = 2
-    max_hardware = 2 
-    max_components = 2
+    max_software = 0
+    max_hardware = 1 
+    max_components = 1
 
     # current number of items active 
     software_count = 0
@@ -105,6 +105,7 @@ class MyInventory():
     software_frame = []
     software_items = []
     software_tips = []
+    software_effects = {}
     
     hardware_frame = []
     hardware_items = []
@@ -113,7 +114,7 @@ class MyInventory():
     components_frame = []
     component_items = []
     components_tips = []
-
+    component_effects = {}
     
     # called in work_space.py
     def setInventory(inventory_frame):
@@ -161,22 +162,29 @@ class MyInventory():
                    'RAM 8gb':os.path.join("assets", "art", "emblem_ramgreen.gif"),
                    'CPU fan':os.path.join("assets", "art", "emblem_fan.gif"),
                    'CPU 3.5 Ghz':os.path.join("assets", "art", "emblem_cpu.gif"),
-                   'GPU 2gb':os.path.join("assets", "art", "emblem_gpu2.gif"),
-                   'GPU 1gb':os.path.join("assets", "art", "emblem_gpu1.gif"),
-                   'Fortify':os.path.join("assets", "art", "emblem_fortify.gif"),
-                   'Fork':os.path.join("assets", "art", "emblem_fork.gif"),
-                   'Smokescreen':os.path.join("assets", "art", "emblem_smoke.gif"),
-                   'Penetrate':os.path.join("assets", "art", "emblem_penetrate.gif"),
+                   'GPU 2gb':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'GPU 1gb':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Fortify':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Fork':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Smokescreen':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Penetrate':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Fortify Burst':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Fork Burst':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Smokescreen Burst':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Penetrate Burst':os.path.join("assets", "art", "emblem_laptop.gif"),
                    'Laptop':os.path.join("assets", "art", "emblem_laptop.gif"),
-                   'Desktop':os.path.join("assets", "art", "emblem_desktop.gif"),
-                   'Terminal':os.path.join("assets", "art", "emblem_terminal.gif"),
-                   'Server':os.path.join("assets", "art", "emblem_server.gif"),
-                   'Desk':os.path.join("assets", "art", "emblem_desk.gif")}
+                   'Desktop':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Terminal':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Server':os.path.join("assets", "art", "emblem_laptop.gif"),
+                   'Desk':os.path.join("assets", "art", "emblem_laptop.gif")}
 
         return emblems[name]
 
         
     def addSoftware(item):
+        if item.item_type in MyInventory.software_effects:
+            return False
+        
         if MyInventory.software_count < MyInventory.max_software:
             i = MyInventory.software_count
             
@@ -190,6 +198,7 @@ class MyInventory():
             MyInventory.software_tips[i] = ToolTip(software_label, item.name + ': ' + item.description)
             MyInventory.software_items[i] = [software_label, item]
             MyInventory.software_count += 1
+            MyInventory.software_effects[item.item_type] = item
             return True
         else:
             return False # software slots full
@@ -219,6 +228,8 @@ class MyInventory():
             answer = messagebox.askokcancel("Remove Active Software Item", msg)
             
             if answer:
+                MyInventory.software_effects.pop(MyInventory.software_items[_id][1].item_type, None)
+                MyInventory.api.remove_effect(MyInventory.software_items[_id][1])
                 MyInventory.software_items[_id][0].destroy()
                 MyInventory.software_items[_id][0] = None
                 if uses_left > 0:
@@ -282,6 +293,7 @@ class MyInventory():
             answer = messagebox.askokcancel("Remove Active Hardware Item", msg)
 
             if answer:
+                MyInventory.api.unequip_item(MyInventory.hardware_items[_id][1])
                 MyInventory.hardware_items[_id][0].destroy()
                 MyInventory.hardware_items[_id][0] = None
                 if uses_left > 0:
@@ -299,9 +311,16 @@ class MyInventory():
                         
                 if MyInventory.hardware_count > 0:
                     MyInventory.hardware_count -= 1
-
+                    
+                MyInventory.max_software = 0
+                MyInventory.max_components = 1
+                MyInventory.resetInventory()
     
     def addComponent(item):
+        if item.item_type in MyInventory.component_effects:
+            return False
+
+        
         if MyInventory.components_count < MyInventory.max_components:
             i = MyInventory.components_count
 
@@ -316,6 +335,8 @@ class MyInventory():
             MyInventory.component_items[i] = [component_label, item]
         
             MyInventory.components_count += 1
+            MyInventory.component_effects[item.item_type] = item
+            
             return True
         else:
             return False # software slots full
@@ -345,6 +366,8 @@ class MyInventory():
             answer = messagebox.askokcancel("Remove Active Component Item", msg)
 
             if answer:
+                MyInventory.component_effects.pop(MyInventory.component_items[_id][1].item_type, None)
+                MyInventory.api.unequip_item(MyInventory.component_items[_id][1])
                 MyInventory.component_items[_id][0].destroy()
                 MyInventory.component_items[_id][0] = None
                 if uses_left > 0:
@@ -362,6 +385,90 @@ class MyInventory():
                         
                 if MyInventory.components_count > 0:
                     MyInventory.components_count -= 1
+                    
+    def resetInventory():
+     
+        tmpComponent = MyInventory.component_items
+        tmpSoftware = MyInventory.software_items
+
+        for i in range(len(MyInventory.software_frame)):
+            MyInventory.software_frame[i].destroy()
+            if MyInventory.software_tips[i] != None:
+                MyInventory.software_tips[i].destroy()
+            if MyInventory.software_items[i][0] != None:
+                MyInventory.software_items[i][0].destroy()
+
+        for i in range(len(MyInventory.components_frame)):
+            MyInventory.components_frame[i].destroy()
+            if MyInventory.components_tips[i] != None:
+                MyInventory.components_tips[i].destroy()
+            if MyInventory.component_items[i][0] != None:
+                MyInventory.component_items[i][0].destroy()
+
+        MyInventory.software_frame = []
+        MyInventory.software_tips = []
+        MyInventory.software_items = []
+        MyInventory.software_count = 0
+
+        MyInventory.components_frame = []
+        MyInventory.components_tips = []
+        MyInventory.component_items = []
+        MyInventory.components_count = 0
+
+        style = Style()
+        for i in range(MyInventory.max_software):
+            software_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
+            software_frame.grid(row=1, column=i+1, sticky=W, pady=4, padx=4)
+            style.configure('item.TFrame', background='#AEAEAE')
+            MyInventory.software_frame.append(software_frame)
+            MyInventory.software_items.append([None, None])
+            MyInventory.software_tips.append(None)
+            
+        for i in range(MyInventory.max_components):
+            component_frame = Frame(MyInventory.items_frame, width=25, height=25, style='item.TFrame')
+            component_frame.grid(row=3, column=i+1, sticky=W, pady=4, padx=4)
+            style.configure('item.TFrame', background='#AEAEAE')
+            MyInventory.components_frame.append(component_frame)
+            MyInventory.component_items.append([None, None])
+            MyInventory.components_tips.append(None)
+
+        addedEffects = []
+        equipedItems = []
+        
+        for i in range(len(tmpSoftware)):
+            not_full = True
+            if tmpSoftware[i][0] != None:
+                effect = MyInventory.api.remove_effect(tmpSoftware[i][1])
+                MyInventory.software_effects.pop(effect.item_type, None)
+                not_full = MyInventory.addSoftware(tmpSoftware[i][1])
+                if not not_full:
+                    MyInventory.my_inventory.addItem(tmpSoftware[i][1])
+                else:
+                    addedEffects.append(effect)
+        for i in range(len(tmpComponent)):
+            not_full = True
+            if tmpComponent[i][0] != None:
+                equiped = MyInventory.api.unequip_item(tmpComponent[i][1])
+                MyInventory.component_effects.pop(equiped.item_type, None)
+                not_full = MyInventory.addComponent(tmpComponent[i][1])
+                if not not_full:
+                    MyInventory.my_inventory.addItem(tmpComponent[i][1])
+                else:
+                    equipedItems.append(equiped)
+                   
+        for i in addedEffects:
+            MyInventory.api.use_item(i)
+
+        for i in equipedItems:
+            MyInventory.api.use_item(i)
+            
+    def time_up(item_type):
+        for i in range(len(MyInventory.software_items)):
+            if item_type == MyInvenetory.software_items[i][1].item_type:
+                MyInventory.removeSoftware(i)
+            
+        
+ 
 
  
 class Inventory():
@@ -572,7 +679,7 @@ class Inventory():
         if item_id != None:
             if self.items[item_id][1] != None:
                 not_full = True
-                item_type = item.item_type
+                item_type = item.component
                 
                 if item_type == 'food' or item_type == 'misc':
                     new_uses = int(self.items[item_id][0].getUses()) - 1
@@ -587,10 +694,12 @@ class Inventory():
                     self.selected_item_ref = None
                     self.remove_selected_item()
                     self.resetItemInfo()
+					
                 else:
                     if item_type == 'software':
                         item.active = 'True'
-                        not_full = MyInventory.addSoftware(item)
+                        if item.item_type != 'smokescreen':
+                            not_full = MyInventory.addSoftware(item)
                     elif item_type == 'hardware':
                         item.active = 'True'
                         not_full = MyInventory.addHardware(item)
@@ -599,23 +708,49 @@ class Inventory():
                         not_full = MyInventory.addComponent(item)
 
                     # item slot not full, so add the item to the active items area of the GUI
-                    if not_full:   
+                    if not_full:
+                        if item.component == 'hardware':
+                            if item.item_type == 'laptop':
+                                MyInventory.max_software = 1
+                                MyInventory.max_components = 3
+                                MyInventory.resetInventory()
+
+                            if item.item_type == 'desktop':
+                                MyInventory.max_software = 2
+                                MyInventory.max_components = 3
+                                MyInventory.resetInventory()
+
+                            if item.item_type == 'terminal':
+                                MyInventory.max_software = 3
+                                MyInventory.max_components = 5
+                                MyInventory.resetInventory()
+
+                            if item.item_type == 'server':
+                                MyInventory.max_software = 3
+                                MyInventory.max_components = 4
+                                MyInventory.resetInventory()
+
+                            if item.item_type == 'desk':
+                                MyInventory.max_software = 1
+                                MyInventory.max_components = 2
+                                MyInventory.resetInventory()
+                            
+                        
+ 
                         new_uses = int(self.items[item_id][0].getUses()) - 1
                         self.items[item_id][0].setUses(str(new_uses))
-                        self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())
-                        
+                        self.uses_labels[item_id][0].set("uses: " + self.items[item_id][0].getUses())                    
                         MyInventory.api.use_item(item)
-                        self.remove_item_from_inventory(item_id)
-                            
-                        self.selceted_item_id = None
-                        self.selected_item_ref = None
-                        self.remove_selected_item()
-                        self.resetItemInfo()
+                        if item.item_type != 'smokescreen':
+                            self.remove_item_from_inventory(item_id)    
+                            self.selceted_item_id = None
+                            self.selected_item_ref = None
+                            self.remove_selected_item()
+                            self.resetItemInfo()
+
                     else:
                         messagebox.showinfo('Active Space Full', 'Active ' + item_type + ' area full.')
                         item.active = 'False'
-
-
     def resetItemInfo(self):
         self.nameSelect.configure(text='')
         self.descriptSelect.configure(text='')
