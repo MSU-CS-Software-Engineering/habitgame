@@ -107,8 +107,19 @@ class Boss:
 
         
     def damage(self, amount):
-        self.health -= amount
+        if self.health - amount < 1:
+            self.health = 0
+        else:
+            self.health -= amount
 
+    def approach_character(self, distance):
+        if self.distance_from_character > 0:
+            self.distance_from_character -= distance
+
+        #Set distance lower limit
+        if self.distance_from_character < 0:
+            self.distance_from_character = 0
+            
     def push_back(self, distance):
         if self.distance_from_character < 100:
             self.distance_from_character += distance
@@ -116,8 +127,24 @@ class Boss:
         #Set distance upper limit
         if self.distance_from_character > 100:
             self.distance_from_character = 100
-            
 
+
+    def next(self):
+        '''
+        Upgrade boss to next level
+        '''
+        self.health = 100
+        self.active = 1
+        self.distance_from_character = 100
+        self.current_timestamp = self.get_time()
+        self.previous_attack = None
+        self.attack_timeout = 0
+        self.attack_multiplier = 1.0 #Used by items to modify boss attack power.
+
+        if self.level < 5:
+            self.new = 1
+            self.level += 1
+        
     def show_info(self):
         print("BOSS Info")
         print("Title: ", self.get_title())

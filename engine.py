@@ -225,7 +225,8 @@ class Notification(threading.Thread):
         self.setDaemon(True) 
         self.notify_queue = notify_queue
         self.master = master
-
+        self.notification = self.master.notification_message
+        
     def run(self):
 
         while True:
@@ -233,43 +234,45 @@ class Notification(threading.Thread):
             #in python, .get() blocks until an item is available in the queue.
             #Not a problem; since this thread's only purpose is to handle
             #notifications it can sit there forever for all we care
+            notification = self.notification
             msg = self.notify_queue.get()
+            notification.configure(text=msg)
+            #notification_frame = Frame(self.master, style='footer.TFrame')
+            #notification_frame.config(height=50, width=300)
+            #notification_frame.place(relx=0.9967, y=230, anchor="se")
             
-            notification_frame = Frame(self.master, style='footer.TFrame')
-            notification_frame.config(height=50, width=300)
-            notification_frame.place(relx=0.9967, y=230, anchor="se")
-            
-            notification = Message(notification_frame, text=msg, width=200)
-            notification.grid(row=0, column=1, sticky = E)
-            notification.configure(background='#d9d9d9', foreground = '#d9d9d9', anchor = E, font='arial 16')
+            #notification = Message(notification_frame, text=msg, width=200)
+            #notification.grid(row=0, column=1, sticky = E)
+            #notification.configure(background='#d9d9d9', foreground = '#d9d9d9', anchor = E, font='arial 16')
             
             #fade in. since frames don't support alpha, it simulates real alpha
             #by simply changing the background color from the original to black
+            notification.configure(foreground='#191919')
             sleep(0.05)
-            notification.configure(background='#c9c9c9')
+            notification.configure(foreground='#292929')
             sleep(0.05)
-            notification.configure(background='#b9b9b9')
+            notification.configure(foreground='#393939')
             sleep(0.05)
-            notification.configure(background='#a9a9a9')
+            notification.configure(foreground='#494949')
             sleep(0.05)
-            notification.configure(background='#999999')
+            notification.configure(foreground='#595959')
             sleep(0.05)
-            notification.configure(background='#898989')
+            notification.configure(foreground='#696969')
             sleep(0.05)
-            notification.configure(background='#797979')
+            notification.configure(foreground='#797979')
             sleep(0.05)
-            notification.configure(background='#696969')
+            notification.configure(foreground='#898989')
             sleep(0.05)
-            notification.configure(background='#595959')
+            notification.configure(foreground='#999999')
             sleep(0.05)
-            notification.configure(background='#494949')
+            notification.configure(foreground='#a9a9a9')
             sleep(0.05)
-            notification.configure(background='#393939')
+            notification.configure(foreground='#b9b9b9')
             sleep(0.05)
-            notification.configure(background='#292929')
+            notification.configure(foreground='#c9c9c9')
             sleep(0.05)
-            notification.configure(background='#191919')
-                
+            notification.configure(foreground='#d9d9d9')
+
             #wait a few seconds at full alpha
             sleep(1)
             
@@ -280,38 +283,38 @@ class Notification(threading.Thread):
                 sleep(1.5)
             if len(msg) > 35:
                 sleep(1)
-            
+
             #fade out
-            notification.configure(background='#191919')
             sleep(0.05)
-            notification.configure(background='#292929')
+            notification.configure(foreground='#c9c9c9')
             sleep(0.05)
-            notification.configure(background='#393939')
+            notification.configure(foreground='#b9b9b9')
             sleep(0.05)
-            notification.configure(background='#494949')
+            notification.configure(foreground='#a9a9a9')
             sleep(0.05)
-            notification.configure(background='#595959')
+            notification.configure(foreground='#999999')
             sleep(0.05)
-            notification.configure(background='#696969')
+            notification.configure(foreground='#898989')
             sleep(0.05)
-            notification.configure(background='#797979')
+            notification.configure(foreground='#797979')
             sleep(0.05)
-            notification.configure(background='#898989')
+            notification.configure(foreground='#696969')
             sleep(0.05)
-            notification.configure(background='#999999')
+            notification.configure(foreground='#595959')
             sleep(0.05)
-            notification.configure(background='#a9a9a9')
+            notification.configure(foreground='#494949')
             sleep(0.05)
-            notification.configure(background='#b9b9b9')
+            notification.configure(foreground='#393939')
             sleep(0.05)
-            notification.configure(background='#c9c9c9')
+            notification.configure(foreground='#292929')
             sleep(0.05)
-            notification.configure(background='#d9d9d9')
-            
-            notification_frame.destroy()
-            
+            notification.configure(foreground='#191919')
+
+            notification.configure(text='')
             #delay just a smidgeon between messages.
             sleep(0.3)
+            
+            
             
 # Placed here to resolve import loop issues with work_space, engine, and
 # shop.
@@ -337,12 +340,6 @@ class GUI(Frame):
         self.character = self.game_data.build_character()
 
         self.boss = self.game_data.build_boss(self)
-        #Hacks and Items for debugging
-        #for hack in load_hacks():
-        #    self.character.add_hack(hack)
-        #
-        #for item in load_items():
-        #    self.character.add_item(item)
 
         self.character_name = StringVar()
         self.character_exp = StringVar()
@@ -356,6 +353,7 @@ class GUI(Frame):
         self.boss_name = StringVar()
         self.boss_health = StringVar()
         self.boss_distance = StringVar()
+        self.boss_distance_progress = IntVar()
         
         self.update_name()
         self.update_exp()
@@ -410,8 +408,11 @@ class GUI(Frame):
         self.make_boss_frame()
         self.make_banner()
         self.make_stats_banner()
+        self.make_notification_area()
         self.make_footer()
 
+        self.update_distance_bar()
+        
         self.frames = {}
 
         work_space_frame = Work_Space(self, self.character)
@@ -425,8 +426,93 @@ class GUI(Frame):
 
         #create the notification handler. this is threaded so the whole program
         #doesn't hang when we make the frame wait.
-        Notification(GUI.notification_queue, self.master).start()
-        GUI.notify('put_type_here', 'Welcome to your Daily <Hack>!')        
+        Notification(GUI.notification_queue, self).start()
+        GUI.notify('put_type_here', 'Welcome to your Daily <Hack>!')
+
+    def configure_distance_bar_color(self):
+        #Configure color based on distance
+        #Green:100-67 Yellow:66-33 Red:32-0
+        style = Style()
+        style.theme_use('clam')
+        style.configure("red.Horizontal.TProgressbar",
+                        foreground='red',
+                        background='red')
+        
+        style.configure("yellow.Horizontal.TProgressbar",
+                        foreground='yellow',
+                        background='yellow')
+        
+        style.configure("green.Horizontal.TProgressbar",
+                        foreground='green',
+                        background='green')
+
+
+        distance = self.boss.get_distance()
+
+        current_style = ''
+        
+        if distance > 66:
+            current_style = 'green.Horizontal.TProgressbar'
+
+        elif distance > 32:
+            current_style = 'yellow.Horizontal.TProgressbar'
+
+        else:
+            current_style = 'red.Horizontal.TProgressbar'
+            
+        self.boss_distance_bar.configure(style=current_style)
+
+
+    def update_distance_bar(self, debug=0):
+        if debug > 0:
+            current_val = self.boss_distance_progress.get()
+            self.boss_distance_progress.set(current_val + debug)
+            
+        else:
+            value = 100 - self.boss.get_distance()
+            self.boss_distance_progress.set(value)
+
+        try:
+            self.configure_distance_bar_color()
+        except:
+            pass
+        
+    def make_notification_area(self):
+        notification_style = Style()
+        notification_style.configure('notif.TFrame')
+        self.notification_area = Frame(self, style='notif.TFrame')
+        self.notification_area.columnconfigure(1, weight=1)
+
+        #Boss Distance Area
+        boss_distance_bar_label = Label(self.notification_area,
+                                        text = "Boss Distance",
+                                        padding = 2,
+                                        foreground = "black",
+                                        font='arial 12 bold')
+        boss_distance_bar_label.grid(row=0, column=0, sticky='ew')
+        self.boss_distance_bar = Progressbar(self.notification_area,
+                                             variable = self.boss_distance_progress,
+                                             maximum = 100)
+
+        
+        self.boss_distance_bar.grid(row=0, column=1, sticky='ew')
+        self.configure_distance_bar_color()
+        
+        #Feedback Area
+        feedback_label = Label(self.notification_area,
+                                        text = "Feedback",
+                                        padding = 2,
+                                        foreground = "black",
+                                        font='arial 12 bold')
+        feedback_label.grid(row=1, column=0, sticky='ew')
+        
+        self.notification_message = Message(self.notification_area, text="blah blah blah", width=1200)
+        
+        self.notification_message.configure(background='#000000', foreground = '#ffffff', anchor = W, font='arial 12')
+        
+        self.notification_message.grid(row=1, column=1, sticky='ew')
+        self.notification_area.grid(row=3, column=0, columnspan=5, sticky='ew')
+
 
     def make_menu_bar(self):
         """
@@ -460,10 +546,20 @@ class GUI(Frame):
         self.help_menu = Menu(self.menu, tearoff=0)
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
         self.help_menu.add_command(label="About", command=self.temp_menu_func)
+        #Used for distance bar debugging
+        self.help_menu.add_command(label="Test", command=self.distance_test)
         self.menu.add_cascade(label="HELP", menu=self.help_menu)
 
         self.master.config(menu=self.menu)
 
+    def distance_test(self):
+        #Increas boss distance
+        if self.boss.get_distance() > 0:
+            self.boss.approach_character(5)
+            self.update_boss_data()
+        
+        #self.update_distance_bar(5)
+        
     def enable_debug(self):
         self.options_menu.entryconfig(0, state="disabled")
         self.options_menu.entryconfig(1, state="normal")
@@ -797,6 +893,8 @@ class GUI(Frame):
         self.boss_name.set(self.boss.get_title())
         self.boss_health.set("Defenses: " + str(self.boss.get_health()))
         self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
+        #Update boss distance progress bar
+        self.update_distance_bar()
         
     def update_boss_msg(self):
         # used for updating the boss image tool tip message
@@ -935,7 +1033,7 @@ class GUI(Frame):
             self.redraw()
             self.update_stats_banner()
             self.change_character_emotion(1, "mainHappy.gif")
-            self.attack_boss(100)
+            self.attack_boss(5)
             return True
 
 
@@ -1049,18 +1147,46 @@ class GUI(Frame):
         self.check_level()
         self.update_level()
 
+    #BOSS Methods
     def attack_boss(self, amount):
         self.boss.damage(amount)
+        self.update_boss_data()
+        
         if self.boss.health < 1:
             self.defeat_boss()
-            self.update_boss_data()
+
+    #def defeat_boss(self):
+    #    self.inst_notify("exclamation", self.boss.get_title() + 
+    #                        " attacks your systems!")
+    #    self.character.health -= 5
 
     def defeat_boss(self):
-        self.inst_notify("exclamation", self.boss.get_title() + 
-                            " attacks your systems!")
-        self.character.health -= 5
-        
+        '''
+        You defeat the boss/authoritative figure
+        Should gain experience, cash
+        '''
+        self.inst_notify("exclamation", self.boss.get_defeat_message())
 
+        #Increase character cash based on boss level
+        reward = [500,750,1200,2000,5000]
+
+        self.character.cash += reward[self.boss.level]
+
+        #Increase character experience
+        experience_gain = [100,400,900,1500,2500]
+        
+        self.character.exp += experience_gain[self.boss.level]
+
+        #Upgrade boss to next authoritative figure
+        self.boss.next()
+        self.update_boss_data()
+        self.update_distance_bar()
+        self.check_boss()
+        
+        
+        #Reflect character update
+        self.update_stats_banner()
+        
     def check_boss(self):
         if self.boss.active == 1:
             if self.boss.new == 1:
