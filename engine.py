@@ -1053,7 +1053,7 @@ class GUI(Frame):
         self.boss.damage(amount)
         if self.boss.health < 1:
             self.defeat_boss()
-            self.update_boss_name()
+            self.update_boss_data()
 
     def defeat_boss(self):
         self.inst_notify("exclamation", self.boss.get_title() + 
