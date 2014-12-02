@@ -1030,12 +1030,19 @@ class GUI(Frame):
         self.redraw()
 
     def complete_hack(self, hack_ID):
+
+        hack_value = int(self.character.get_hack(hack_ID).value)
+        hack_type = self.character.get_hack(hack_ID).h_type
+
         #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
         if(self.character.complete_hack(hack_ID)):
             self.redraw()
             self.update_stats_banner()
-            self.change_character_emotion(1, "mainHappy.gif")
-            self.attack_boss(5)
+            if hack_value < 0: # For negative habits
+                self.change_character_emotion(2, "mainMad.gif")
+            else:
+                self.change_character_emotion(1, "mainHappy.gif")
+                self.attack_boss(5)
             self.check_time()
             return True
 

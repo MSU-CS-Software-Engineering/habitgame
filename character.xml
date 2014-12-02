@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
    <token>LSgDEkSmcWgAAAAAAAAa-xr7yNQyx3N1QR99znXp7U9PU3tBeb_W1nj4SvGdyvOF</token>
+   <version>0.0</version>
    <firstname>Joe</firstname>
    <lastname>Doe</lastname>
    <username>hacker_Joe20</username>
    <birthday>01-01-01</birthday>
-   <cash>123</cash>
-   <exp>0</exp>
-   <level>1</level>
-   <hacks>
-      <hack>
-         <h_type>task</h_type>
-         <title>a</title>
-         <desc>a</desc>
+   <cash>38</cash>
+   <exp>100</exp>
+   <level>3</level>
+   <boss>eydhY3RpdmUnOiAxLCAnbGV2ZWwnOiAxLCAnbmV3JzogMCwgJ2hlYWx0aCc6IDgwLCAnZGlzdGFuY2UnOiAxMDAsICdhdHRhY2tNdWx0JzogMS4wfQ==</boss>
+   <hacks/>
+   <items>
+      <item>
+         <title>CPU fan</title>
+         <desc>50% less damage for bad habits and missing habits</desc>
          <ID>0</ID>
-         <value>123</value>
-         <exp>100</exp>
-      </hack>
-      <hack>
-         <h_type>task</h_type>
-         <title>2</title>
-         <desc>2</desc>
+         <image>assets\art\cpufan.gif</image>
+         <value>50</value>
+         <uses>1</uses>
+         <item_type>CPU_fan</item_type>
+         <effect>0.5</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>component</component>
+      </item>
+      <item>
+         <title>RAM 8gb</title>
+         <desc>Increases your characters max hacks to 8</desc>
          <ID>1</ID>
-         <value>123</value>
-         <exp>100</exp>
-      </hack>
-      <hack>
-         <h_type>task</h_type>
-         <title>123</title>
-         <desc>1233</desc>
+         <image>assets\art\ramgreen.gif</image>
+         <value>75</value>
+         <uses>1</uses>
+         <item_type>RAM</item_type>
+         <effect>8.0</effect>
+         <active>False</active>
+         <duration>0.0</duration>
+         <component>component</component>
+      </item>
+      <item>
+         <title>Desk</title>
+         <desc>Increase max number of software slots to 1 and component slots to 2</desc>
          <ID>2</ID>
-         <value>321</value>
-         <exp>100</exp>
-      </hack>
-      <hack>
-         <h_type>task</h_type>
-         <title>5</title>
-         <desc>5</desc>
+         <image>assets\art\desk.gif</image>
+         <value>500</value>
+         <uses>1</uses>
+         <item_type>desk</item_type>
+         <effect>2.0</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>hardware</component>
+      </item>
+      <item>
+         <title>RAM 16gb</title>
+         <desc>Increases your characters max hacks to 16</desc>
          <ID>3</ID>
-         <value>123</value>
-         <exp>100</exp>
-      </hack>
-   </hacks>
-   <items/>
+         <image>assets\art\ramred.gif</image>
+         <value>150</value>
+         <uses>1</uses>
+         <item_type>RAM</item_type>
+         <effect>16</effect>
+         <active>True</active>
+         <duration>0</duration>
+         <component>component</component>
+      </item>
+   </items>
 </data>

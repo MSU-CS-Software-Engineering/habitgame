@@ -95,7 +95,7 @@ class Character:
  
         if hack.h_type == "daily":
             if hack.timestamp < date.today():
-                self.hacks[hack_id].timestamp = date.today()
+                self.hacks[hack_ID].timestamp = date.today()
             else:
                 return False
 
@@ -107,8 +107,8 @@ class Character:
 
         self.cash += ceil(float(hack.value) * value_mult)
         
-        if hack.h_type == "habit":
-            return False
+        #if hack.h_type == "habit":
+        #    return False  #FIXME
 
         return True
 

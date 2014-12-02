@@ -122,7 +122,8 @@ class hack_frame(Frame):
             
     def complete(self):
         if(self.top_class.complete_hack(self.ID)):
-            self.destroy()
+            if self.hack_type != "habit":
+                self.destroy()
 
 class Work_Space_Tab(Canvas):
     def __init__(self, parent, width, height):
