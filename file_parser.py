@@ -287,6 +287,8 @@ class file_parser:
             item_type_element = newdoc.createElement('item_type')
             effect_element = newdoc.createElement('effect')
             active_element = newdoc.createElement('active')
+            duration_element = newdoc.createElement('duration')
+            component_element = newdoc.createElement('component')
             
             title_text_node = newdoc.createTextNode(item['title'])
             description_text_node = newdoc.createTextNode(item['desc'])
@@ -297,6 +299,8 @@ class file_parser:
             item_type_text_node = newdoc.createTextNode(str(item['item_type']))
             effect_text_node = newdoc.createTextNode(str(item['effect']))
             active_text_node = newdoc.createTextNode(str(item['active']))
+            duration_text_node = newdoc.createTextNode(str(item['duration']))
+            component_text_node = newdoc.createTextNode(str(item['component']))
             
             title_element.appendChild(title_text_node)
             description_element.appendChild(description_text_node)
@@ -307,6 +311,8 @@ class file_parser:
             item_type_element.appendChild(item_type_text_node)
             effect_element.appendChild(effect_text_node)
             active_element.appendChild(active_text_node)
+            duration_element.appendChild(duration_text_node)
+            component_element.appendChild(component_text_node)
             
             node.appendChild(title_element)
             node.appendChild(description_element)
@@ -317,6 +323,8 @@ class file_parser:
             node.appendChild(item_type_element)
             node.appendChild(effect_element)
             node.appendChild(active_element)
+            node.appendChild(duration_element)
+            node.appendChild(component_element)
             
             items_element.appendChild(node)
         

@@ -24,7 +24,7 @@ class Character:
         self.hacks = {}
         self.items = []
         self.effects = {}
-        self.equiped = {}
+        self.equipped = {}
 
     def serialize(self):
         """
@@ -36,14 +36,11 @@ class Character:
                           'exp' : self.exp,
                           'level' : self.level,
                           'hacks': None,
-                          'items': None,
-                          'effects': None,
-                          'equiped': None }
+                          'items': None }
 
         hacks_list = []
         items_list = []
-        effect_list = []
-        equiped_list = []
+
         
         for hack in self.hacks.values():
             hacks_list.append(hack.serialize())
@@ -51,23 +48,18 @@ class Character:
         for item in self.items:
             items_list.append(item.serialize())
 
-        for effect in self.effects:
-            effect_list.append(effect.serialize())
 
-        for equiped in self.equiped:
-            equiped_list.append(equiped.serialize())
 
         character_dict['hacks'] = hacks_list
         character_dict['items'] = items_list
-        character_dict['effects'] = effect_list
-        character_dict['equiped'] = effect_list
+
         
         return character_dict
 
     def add_hack(self, hack):
         hack_limit = 4
-        if 'RAM' in self.equiped:
-            hack_limit = self.equiped['RAM'].effect
+        if 'RAM' in self.equipped:
+            hack_limit = self.equipped['RAM'].effect
         if len(self.hacks) < hack_limit:
             if hack.ID == -1:
                 hack.ID = self.hack_index
@@ -92,10 +84,10 @@ class Character:
 
         value_mult = 1
         exp_mult = 1
-        if 'motherboard' in self.equiped:
-            exp_mult *= self.equiped['motherboard'].effect
-        if 'GPU' in self.equiped:
-            value_mult *= self.equiped['GPU'].effect
+        if 'motherboard' in self.equipped:
+            exp_mult *= self.equipped['motherboard'].effect
+        if 'GPU' in self.equipped:
+            value_mult *= self.equipped['GPU'].effect
         if 'fork' in self.effects:
             value_mult *= self.effects['fork'].effect
         if 'penetrate' in self.effects:
@@ -150,7 +142,7 @@ class Character:
         
     def equip_item(self, item):
         
-        self.equiped[item.item_type] = item
+        self.equipped[item.item_type] = item
 
     def remove_item(self, item_ID):
         try:

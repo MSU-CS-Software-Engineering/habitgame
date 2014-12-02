@@ -137,7 +137,9 @@ class Game_Data:
                                 item['uses'],
                                 item['item_type'],
                                 item['active'],
-                                item['effect'])
+                                float(item['effect']),
+				float(item['duration']),
+				item['component'])
 
                 new_character.add_item(new_item)
 
@@ -1129,7 +1131,7 @@ class GUI(Frame):
         self.update_item_count()
 
     def unequip_item(self, item):
-        return self.character.equiped.pop(item.item_type, None)
+        return self.character.equipped.pop(item.item_type, None)
         
     def remove_effect(self, item):
         return self.character.effects.pop(item.item_type, None)
@@ -1183,8 +1185,8 @@ class GUI(Frame):
     #BOSS Methods
     def attack_boss(self, amount):
         damage_mult = 1
-        if 'CPU' in self.character.equiped:
-            damage_mult *= self.character.equiped['CPU'].effect
+        if 'CPU' in self.character.equipped:
+            damage_mult *= self.character.equipped['CPU'].effect
 
         if 'penetrate' in self.character.effects:
             damage_mult *= self.character.effects['penetrate'].effect

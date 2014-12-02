@@ -433,7 +433,7 @@ class MyInventory():
             MyInventory.components_tips.append(None)
 
         addedEffects = []
-        equipedItems = []
+        equippedItems = []
         
         for i in range(len(tmpSoftware)):
             not_full = True
@@ -448,18 +448,18 @@ class MyInventory():
         for i in range(len(tmpComponent)):
             not_full = True
             if tmpComponent[i][0] != None:
-                equiped = MyInventory.api.unequip_item(tmpComponent[i][1])
-                MyInventory.component_effects.pop(equiped.item_type, None)
+                equipped = MyInventory.api.unequip_item(tmpComponent[i][1])
+                MyInventory.component_effects.pop(equipped.item_type, None)
                 not_full = MyInventory.addComponent(tmpComponent[i][1])
                 if not not_full:
                     MyInventory.my_inventory.addItem(tmpComponent[i][1])
                 else:
-                    equipedItems.append(equiped)
+                    equippedItems.append(equipped)
                    
         for i in addedEffects:
             MyInventory.api.use_item(i)
 
-        for i in equipedItems:
+        for i in equippedItems:
             MyInventory.api.use_item(i)
             
     def time_up(item_type):
@@ -492,19 +492,52 @@ class Inventory():
         for item in char_items:
             # item does not need to be added to the inventory since it's active
             if item.active == 'True': # item.active is a string
-                item_type = item.item_type
-                # add to active item frame
-                if item_type == 'software':
-                    MyInventory.addSoftware(item)
-                elif item_type == 'hardware':
+                item_type = item.component
+                if item_type == 'hardware':
                     MyInventory.addHardware(item)
-                elif item_type == 'component':
-                    MyInventory.addComponent(item)
+                    if item.item_type == 'laptop':
+                        MyInventory.max_software = 1
+                        MyInventory.max_components = 3
+                        MyInventory.resetInventory()
+
+                    if item.item_type == 'desktop':
+                        MyInventory.max_software = 2
+                        MyInventory.max_components = 3
+                        MyInventory.resetInventory()
+
+                    if item.item_type == 'terminal':
+                        MyInventory.max_software = 3
+                        MyInventory.max_components = 5
+                        MyInventory.resetInventory()
+
+                    if item.item_type == 'server':
+                        MyInventory.max_software = 3
+                        MyInventory.max_components = 4
+                        MyInventory.resetInventory()
+
+                    if item.item_type == 'desk':
+                        MyInventory.max_software = 1
+                        MyInventory.max_components = 2
+                        MyInventory.resetInventory()
             else:
                 self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
                                                     item.uses, item.value, item.item_type, item.active,
                                                     row, col, item), None])
-
+        for item in char_items:
+            # item does not need to be added to the inventory since it's active
+            if item.active == 'True': # item.active is a string
+                item_type = item.component
+                # add to active item frame
+                if item_type == 'software':
+                    MyInventory.addSoftware(item)
+                    MyInventory.api.use_item(item)
+                elif item_type == 'component':
+                    MyInventory.addComponent(item)
+                    MyInventory.api.use_item(item)
+            else:
+                self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
+                                                    item.uses, item.value, item.item_type, item.active,
+                                                    row, col, item), None])
                 col += 1
                 if col == 5: # max of 5 items in a row
                     col = 0
