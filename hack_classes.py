@@ -86,9 +86,12 @@ class Character:
             print("Invalid hack id!")
             return False
 
-    def complete_hack(self, hack_ID):
+    def complete_hack(self, hack_ID, current_date = 'P_DATE'):
+        if current_date == 'P_DATE':
+            current_date = self.parent.current_date
+            
         hack = self.get_hack(hack_ID)
-
+        
         value_mult = 1
         exp_mult = 1
         if 'motherboard' in self.equipped:
@@ -98,12 +101,14 @@ class Character:
         if 'fork' in self.effects:
             value_mult *= self.effects['fork'].effect
         if 'penetrate' in self.effects:
-            value_mult /= self.effects['penetrate'].effect
+            value_mult /= self.effects['penetrate'].effect   
  
         if hack.h_type == "daily":
             if hack.timestamp < self.parent.current_date:
                 self.hacks[hack_ID].timestamp = self.parent.current_date
+
             else:
+                #self.remove_hack(hack_ID)
                 return False
 
         elif hack.h_type == "task":
@@ -202,6 +207,7 @@ class Hack:
         self.ID = -1
         self.timestamp = timestamp
         #self.timestamp = date.today() - timedelta(hours=24)
+
         self.value = value
         self.exp = exp    #Temporarily defaults to 100.
 

@@ -89,6 +89,14 @@ class Game_Data:
             self.birthday = self.parser.parse_birthday()
             self.token = self.parser.parse_token()
             self.version = self.parser.parse_version()
+
+            #1.1 is the first version available. If this project were
+            #to continue we would have self.version pull from a text
+            #file that was created during the original build or
+            #subsequent updates. For now we are hardcoding the first version.
+            self.version =1.1
+            #self.parser.parse_version()
+
             self.character_data['level'] = self.parser.parse_level()
             self.character_data['exp'] = self.parser.parse_exp()
             self.character_data['cash'] = self.parser.parse_cash()
@@ -590,10 +598,11 @@ class GUI(Frame):
         self.options_menu.entryconfig(2, state="normal")
 
     def check_dailies_init(self):
-        lastran_date = datetime.strptime(self.game_data.lastran,
+        if self.game_data.lastran != '':
+            lastran_date = datetime.strptime(self.game_data.lastran,
                                              "%Y-%m-%d").date()
             
-        days_elapsed = self.current_date.day - lastran_date.day
+            days_elapsed = self.current_date.day - lastran_date.day
         
         
     def check_dailies(self):
@@ -606,6 +615,11 @@ class GUI(Frame):
                 missed_dailies += 1
                 days_missed = (self.current_date - hack.timestamp).days
                 self.character.cash -= int(hack.value)*days_missed
+
+                #Make sure character cash isn't negative 
+                if self.character.cash < 0:
+                    self.character.cash = 0
+                    
                 self.boss.distance_from_character -= 5 
                 self.redraw()
                 self.update_stats_banner()
@@ -623,7 +637,6 @@ class GUI(Frame):
     def advance_to_next_day(self):
         self.current_date += timedelta(hours=24)
         self.check_dailies()
-
         
 
     def set_player_stats(self):
@@ -1073,7 +1086,7 @@ class GUI(Frame):
         hack_type = self.character.get_hack(hack_ID).h_type
 
         #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
-        if(self.character.complete_hack(hack_ID)):
+        if(self.character.complete_hack(hack_ID, self.current_date)):
             self.redraw()
             self.update_stats_banner()
             if hack_value < 0: # For negative habits
@@ -1153,7 +1166,6 @@ class GUI(Frame):
         self.update_item_count()
         
     def use_item(self, item):
-        
         if item.component == 'software':
             if item.item_type == 'smokescreen':
                 self.boss.push_back(item.effect)
@@ -1256,12 +1268,18 @@ class GUI(Frame):
         #Increase character cash based on boss level
         reward = [500,750,1200,2000,5000]
 
-        self.character.cash += reward[self.boss.level]
+        if self.boss.level < len(reward):
+            self.character.cash += reward[self.boss.level]
+        else:
+            self.character.cash += reward[len(reward)-1]
 
         #Increase character experience
         experience_gain = [100,400,900,1500,2500]
-        
-        self.character.exp += experience_gain[self.boss.level]
+
+        if self.boss.level < len(experience_gain):
+            self.character.exp += experience_gain[self.boss.level]
+        else:
+            self.character.exp += experience_gain[len(experience_gain)-1]
 
         #Upgrade boss to next authoritative figure
         self.boss.next()
