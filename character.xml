@@ -2,53 +2,140 @@
 <data>
    <token>LSgDEkSmcWgAAAAAAAAa-xr7yNQyx3N1QR99znXp7U9PU3tBeb_W1nj4SvGdyvOF</token>
    <version>1.1</version>
+   <lastran>2014-12-03</lastran>
    <firstname>Joe</firstname>
    <lastname>Doe</lastname>
    <username>hacker_Joe20</username>
    <birthday>01-01-01</birthday>
-   <cash>2788</cash>
-   <exp>100</exp>
-   <level>3</level>
-   <boss>eydhY3RpdmUnOiAxLCAnYXR0YWNrTXVsdCc6IDEuMCwgJ2hlYWx0aCc6IDgwLCAnbGV2ZWwnOiAxLCAnbmV3JzogMCwgJ2Rpc3RhbmNlJzogOTV9</boss>
+   <cash>0</cash>
+   <exp>0</exp>
+   <level>17</level>
+   <boss>eydkaXN0YW5jZSc6IDEwMCwgJ25ldyc6IDAsICdoZWFsdGgnOiAyMCwgJ2F0dGFja011bHQnOiAxLjAsICdhY3RpdmUnOiAxLCAnbGV2ZWwnOiA1fQ==</boss>
    <hacks>
       <hack>
          <h_type>habit</h_type>
-         <title>party</title>
-         <desc>popioo</desc>
+         <title>Learn Mandarin Chinese</title>
+         <desc>Title is self-explanatory</desc>
          <ID>0</ID>
-         <value>     99</value>
-         <exp>100</exp>
-      </hack>
-      <hack>
-         <h_type>daily</h_type>
-         <title>farting</title>
-         <desc>Rip Some!! 3-%</desc>
-         <ID>1</ID>
-         <value>   999</value>
+         <value>200</value>
          <exp>100</exp>
       </hack>
       <hack>
          <h_type>task</h_type>
-         <title>pissing</title>
-         <desc>wee wee</desc>
+         <title>Walk the dog</title>
+         <desc>Walk Max at 4:30</desc>
+         <ID>1</ID>
+         <value>50</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>daily</h_type>
+         <title>Brush Teeth</title>
+         <desc>Fight plaque on the oral battlefield</desc>
          <ID>2</ID>
-         <value>2</value>
+         <value>100</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>task</h_type>
+         <title>Get Milk</title>
+         <desc>Pick up milk from the grocery store</desc>
+         <ID>3</ID>
+         <value>75</value>
          <exp>100</exp>
       </hack>
    </hacks>
    <items>
       <item>
+         <title>GPU 2gb</title>
+         <desc>2x habit reward</desc>
+         <ID>0</ID>
+         <image>assets\art\gpured.gif</image>
+         <value>300</value>
+         <uses>1</uses>
+         <item_type>GPU</item_type>
+         <effect>2.0</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>component</component>
+      </item>
+      <item>
          <title>CPU fan</title>
          <desc>50% less damage for bad habits and missing habits</desc>
-         <ID>0</ID>
+         <ID>1</ID>
          <image>assets\art\cpufan.gif</image>
          <value>50</value>
          <uses>1</uses>
          <item_type>CPU_fan</item_type>
          <effect>0.5</effect>
-         <active>False</active>
-         <duration>0</duration>
+         <active>True</active>
+         <duration>0.0</duration>
          <component>component</component>
+      </item>
+      <item>
+         <title>Laptop</title>
+         <desc>Increase max number of software slots to 1 and component slots to 3</desc>
+         <ID>2</ID>
+         <image>assets\art\laptop.gif</image>
+         <value>1250</value>
+         <uses>1</uses>
+         <item_type>laptop</item_type>
+         <effect>3.0</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>hardware</component>
+      </item>
+      <item>
+         <title>Motherboard</title>
+         <desc>2x exeriance reward</desc>
+         <ID>3</ID>
+         <image>assets\art\mobo.gif</image>
+         <value>200</value>
+         <uses>1</uses>
+         <item_type>motherboard</item_type>
+         <effect>2.0</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>component</component>
+      </item>
+      <item>
+         <title>GPU 1gb</title>
+         <desc>50% more habit reward</desc>
+         <ID>4</ID>
+         <image>assets\art\gpugreen.gif</image>
+         <value>150</value>
+         <uses>1</uses>
+         <item_type>GPU</item_type>
+         <effect>1.5</effect>
+         <active>False</active>
+         <duration>0.0</duration>
+         <component>component</component>
+      </item>
+      <item>
+         <title>Smokescreen</title>
+         <desc>restore to full health</desc>
+         <ID>5</ID>
+         <image>assets\art\smoke.gif</image>
+         <value>5000</value>
+         <uses>5</uses>
+         <item_type>smokescreen</item_type>
+         <effect>50.0</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>software</component>
+      </item>
+      <item>
+         <title>Smokescreen Burst</title>
+         <desc>Restore to full health</desc>
+         <ID>6</ID>
+         <image>assets\art\smoke.gif</image>
+         <value>5000</value>
+         <uses>5</uses>
+         <item_type>smokescreen</item_type>
+         <effect>100.0</effect>
+         <active>True</active>
+         <duration>0.0</duration>
+         <component>software</component>
       </item>
    </items>
 </data>
