@@ -325,12 +325,18 @@ class Work_Space(Frame):
         self.daily_canvas.set_frames(self.dailies_dict)
         self.task_canvas.set_frames(self.tasks_dict)
         
+        frame.add(self.tab_habits)
+        frame.add(self.tab_tasks)
+        frame.add(self.tab_dailies)
+        frame.add(self.tab_shop)
+        frame.add(self.tab_inventory)
         
-        frame.add(self.tab_habits, state='hidden')
-        frame.add(self.tab_tasks, state='hidden')
-        frame.add(self.tab_dailies, state='hidden')
-        frame.add(self.tab_shop, state='hidden')
-        frame.add(self.tab_inventory, state='hidden')
+
+        frame.hide(self.tab_habits)
+        frame.hide(self.tab_tasks)
+        frame.hide(self.tab_dailies)
+        frame.hide(self.tab_shop)
+        frame.hide(self.tab_inventory)
 
 
         add_task_btn = Button(self.tab_tasks, text = 'Add new task', image=plus_img, compound="left",
