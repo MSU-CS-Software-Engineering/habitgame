@@ -85,7 +85,12 @@ class Game_Data:
             self.character_data['name'] = self.parser.parse_name()
             self.birthday = self.parser.parse_birthday()
             self.token = self.parser.parse_token()
-            self.version = self.parser.parse_version()
+            #1.1 is the first version available. If this project were
+            #to continue we would have self.version pull from a text
+            #file that was created during the original build or
+            #subsequent updates. For now we are hardcoding the first version.
+            self.version =1.1
+            #self.parser.parse_version()
 
             self.character_data['level'] = self.parser.parse_level()
             self.character_data['exp'] = self.parser.parse_exp()
