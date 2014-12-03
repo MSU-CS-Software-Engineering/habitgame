@@ -236,12 +236,10 @@ class MyInventory():
                 MyInventory.api.remove_effect(MyInventory.software_items[_id][1])
                 MyInventory.software_items[_id][0].destroy()
                 MyInventory.software_items[_id][0] = None
-                if uses_left > 0:
-                    MyInventory.my_inventory.addItem(MyInventory.software_items[_id][1])
-                    MyInventory.api.set_active(MyInventory.software_items[_id][1], 'False')
-                else:
-                    pass#MyInventory.api.remove_item(MyInventory.software_items[_id][1])
                 
+                MyInventory.my_inventory.addItem(MyInventory.software_items[_id][1])
+                MyInventory.api.set_active(MyInventory.software_items[_id][1], 'False')
+
                 # shift all items to the left on the gui if any visual node gaps
                 for i in range(_id+1, MyInventory.max_software, 1):
                     if MyInventory.software_items[i][0] != None:
@@ -256,7 +254,7 @@ class MyInventory():
     def addHardware(item):
         if MyInventory.hardware_count < MyInventory.max_hardware:
             i = MyInventory.hardware_count
-
+            print(i)
             img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
             hardware_label = Label(MyInventory.hardware_frame[MyInventory.hardware_count], image=img)
             hardware_label.grid(sticky=W)
@@ -266,7 +264,7 @@ class MyInventory():
             
             MyInventory.hardware_tips[i] = ToolTip(hardware_label, item.name + ': ' + item.description)
             MyInventory.hardware_items[i] = [hardware_label, item]
-        
+            
             MyInventory.hardware_count += 1
             return True
         else:
@@ -300,11 +298,9 @@ class MyInventory():
                 MyInventory.api.unequip_item(MyInventory.hardware_items[_id][1])
                 MyInventory.hardware_items[_id][0].destroy()
                 MyInventory.hardware_items[_id][0] = None
-                if uses_left > 0:
-                    MyInventory.my_inventory.addItem(MyInventory.hardware_items[_id][1])
-                    MyInventory.api.set_active(MyInventory.hardware_items[_id][1], 'False')
-                else:
-                    pass#MyInventory.api.remove_item(MyInventory.hardware_items[_id][1])
+                
+                MyInventory.my_inventory.addItem(MyInventory.hardware_items[_id][1])
+                MyInventory.api.set_active(MyInventory.hardware_items[_id][1], 'False')
                     
                 # shift all items to the left on the gui if any visual node gaps
                 for i in range(_id+1, MyInventory.max_hardware, 1):
@@ -319,10 +315,11 @@ class MyInventory():
                 MyInventory.max_software = 0
                 MyInventory.max_components = 1
                 MyInventory.resetInventory()
+                
     
     def addComponent(item):
-        if item.item_type in MyInventory.component_effects:
-            return False
+        #if item.item_type in MyInventory.component_effects:
+            #return False
 
         if MyInventory.components_count < MyInventory.max_components:
             i = MyInventory.components_count
@@ -373,12 +370,10 @@ class MyInventory():
                 MyInventory.api.unequip_item(MyInventory.component_items[_id][1])
                 MyInventory.component_items[_id][0].destroy()
                 MyInventory.component_items[_id][0] = None
-                if uses_left > 0:
-                    MyInventory.my_inventory.addItem(MyInventory.component_items[_id][1])
-                    MyInventory.api.set_active(MyInventory.component_items[_id][1], 'False')
-                else:
-                    pass#MyInventory.api.remove_item(MyInventory.component_items[_id][1])
 
+                MyInventory.my_inventory.addItem(MyInventory.component_items[_id][1])
+                MyInventory.api.set_active(MyInventory.component_items[_id][1], 'False')
+ 
                 # shift all items to the left on the gui if any visual node gaps
                 for i in range(_id+1, MyInventory.max_components, 1):
                     if MyInventory.component_items[i][0] != None:
@@ -388,9 +383,9 @@ class MyInventory():
                         
                 if MyInventory.components_count > 0:
                     MyInventory.components_count -= 1
-                    
+
+        
     def resetInventory():
-     
         tmpComponent = MyInventory.component_items
         tmpSoftware = MyInventory.software_items
 
@@ -407,7 +402,7 @@ class MyInventory():
                 MyInventory.components_tips[i].destroy()
             if MyInventory.component_items[i][0] != None:
                 MyInventory.component_items[i][0].destroy()
-
+    
         MyInventory.software_frame = []
         MyInventory.software_tips = []
         MyInventory.software_items = []
@@ -442,21 +437,26 @@ class MyInventory():
             not_full = True
             if tmpSoftware[i][0] != None:
                 effect = MyInventory.api.remove_effect(tmpSoftware[i][1])
-                MyInventory.software_effects.pop(effect.item_type, None)
+                MyInventory.software_effects.pop(tmpSoftware[i][1].item_type, None)
                 not_full = MyInventory.addSoftware(tmpSoftware[i][1])
                 if not not_full:
+                    MyInventory.api.set_active(tmpSoftware[i][1], 'False')
                     MyInventory.my_inventory.addItem(tmpSoftware[i][1])
                 else:
+                    MyInventory.api.set_active(tmpSoftware[i][1], 'True')
                     addedEffects.append(effect)
+                    
         for i in range(len(tmpComponent)):
             not_full = True
             if tmpComponent[i][0] != None:
                 equipped = MyInventory.api.unequip_item(tmpComponent[i][1])
-                MyInventory.component_effects.pop(equipped.item_type, None)
+                MyInventory.component_effects.pop(tmpComponent[i][1].item_type, None)
                 not_full = MyInventory.addComponent(tmpComponent[i][1])
                 if not not_full:
+                    MyInventory.api.set_active(tmpComponent[i][1], 'False')
                     MyInventory.my_inventory.addItem(tmpComponent[i][1])
                 else:
+                    MyInventory.api.set_active(tmpComponent[i][1], 'True')
                     equippedItems.append(equipped)
                    
         for i in addedEffects:
@@ -486,7 +486,6 @@ class Inventory():
     def initInventory(self, char_items):
         row, col = 0, 0
         for item in char_items:
-            print(str(item.ID) + " " + item.name)
             # item does not need to be added to the inventory since it's active
             if item.active == 'True': # item.active is a string
                 item_type = item.component
@@ -516,16 +515,8 @@ class Inventory():
                         MyInventory.max_software = 1
                         MyInventory.max_components = 2
                         MyInventory.resetInventory()
-            else:
-                self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
-                                                    item.uses, item.value, item.item_type, item.active,
-                                                    row, col, item, item.component), None])
-        for item in char_items:
-            # item does not need to be added to the inventory since it's active
-            if item.active == 'True': # item.active is a string
-                item_type = item.component
-                # add to active item frame
-                if item_type == 'software':
+                        
+                elif item_type == 'software':
                     MyInventory.addSoftware(item)
                     MyInventory.api.use_item(item)
                 elif item_type == 'component':
@@ -535,6 +526,7 @@ class Inventory():
                 self.items.append([SetInventoryItem(item.name, item.image, item.description, item.effect,
                                                     item.uses, item.value, item.item_type, item.active,
                                                     row, col, item, item.component), None])
+
                 col += 1
                 if col == 5: # max of 5 items in a row
                     col = 0
@@ -695,6 +687,8 @@ class Inventory():
 
         
     def useItem(self, item_id, item):
+        print(MyInventory.components_count)
+        print(MyInventory.max_components)
         if item_id != None:
             if self.items[item_id][1] != None:
                 not_full = True
@@ -710,7 +704,6 @@ class Inventory():
                         
                     self.selceted_item_id = None
                     self.selected_item_ref = None
-                    self.remove_selected_item()
                     self.resetItemInfo()
 					
                 else:
@@ -752,16 +745,12 @@ class Inventory():
                                 MyInventory.max_software = 1
                                 MyInventory.max_components = 2
                                 MyInventory.resetInventory()
-
-                        new_uses = int(self.items[item_id][0].getUses()) - 1
-                        self.items[item_id][0].setUses(str(new_uses))                
+           
                         MyInventory.api.use_item(item)
-                        if item.item_type != 'smokescreen':
-                            self.remove_item_from_inventory(item_id)    
-                            self.selceted_item_id = None
-                            self.selected_item_ref = None
-                            self.remove_selected_item()
-                            self.resetItemInfo()
+                        self.remove_item_from_inventory(item_id)
+                        self.selceted_item_id = None
+                        self.selected_item_ref = None
+                        self.resetItemInfo()
 
                     else:
                         messagebox.showinfo('Active Space Full', 'Active ' + item_type + ' area full.')
@@ -771,7 +760,6 @@ class Inventory():
     def resetItemInfo(self):
         self.nameSelect.configure(text='')
         self.descriptSelect.configure(text='')
-        self.useSelect.configure(text='')
         self.costSelect.configure(text='')
         self.typeSelect.configure(text='')
 
@@ -785,8 +773,6 @@ class Inventory():
         self.nameSelect.configure(text=name)
         cost = "Purchase price: $" + str(cost)
         self.costSelect.configure(text=cost)
-        uses = "Uses left: " + str(uses)
-        self.useSelect.configure(text=uses)
         item_type = "Item type: " + item_type
         self.typeSelect.configure(text=item_type)
         descript = "Item effect: " + descript
@@ -797,8 +783,6 @@ class Inventory():
         """
         repositions all items in the inventory once a item is removed or added
         """
-        # self.inv_canvas.winfo_width()
-        # self.items[i][1].winfo_width()
         _row, _col = 0, 0
         for i in range(len(self.items)):
             if self.items[i][1] != None:
@@ -930,14 +914,9 @@ class Inventory():
         self.costSelect = Label(item_info_div, text='', padding='10 5 5 5')
         self.costSelect.grid(sticky='news', row=2, columnspan=2)
         self.costSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
-
-        # selected item's number of uses
-        self.useSelect = Label(item_info_div, text='', padding='10 5 5 5')
-        self.useSelect.grid(sticky='news', row=3, columnspan=2)
-        self.useSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
-        
+                
         # selected item's description
         self.descriptSelect = Label(item_info_div, text='', wraplength=370, padding='10 5 5 5')
-        self.descriptSelect.grid(sticky='news', row=4, columnspan=2)
+        self.descriptSelect.grid(sticky='news', row=3, columnspan=2)
         self.descriptSelect.configure(font='arial 12 bold', foreground='#48D220', background=panel_color_bg)
         self.descriptSelect.grid_columnconfigure(1, weight=1)

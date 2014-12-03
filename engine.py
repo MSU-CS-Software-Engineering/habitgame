@@ -938,7 +938,7 @@ class GUI(Frame):
         
         rank = Label(self.stats_frame, textvariable = self.character_rank)
         rank.grid(row = 0, column=9, sticky='nesw', pady=4, padx=5)
-        rank.configure(background="#283D57", font="arial 12 bold", foreground='#3C2AFF')
+        rank.configure(background="#283D57", font="arial 12 bold", foreground='#5BADD9')
 
         self.style.configure("statsLabel.TLabel", background="#283D57", font="arial 12 bold", foreground='white')
         self.style.configure("statsFrame.TFrame", background="#283D57")
@@ -1264,32 +1264,34 @@ class GUI(Frame):
         self._geom=geom
 
     def set_active(self, item, state):
-        print(len(self.character.items))
-        print(item.ID)
-        self.character.items[item.ID].active = state
-        self.update_item_count()
+        try:
+            self.character.items[item.ID].active = state
+            self.update_item_count()
+        except:
+            pass
         
     def use_item(self, item):
-        if item.component == 'software':
-            if item.item_type == 'smokescreen':
-                self.boss.push_back(item.effect)
-                self.update_boss_data()
-            else:
-                self.character.use_item(item)
+        if item != None:
+            if item.component == 'software':
+                if item.item_type == 'smokescreen':
+                    self.boss.push_back(item.effect)
+                    self.update_boss_data()
+                else:
+                    self.character.use_item(item)
+                    self.update_item_count()
+            elif item.component == 'hardware':
+                self.character.equip_item(item)
                 self.update_item_count()
-        elif item.component == 'hardware':
-            self.character.equip_item(item)
+            elif item.component == 'component':
+                self.character.equip_item(item)
+                self.update_item_count()
+            elif item.component == 'misc':
+                self.character.use_item(item)
+                self.update_exp()
+            elif item.component == 'food':
+                messagebox.showinfo('Break Time', 'Go enjoy some ' + str(item.description))
+                self.remove_item(item)
             self.update_item_count()
-        elif item.component == 'component':
-            self.character.equip_item(item)
-            self.update_item_count()
-        elif item.component == 'misc':
-            self.character.use_item(item)
-            self.update_exp()
-        elif item.component == 'food':
-            messagebox.showinfo('Break Time', 'Go enjoy some ' + str(item.description))
-            self.remove_item(item)
-        self.update_item_count()
 
     def unequip_item(self, item):
         return self.character.equipped.pop(item.item_type, None)

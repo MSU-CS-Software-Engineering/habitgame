@@ -281,7 +281,7 @@ class Shop():
                  get_item.value,
                  get_item.uses,
                  get_item.item_type,
-                 False, 
+                 'False', 
                  get_item.effect,
                  get_item.duration,
                  get_item.component))
