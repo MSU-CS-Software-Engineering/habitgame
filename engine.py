@@ -612,35 +612,37 @@ class GUI(Frame):
             lastran_date = datetime.strptime(self.game_data.lastran,
                                              "%Y-%m-%d").date()
 
-            missed_dailies = 0
+            
             days_missed = (self.current_date - lastran_date).days
-            for hack in self.character.hacks.values():
-                if hack.h_type == "daily":
-                    missed_dailies += 1
-                    
-                    self.remove_cash(int(hack.value)*days_missed)
-                    self.boss.distance_from_character -= 5
-                    self.redraw()
-                    self.update_stats_banner()
-                    self.update_boss_data()
-                    self.update_distance_bar()
-                    self.change_character_emotion(1, "mainMad.gif")
+            if days_missed > 0:
+                missed_dailies = 0
+                for hack in self.character.hacks.values():
+                    if hack.h_type == "daily":
+                        missed_dailies += 1
 
-            if missed_dailies:
-                if missed_dailies > 1:
-                    plural_string = "s"
-                    
-                else:
-                    plural_string = ""
-                    self.inst_notify("Exclamation",
-                                     "You failed to complete " 
-                + str(missed_dailies) + " daily hack" + plural_string + "!")
+                        self.remove_cash(int(hack.value)*days_missed)
+                        self.boss.distance_from_character -= 5
+                        self.redraw()
+                        self.update_stats_banner()
+                        self.update_boss_data()
+                        self.update_distance_bar()
+                        self.change_character_emotion(1, "mainMad.gif")
 
-            note_message_part_1 = 'Make sure to log in every day and '
-            note_message_part_2 = 'complete your hacks or you may be robbed!'
-            self.inst_notify("Note", note_message_part_1 + \
-                             note_message_part_2)
-        
+                if missed_dailies:
+                    if missed_dailies > 1:
+                        plural_string = "s"
+
+                    else:
+                        plural_string = ""
+                        self.inst_notify("Exclamation",
+                                         "You failed to complete " 
+                    + str(missed_dailies) + " daily hack" + plural_string + "!")
+
+                note_message_part_1 = 'Make sure to log in every day and '
+                note_message_part_2 = 'complete your hacks or you may be robbed!'
+                self.inst_notify("Note", note_message_part_1 + \
+                                 note_message_part_2)
+
                              
         
     def check_dailies(self):
