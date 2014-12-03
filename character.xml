@@ -6,11 +6,36 @@
    <lastname>Doe</lastname>
    <username>hacker_Joe20</username>
    <birthday>01-01-01</birthday>
-   <cash>38</cash>
+   <cash>1960</cash>
    <exp>100</exp>
    <level>3</level>
-   <boss>eydhY3RpdmUnOiAxLCAnbGV2ZWwnOiAxLCAnbmV3JzogMCwgJ2hlYWx0aCc6IDgwLCAnZGlzdGFuY2UnOiAxMDAsICdhdHRhY2tNdWx0JzogMS4wfQ==</boss>
-   <hacks/>
+   <boss>eydoZWFsdGgnOiA4MCwgJ2F0dGFja011bHQnOiAxLjAsICdhY3RpdmUnOiAxLCAnZGlzdGFuY2UnOiAxMDAsICduZXcnOiAwLCAnbGV2ZWwnOiAxfQ==</boss>
+   <hacks>
+      <hack>
+         <h_type>habit</h_type>
+         <title>party</title>
+         <desc>popioo</desc>
+         <ID>0</ID>
+         <value>     99</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>daily</h_type>
+         <title>farting</title>
+         <desc>Rip Some!! 3-%</desc>
+         <ID>1</ID>
+         <value>   999</value>
+         <exp>100</exp>
+      </hack>
+      <hack>
+         <h_type>task</h_type>
+         <title>pissing</title>
+         <desc>wee wee</desc>
+         <ID>2</ID>
+         <value>2</value>
+         <exp>100</exp>
+      </hack>
+   </hacks>
    <items>
       <item>
          <title>CPU fan</title>
@@ -59,9 +84,9 @@
          <value>150</value>
          <uses>1</uses>
          <item_type>RAM</item_type>
-         <effect>16</effect>
+         <effect>16.0</effect>
          <active>True</active>
-         <duration>0</duration>
+         <duration>0.0</duration>
          <component>component</component>
       </item>
    </items>

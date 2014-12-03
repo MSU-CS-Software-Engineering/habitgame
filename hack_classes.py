@@ -69,7 +69,14 @@ class Character:
         
         return False
 
-
+    def edit_hack(self, hack_ID, hack):
+        try:
+            self.remove_hack(hack_ID)
+            hack.ID = hack_ID
+            self.add_hack(hack)
+        except:
+            print("Edit failed!")
+            return False
 
     def remove_hack(self, hack_ID):
         try:
@@ -106,9 +113,6 @@ class Character:
             self.exp += ceil(float(hack.exp) * exp_mult)
 
         self.cash += ceil(float(hack.value) * value_mult)
-        
-        #if hack.h_type == "habit":
-        #    return False  #FIXME
 
         return True
 
