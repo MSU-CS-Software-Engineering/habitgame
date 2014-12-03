@@ -557,17 +557,15 @@ class GUI(Frame):
         self.menu = Menu(self)
 
         self.file_menu = Menu(self.menu, tearoff=0)
-        self.file_menu.add_command(label="New game", command=self.temp_menu_func)
-        self.file_menu.add_command(label="Load game", command=self.temp_menu_func)
         self.file_menu.add_command(label="Save game", command=self.save_game)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.master.destroy)
         self.menu.add_cascade(label="FILE", menu=self.file_menu)
 
         self.edit_menu = Menu(self.menu, tearoff=0)
-        self.edit_menu.add_command(label="Habits", command=self.temp_menu_func)
-        self.edit_menu.add_command(label="Dailies", command=self.temp_menu_func)
-        self.edit_menu.add_command(label="Tasks", command=self.temp_menu_func)
+        self.edit_menu.add_command(label="Habits", command=self.go_to_habits)
+        self.edit_menu.add_command(label="Tasks", command=self.go_to_tasks)
+        self.edit_menu.add_command(label="Dailies", command=self.go_to_dailies)
         self.menu.add_cascade(label="EDIT", menu=self.edit_menu)
 
         self.options_menu = Menu(self.menu, tearoff=0)
@@ -1257,6 +1255,7 @@ class GUI(Frame):
             self.character.set_item_IDs()
             self.character_cash.set(self.character.cash)
             self.update_item_count()
+            GUI.notify("type", str(item.name) + " bought!")
             return item
         else:
            self.inst_notify("exclamation", "Not enough cash for " + item.name + "!")
