@@ -1,4 +1,5 @@
 import os.path
+from datetime import date, timedelta #For Timestamps
 from tkinter  import *
 from tkinter.ttk import *
 
@@ -182,19 +183,43 @@ class Landing_Area_Frame(Frame):
 
             
         if self.number_of_frames != 0:
+            
             for key in hack_dict.keys():
                 hack = hack_dict[key]
-                hack_frame = Hack_Frame(self, hack.ID, self.hack_type)
-                hack_frame.grid(row = self.get_current_row(),
-                                column = self.column,
-                                sticky = 'new', pady = (3,0),
-                                padx = 3)
-                hack_frame.set_name_label(hack.title)
-                hack_frame.set_description_label(hack.description)
-                hack_frame.set_value_label(str(hack.value))
-                hack_frame.set_date_time_label(str(hack.timestamp))
-                
-                self.frames.append(hack_frame)
+ 
+                if hack.timestamp <= date.today():
+                    
+                    hack_frame = Hack_Frame(self, hack.ID, self.hack_type)
+                    hack_frame.grid(row = self.get_current_row(),
+                                    column = self.column,
+                                    sticky = 'new', pady = (3,0),
+                                    padx = 3)
+                    hack_frame.set_name_label(hack.title)
+                    hack_frame.set_description_label(hack.description)
+                    hack_frame.set_value_label(str(hack.value))
+                    hack_frame.set_date_time_label(str(hack.timestamp))
+                    
+                    self.frames.append(hack_frame)
+                else:
+                    flag_hack = False
+                    for key in hack_dict.keys():
+                        hack = hack_dict[key]
+                        if hack.h_type == 'daily' and hack.timestamp <= date.today():
+                            flag_hack = True
+                    if flag_hack == False:
+                        hack_frame = Hack_Frame(self, 0, self.hack_type, 1)
+                        hack_frame.grid(row = 1, column = self.column, sticky = 'news',pady = (3,0), padx = 3)
+
+                        if self.hack_type == 'daily':
+                            label_string = 'dailies'
+                        elif self.hack_type == 'habit':
+                            label_string = 'habits'
+                        else:
+                            label_string = 'tasks'
+                            
+                        hack_frame.set_name_label("No "+label_string+" to Display")
+                        self.frames.append(hack_frame)
+
   
 class Landing_Page (Frame):
     def __init__(self, parent, character):

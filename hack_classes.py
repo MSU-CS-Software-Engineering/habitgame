@@ -102,7 +102,6 @@ class Character:
         if hack.h_type == "daily":
             if hack.timestamp < current_date:
                 self.hacks[hack_ID].timestamp = current_date
-                print(self.hacks[hack_ID].timestamp)
 
             else:
                 #self.remove_hack(hack_ID)
@@ -202,7 +201,7 @@ class Hack:
         self.title = title
         self.description = desc
         self.ID = -1
-        self.timestamp = date.today() - timedelta(hours=24)
+        self.timestamp = date.today() #- timedelta(hours=24)
         self.value = value
         self.exp = exp    #Temporarily defaults to 100.
 
