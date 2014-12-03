@@ -582,7 +582,7 @@ class GUI(Frame):
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
         self.help_menu.add_command(label="About", command=self.temp_menu_func)
         #Used for distance bar debugging
-        self.help_menu.add_command(label="Distance test", command=self.distance_test)
+        #self.help_menu.add_command(label="Distance test", command=self.distance_test)
         self.menu.add_cascade(label="HELP", menu=self.help_menu)
 
         self.master.config(menu=self.menu)
@@ -623,9 +623,10 @@ class GUI(Frame):
                 if self.character.cash < 0:
                     self.character.cash = 0
                     
-                self.boss.distance_from_character -= 5 
+                self.boss.distance_from_character -= 5
                 self.redraw()
                 self.update_stats_banner()
+                self.update_boss_data()
                 self.update_distance_bar()
                 self.change_character_emotion(1, "mainMad.gif")
 
