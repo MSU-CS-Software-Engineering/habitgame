@@ -101,8 +101,11 @@ class Character:
  
         if hack.h_type == "daily":
             if hack.timestamp < date.today():
-                self.hacks[hack_ID].timestamp = date.today()
+                
+                self.hacks[hack_ID].timestamp = date.today() + timedelta(hours=24)
+                print(date.today())
             else:
+                #self.remove_hack(hack_ID)
                 return False
 
         elif hack.h_type == "task":
