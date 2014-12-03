@@ -583,6 +583,7 @@ class GUI(Frame):
                 self.redraw()
                 self.update_stats_banner()
                 self.update_distance_bar()
+                self.update_boss_data()
                 self.change_character_emotion(1, "mainMad.gif")
 
         if missed_dailies:
@@ -1041,6 +1042,9 @@ class GUI(Frame):
             self.update_stats_banner()
             if hack_value < 0: # For negative habits
                 self.change_character_emotion(2, "mainMad.gif")
+                self.boss.distance_from_character -= 5 
+                self.update_distance_bar()
+                self.update_boss_data()
             else:
                 self.change_character_emotion(1, "mainHappy.gif")
                 self.attack_boss(5)
