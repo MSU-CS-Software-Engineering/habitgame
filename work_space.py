@@ -538,7 +538,7 @@ class Work_Space(Frame):
         else:
 
             submitted_hack = Hack(h_type, title_string,
-                                  desc_string.strip('\t\n'), value_string)
+                                  desc_string.strip('\t\n'), value_string, self.parent.current_date)
 
             if not hack_data:
                 self.parent.add_hack(submitted_hack)

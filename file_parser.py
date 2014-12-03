@@ -82,6 +82,9 @@ class file_parser:
 
     def parse_version(self):
         return self.parse_simple('version')
+
+    def parse_lastran(self):
+        return self.parse_simple('lastran')
     
     def parse_exp(self):
         return self.parse_simple('exp')
@@ -223,6 +226,7 @@ class file_parser:
         char_lname = char['lastname']
         char_birthday = char['birthday']
         char_token = char['token']
+        char_lastran = char['lastran']
         char_version = str(char['version'])
         char_name = char['name']
         char_cash = str(char['cash'])
@@ -236,6 +240,7 @@ class file_parser:
         root_element = newdoc.createElement('data')
         token_element = newdoc.createElement('token')
         version_element = newdoc.createElement('version')
+        lastran_element = newdoc.createElement('lastran')
         firstname_element = newdoc.createElement('firstname')
         lastname_element = newdoc.createElement('lastname')
         username_element = newdoc.createElement('username')
@@ -250,6 +255,7 @@ class file_parser:
         #Create text nodes for elements
         token_text = newdoc.createTextNode(char_token)
         version_text = newdoc.createTextNode(char_version)
+        lastran_text = newdoc.createTextNode(char_lastran)
         firstname_text = newdoc.createTextNode(char_fname)
         lastname_text = newdoc.createTextNode(char_lname)
         username_text = newdoc.createTextNode(char_name)
@@ -262,6 +268,7 @@ class file_parser:
         #Append text nodes to elements
         token_element.appendChild(token_text)
         version_element.appendChild(version_text)
+        lastran_element.appendChild(lastran_text)
         firstname_element.appendChild(firstname_text)
         lastname_element.appendChild(lastname_text)
         username_element.appendChild(username_text)
@@ -331,6 +338,7 @@ class file_parser:
         #Append elements to root element
         root_element.appendChild(token_element)
         root_element.appendChild(version_element)
+        root_element.appendChild(lastran_element)
         root_element.appendChild(firstname_element)
         root_element.appendChild(lastname_element)
         root_element.appendChild(username_element)

@@ -14,7 +14,8 @@ class Character:
         hacks: Current hacks          (list of Hack objects)
         items: Owned (soft|hard)ware  (list of Item objects)
     """
-    def __init__(self, name):
+    def __init__(self, name, parent):
+        self.parent = parent
         self.hack_index = 0
         self.name = name
         self.cash = 0
@@ -100,8 +101,8 @@ class Character:
             value_mult /= self.effects['penetrate'].effect
  
         if hack.h_type == "daily":
-            if hack.timestamp < date.today():
-                self.hacks[hack_ID].timestamp = date.today()
+            if hack.timestamp < self.parent.current_date:
+                self.hacks[hack_ID].timestamp = self.parent.current_date
             else:
                 return False
 
@@ -194,12 +195,13 @@ class Hack:
         value: Cash reward/penalty                   (int)
         exp: Experience point value                  (int)
     """
-    def __init__(self, h_type, title, desc, value, exp = 100 ):
+    def __init__(self, h_type, title, desc, value, timestamp, exp = 100 ):
         self.h_type = h_type
         self.title = title
         self.description = desc
         self.ID = -1
-        self.timestamp = date.today() - timedelta(hours=24)
+        self.timestamp = timestamp
+        #self.timestamp = date.today() - timedelta(hours=24)
         self.value = value
         self.exp = exp    #Temporarily defaults to 100.
 

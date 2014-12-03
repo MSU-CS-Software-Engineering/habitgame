@@ -29,13 +29,14 @@ import threading
 import queue
 from tooltip import *
 
-current_date = date.today()
+#current_date = date.today()
 
 class Game_Data:
     """
     Class for main game functions
     """
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
         self.savefile = 'character.xml'
         self.character_data = {}
         self.character_data['firstname'] = ''
@@ -43,12 +44,13 @@ class Game_Data:
         self.character_data['birthday'] = ''
         self.token = ''
         self.version = 1.1
+        self.lastran = ''
         self.parser = file_parser(self.savefile)
 
     def show_character_data(self):
         print(self.character_data)
 
-    def save_data(self, character, boss):
+    def save_data(self, character, boss, lastran):
         """
         Saves the current character data to
         Game_Data's character_data
@@ -60,6 +62,7 @@ class Game_Data:
         self.character_data['token'] = self.token
         self.character_data['boss'] = boss.serialize()
         self.character_data['version'] = self.version
+        self.character_data['lastran'] = str(lastran)
         print("Character data saved")
 
     def save_to_file(self):
@@ -86,12 +89,20 @@ class Game_Data:
             self.birthday = self.parser.parse_birthday()
             self.token = self.parser.parse_token()
             self.version = self.parser.parse_version()
-
             self.character_data['level'] = self.parser.parse_level()
             self.character_data['exp'] = self.parser.parse_exp()
             self.character_data['cash'] = self.parser.parse_cash()
             self.character_data['items'] = self.parser.parse_items()
 
+            lastran = self.parser.parse_lastran()
+            
+            if lastran == 0:
+                self.lastran = ''
+
+            else:
+                self.lastran = lastran
+
+            
             boss_data = self.parser.parse_boss()
 
             if boss_data == 0:
@@ -109,49 +120,50 @@ class Game_Data:
         Builds a character object from the Game_Data's
         character_data.
         """
-        try:
-            character_data = self.character_data
-            new_character = Character(character_data['name'])
-            new_character.level = character_data['level']
-            new_character.exp = character_data['exp']
-            new_character.cash = character_data['cash']
-        
-            if new_character.level < 1:
-                new_character.level = 1
+        #try:
+        character_data = self.character_data
+        new_character = Character(character_data['name'], self.parent)
+        new_character.level = character_data['level']
+        new_character.exp = character_data['exp']
+        new_character.cash = character_data['cash']
+
+        if new_character.level < 1:
+            new_character.level = 1
 
 
-            for hack in character_data['hacks']:
-                new_hack = Hack(hack['h_type'],
-                                hack['title'],
-                                hack['desc'],
-                                hack['value'],
-                                hack['exp'])
+        for hack in character_data['hacks']:
+            new_hack = Hack(hack['h_type'],
+                            hack['title'],
+                            hack['desc'],
+                            hack['value'],
+                            self.parent.current_date,
+                            hack['exp'])
 
-                new_character.add_hack(new_hack)
+            new_character.add_hack(new_hack)
 
-            for item in character_data['items']:
-                new_item = Item(item['title'],
-                                item['desc'],
-                                item['image'],
-                                item['value'],
-                                item['uses'],
-                                item['item_type'],
-                                item['active'],
-                                float(item['effect']),
-				float(item['duration']),
-				item['component'])
+        for item in character_data['items']:
+            new_item = Item(item['title'],
+                            item['desc'],
+                            item['image'],
+                            item['value'],
+                            item['uses'],
+                            item['item_type'],
+                            item['active'],
+                            float(item['effect']),
+                            float(item['duration']),
+                            item['component'])
 
-                new_character.add_item(new_item)
+            new_character.add_item(new_item)
 
-            #Resynchronize hack index
-            if len(new_character.hacks.keys()) > 0:
-                new_character.hack_index = max(new_character.hacks.keys())
+        #Resynchronize hack index
+        if len(new_character.hacks.keys()) > 0:
+            new_character.hack_index = max(new_character.hacks.keys())
 
-            return new_character
+        return new_character
 
-        except:
-            self.error("Failed to build character from" \
-                       " default character data")
+        #except:
+        #    self.error("Failed to build character from" \
+        #               " default character data")
 
     def build_boss(self, parent):
         '''
@@ -327,13 +339,21 @@ class GUI(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
         pad = 100
-
-        self.game_data = Game_Data()
+        self.current_date = date.today()
+        
+        self.game_data = Game_Data(self)
         self.game_data.load_data()
+        
+        
+        #This variable holds a constant record
+        #of the actual system date, so not to
+        #corrupt the lastran in character.xml
+        self.const_current_date = self.current_date
 
         #Check for software updater
         self.updater = Updater(self.game_data.version,
                                master)
+        
         self.updater.check_update()
 
         #bring back root window
@@ -431,6 +451,8 @@ class GUI(Frame):
         Notification(GUI.notification_queue, self).start()
         GUI.notify('put_type_here', 'Welcome to your Daily <Hack>!')
 
+        self.check_dailies_init()
+
     def configure_distance_bar_color(self):
         #Configure color based on distance
         #Green:100-67 Yellow:66-33 Red:32-0
@@ -508,7 +530,8 @@ class GUI(Frame):
                                         font='arial 12 bold')
         feedback_label.grid(row=1, column=0, sticky='ew')
         
-        self.notification_message = Message(self.notification_area, text="blah blah blah", width=1200)
+        self.notification_message = Message(self.notification_area,
+                                            text="", width=1200)
         
         self.notification_message.configure(background='#000000', foreground = '#ffffff', anchor = W, font='arial 12')
         
@@ -566,17 +589,22 @@ class GUI(Frame):
         self.options_menu.entryconfig(1, state="normal")
         self.options_menu.entryconfig(2, state="normal")
 
-    def advance_to_next_day(self):
-        global current_date
-        current_date += timedelta(hours=24)
+    def check_dailies_init(self):
+        lastran_date = datetime.strptime(self.game_data.lastran,
+                                             "%Y-%m-%d").date()
+            
+        days_elapsed = self.current_date.day - lastran_date.day
+        
+        
+    def check_dailies(self):
         missed_dailies = 0
 
         for hack in self.character.hacks.values():
             if hack.h_type == "daily" and (hack.timestamp < 
-                (current_date - timedelta(hours=24))):
+                (self.current_date - timedelta(hours=24))):
 
                 missed_dailies += 1
-                days_missed = (date.today() - hack.timestamp).days
+                days_missed = (self.current_date - hack.timestamp).days
                 self.character.cash -= int(hack.value)*days_missed
                 self.boss.distance_from_character -= 5 
                 self.redraw()
@@ -591,6 +619,12 @@ class GUI(Frame):
                 plural_string = ""
             self.inst_notify("Exclamation", "You failed to complete " 
                 + str(missed_dailies) + " daily hack" + plural_string + "!")
+            
+    def advance_to_next_day(self):
+        self.current_date += timedelta(hours=24)
+        self.check_dailies()
+
+        
 
     def set_player_stats(self):
         data_window = Toplevel(self)
@@ -991,6 +1025,10 @@ class GUI(Frame):
 
         landing_page.go_to_tasks_button.bind("<1>", lambda e : self.page_navigator('task'))
 
+    def check_assets(self):
+        #for item in self.character.items:
+        pass
+    
     def update_cash(self):
         self.character_cash.set(str(self.character.cash))
 
@@ -1353,7 +1391,8 @@ class GUI(Frame):
     def save_game(self):
         #messagebox.showinfo("Save", "Game Saved!")
         GUI.notify("", "Game data saved!")
-        self.game_data.save_data(self.character, self.boss)
+        self.game_data.save_data(self.character, self.boss,
+                                 self.const_current_date)
         self.game_data.save_to_file()
 
     def no_where(self):
