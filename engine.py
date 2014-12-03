@@ -252,87 +252,89 @@ class Notification(threading.Thread):
     def run(self):
 
         while True:
-            
-            #in python, .get() blocks until an item is available in the queue.
-            #Not a problem; since this thread's only purpose is to handle
-            #notifications it can sit there forever for all we care
-            notification = self.notification
-            msg = self.notify_queue.get()
-            notification.configure(text=msg)
-            #notification_frame = Frame(self.master, style='footer.TFrame')
-            #notification_frame.config(height=50, width=300)
-            #notification_frame.place(relx=0.9967, y=230, anchor="se")
-            
-            #notification = Message(notification_frame, text=msg, width=200)
-            #notification.grid(row=0, column=1, sticky = E)
-            #notification.configure(background='#d9d9d9', foreground = '#d9d9d9', anchor = E, font='arial 16')
-            
-            #fade in. since frames don't support alpha, it simulates real alpha
-            #by simply changing the background color from the original to black
-            notification.configure(foreground='#191919')
-            sleep(0.05)
-            notification.configure(foreground='#292929')
-            sleep(0.05)
-            notification.configure(foreground='#393939')
-            sleep(0.05)
-            notification.configure(foreground='#494949')
-            sleep(0.05)
-            notification.configure(foreground='#595959')
-            sleep(0.05)
-            notification.configure(foreground='#696969')
-            sleep(0.05)
-            notification.configure(foreground='#797979')
-            sleep(0.05)
-            notification.configure(foreground='#898989')
-            sleep(0.05)
-            notification.configure(foreground='#999999')
-            sleep(0.05)
-            notification.configure(foreground='#a9a9a9')
-            sleep(0.05)
-            notification.configure(foreground='#b9b9b9')
-            sleep(0.05)
-            notification.configure(foreground='#c9c9c9')
-            sleep(0.05)
-            notification.configure(foreground='#d9d9d9')
+            try:
+                #in python, .get() blocks until an item is available in the queue.
+                #Not a problem; since this thread's only purpose is to handle
+                #notifications it can sit there forever for all we care
+                notification = self.notification
+                msg = self.notify_queue.get()
+                notification.configure(text=msg)
+                #notification_frame = Frame(self.master, style='footer.TFrame')
+                #notification_frame.config(height=50, width=300)
+                #notification_frame.place(relx=0.9967, y=230, anchor="se")
+                
+                #notification = Message(notification_frame, text=msg, width=200)
+                #notification.grid(row=0, column=1, sticky = E)
+                #notification.configure(background='#d9d9d9', foreground = '#d9d9d9', anchor = E, font='arial 16')
+                
+                #fade in. since frames don't support alpha, it simulates real alpha
+                #by simply changing the background color from the original to black
+                notification.configure(foreground='#191919')
+                sleep(0.05)
+                notification.configure(foreground='#292929')
+                sleep(0.05)
+                notification.configure(foreground='#393939')
+                sleep(0.05)
+                notification.configure(foreground='#494949')
+                sleep(0.05)
+                notification.configure(foreground='#595959')
+                sleep(0.05)
+                notification.configure(foreground='#696969')
+                sleep(0.05)
+                notification.configure(foreground='#797979')
+                sleep(0.05)
+                notification.configure(foreground='#898989')
+                sleep(0.05)
+                notification.configure(foreground='#999999')
+                sleep(0.05)
+                notification.configure(foreground='#a9a9a9')
+                sleep(0.05)
+                notification.configure(foreground='#b9b9b9')
+                sleep(0.05)
+                notification.configure(foreground='#c9c9c9')
+                sleep(0.05)
+                notification.configure(foreground='#d9d9d9')
 
-            #wait a few seconds at full alpha
-            sleep(1)
-            
-            #longer messages delay a little bit longer to allow the user to read it
-            if len(msg) > 15:
-                sleep(0.5)
-            if len(msg) > 30:
-                sleep(1.5)
-            if len(msg) > 35:
+                #wait a few seconds at full alpha
                 sleep(1)
+                
+                #longer messages delay a little bit longer to allow the user to read it
+                if len(msg) > 15:
+                    sleep(0.5)
+                if len(msg) > 30:
+                    sleep(1.5)
+                if len(msg) > 35:
+                    sleep(1)
 
-            #fade out
-            sleep(0.05)
-            notification.configure(foreground='#c9c9c9')
-            sleep(0.05)
-            notification.configure(foreground='#b9b9b9')
-            sleep(0.05)
-            notification.configure(foreground='#a9a9a9')
-            sleep(0.05)
-            notification.configure(foreground='#999999')
-            sleep(0.05)
-            notification.configure(foreground='#898989')
-            sleep(0.05)
-            notification.configure(foreground='#797979')
-            sleep(0.05)
-            notification.configure(foreground='#696969')
-            sleep(0.05)
-            notification.configure(foreground='#595959')
-            sleep(0.05)
-            notification.configure(foreground='#494949')
-            sleep(0.05)
-            notification.configure(foreground='#393939')
-            sleep(0.05)
-            notification.configure(foreground='#292929')
-            sleep(0.05)
-            notification.configure(foreground='#191919')
+                #fade out
+                sleep(0.05)
+                notification.configure(foreground='#c9c9c9')
+                sleep(0.05)
+                notification.configure(foreground='#b9b9b9')
+                sleep(0.05)
+                notification.configure(foreground='#a9a9a9')
+                sleep(0.05)
+                notification.configure(foreground='#999999')
+                sleep(0.05)
+                notification.configure(foreground='#898989')
+                sleep(0.05)
+                notification.configure(foreground='#797979')
+                sleep(0.05)
+                notification.configure(foreground='#696969')
+                sleep(0.05)
+                notification.configure(foreground='#595959')
+                sleep(0.05)
+                notification.configure(foreground='#494949')
+                sleep(0.05)
+                notification.configure(foreground='#393939')
+                sleep(0.05)
+                notification.configure(foreground='#292929')
+                sleep(0.05)
+                notification.configure(foreground='#191919')
 
-            notification.configure(text='')
+                notification.configure(text='')
+            except:
+                pass
             #delay just a smidgeon between messages.
             sleep(0.3)
             
@@ -596,6 +598,7 @@ class GUI(Frame):
         self.options_menu.entryconfig(0, state="disabled")
         self.options_menu.entryconfig(1, state="normal")
         self.options_menu.entryconfig(2, state="normal")
+        self.update_boss_data()
 
     def check_dailies_init(self):
         if self.game_data.lastran != '':
@@ -904,30 +907,27 @@ class GUI(Frame):
 
     def make_boss_frame(self):
         # create boss data frame
-        boss_frame_bg = Frame(self, padding = '40 0 0 0')
-        boss_frame_bg.grid(row = 2, column = 2, sticky = 'news')
+        self.boss_frame_bg = Frame(self, padding = '40 0 0 0')
+        self.boss_frame_bg.grid(row = 2, column = 2, sticky = 'news')
         
-        self.update_boss_data()
-        boss_name = Label(boss_frame_bg, textvariable = self.boss_name)
+        boss_name = Label(self.boss_frame_bg, textvariable = self.boss_name)
         boss_name.grid(row = 0, column = 0, sticky = W, pady = 4, padx = 5)
         boss_name.configure(font = 'arial 14 bold')
 
-        boss_frame = Frame(boss_frame_bg)
-        boss_frame.grid(row = 1, column = 0, sticky = 'news')
+        self.boss_frame = Frame(self.boss_frame_bg)
+        self.boss_frame.grid(row = 1, column = 0, sticky = 'news')
         
         # load boss image
-        boss_file = PhotoImage(file = self.boss.get_boss_img())
-        boss_image = Label(boss_frame, image = boss_file, cursor = 'hand2')
-        boss_image.grid(row = 0, column = 0, stick = W, padx = 5)
-        boss_image.image = boss_file
+        self.boss_file = PhotoImage(file = self.boss.get_boss_img())
+        self.boss_image = Label(self.boss_frame, image = self.boss_file, cursor = 'hand2')
+        self.boss_image.grid(row = 0, column = 0, stick = W, padx = 5)
+        self.boss_image.image = self.boss_file
         
-        ToolTip(boss_image, self.boss.display_message(), self.update_boss_msg, '#CD3D3D')
+        self.boss_tip = ToolTip(self.boss_image, self.boss.display_message(), self.update_boss_msg, '#CD3D3D')
 
         # create boss data frame for defenses and distance variables
-        boss_stats_frame = Frame(boss_frame)
+        boss_stats_frame = Frame(self.boss_frame)
         boss_stats_frame.grid(row = 0, column = 1, sticky = 'news')
-
-        self.update_boss_data()
         
         boss_health = Label(boss_stats_frame, textvariable = self.boss_health)
         boss_health.grid(row = 0, column = 0, sticky = W)
@@ -936,12 +936,23 @@ class GUI(Frame):
         boss_distance = Label(boss_stats_frame, textvariable = self.boss_distance)
         boss_distance.grid(row = 1, column = 0, sticky = W)
         boss_distance.configure(font = 'arial 12 bold')
+
+        self.update_boss_data()
         
     def update_boss_data(self):
         # call when the boss name, defenses, or distance changes
         self.boss_name.set(self.boss.get_title())
         self.boss_health.set("Defenses: " + str(self.boss.get_health()))
         self.boss_distance.set("Distance: " + str(self.boss.get_distance()))
+        
+        # change boss image
+        self.boss_file = PhotoImage(file = self.boss.get_boss_img())
+        self.boss_image = Label(self.boss_frame, image = self.boss_file, cursor = 'hand2')
+        self.boss_image.grid(row = 0, column = 0, stick = W, padx = 5)
+        self.boss_image.image = self.boss_file
+
+        self.boss_tip = ToolTip(self.boss_image, self.boss.display_message(), self.update_boss_msg, '#CD3D3D')
+        
         #Update boss distance progress bar
         self.update_distance_bar()
         
@@ -1162,6 +1173,8 @@ class GUI(Frame):
         self._geom=geom
 
     def set_active(self, item, state):
+        print(len(self.character.items))
+        print(item.ID)
         self.character.items[item.ID].active = state
         self.update_item_count()
         
@@ -1283,10 +1296,9 @@ class GUI(Frame):
 
         #Upgrade boss to next authoritative figure
         self.boss.next()
-        self.update_boss_data()
         self.update_distance_bar()
         self.check_boss()
-        
+        self.update_boss_data()
         
         #Reflect character update
         self.update_stats_banner()
