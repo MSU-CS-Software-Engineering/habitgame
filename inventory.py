@@ -254,7 +254,7 @@ class MyInventory():
     def addHardware(item):
         if MyInventory.hardware_count < MyInventory.max_hardware:
             i = MyInventory.hardware_count
-            print(i)
+
             img = PhotoImage(file=MyInventory.getEmblemImage(item.name))
             hardware_label = Label(MyInventory.hardware_frame[MyInventory.hardware_count], image=img)
             hardware_label.grid(sticky=W)
@@ -569,7 +569,7 @@ class Inventory():
         t_name = self.items[i][0].getName()
         t_descript = self.items[i][0].getDescription()
         t_cost = self.items[i][0].getValue()
-        t_type = self.items[i][0].getItemType()
+        t_type = self.items[i][0].getComponent()
         
         # create frame border for item
         border_frame = Frame(self.inventoryFrame, padding=2, cursor='hand2', style='c.TFrame')
@@ -687,8 +687,6 @@ class Inventory():
 
         
     def useItem(self, item_id, item):
-        print(MyInventory.components_count)
-        print(MyInventory.max_components)
         if item_id != None:
             if self.items[item_id][1] != None:
                 not_full = True

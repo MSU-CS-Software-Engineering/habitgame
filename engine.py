@@ -577,7 +577,6 @@ class GUI(Frame):
         self.options_menu.entryconfig(2, state="disabled")
 
         self.help_menu = Menu(self.menu, tearoff=0)
-        self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
         self.help_menu.add_command(label="About", command=self.spawn_about_window)
         #Used for distance bar debugging
         #self.help_menu.add_command(label="Distance test", command=self.distance_test)
