@@ -549,16 +549,15 @@ class GUI(Frame):
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
         self.help_menu.add_command(label="About", command=self.temp_menu_func)
         #Used for distance bar debugging
-        self.help_menu.add_command(label="Test", command=self.distance_test)
+        self.help_menu.add_command(label="Distance test", command=self.distance_test)
         self.menu.add_cascade(label="HELP", menu=self.help_menu)
 
         self.master.config(menu=self.menu)
 
     def distance_test(self):
         #Increas boss distance
-        if self.boss.get_distance() > 0:
-            self.boss.approach_character(5)
-            self.update_boss_data()
+        self.boss.approach_character(5)
+        self.update_boss_data()
         
         #self.update_distance_bar(5)
         
