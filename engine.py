@@ -468,10 +468,10 @@ class GUI(Frame):
     def update_distance_bar(self, debug=0):
         if debug > 0:
             current_val = self.boss_distance_progress.get()
-            self.boss_distance_progress.set(current_val + debug)
+            self.boss_distance_progress.set(current_val - debug)
             
         else:
-            value = 100 - self.boss.get_distance()
+            value = self.boss.get_distance()
             self.boss_distance_progress.set(value)
 
         try:
@@ -1242,6 +1242,21 @@ class GUI(Frame):
                            self.boss.display_message())
                 print("BOSS:", self.boss.display_message())
 
+    def steal_character_money(self, amount):
+        if self.character.cash > 0:
+            self.character.cash -= amount
+
+            
+            message = 'You were robbed!'
+            self.inst_notify('exclamation',
+                                message)
+
+        #Set character cash lower limit
+        if self.character.cash < 0:
+            self.character.cash = 0
+
+        self.update_cash()
+        
     def check_level(self):
         curr_level = int(self.character_level.get())
         exp = int(self.character_exp.get())

@@ -105,7 +105,6 @@ class Boss:
     def steal_money(self, amount):
         self.parent.steal_character_money(amount)
 
-        
     def damage(self, amount):
         if self.health - amount < 1:
             self.health = 0
@@ -116,9 +115,13 @@ class Boss:
         if self.distance_from_character > 0:
             self.distance_from_character -= distance
 
-        #Set distance lower limit
+        if self.distance_from_character < 1:
+            self.steal_money(self.level * 20)
+
+        #Set distance lower limit and steal character's money
         if self.distance_from_character < 0:
             self.distance_from_character = 0
+
             
     def push_back(self, distance):
         if self.distance_from_character < 100:
