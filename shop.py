@@ -82,71 +82,71 @@ class Shop():
         
         # component items
         self.items.append(SetItem('CPU 3.5 Ghz', os.path.join("assets", "art", "cpu.gif"),
-                               'component', "2x more damage to bosses", 300, 0, 1.5, 1, 'component'))
+                               'CPU', "2x more damage to bosses", 300, 0, 1.5, 1, 'component'))
         self.items.append(SetItem('CPU fan', os.path.join("assets", "art", "cpufan.gif"),
-                               'component', "50% less damage for bad habits and missing habits", 50, 0, .5, 1, 'component'))
+                               'CPU_fan', "50% less damage for bad habits and missing habits", 50, 0, .5, 1, 'component'))
         self.items.append(SetItem('GPU 1gb', os.path.join("assets", "art", "gpugreen.gif"),
-                               'component', "50% more habit reward", 150, 0, 1.5, 1, 'component' ))
+                               'GPU', "50% more habit reward", 150, 0, 1.5, 1, 'component' ))
         self.items.append(SetItem('GPU 2gb', os.path.join("assets", "art", "gpured.gif"),
-                               'component', "2x habit reward", 300, 0, 2, 1, 'component'))
+                               'GPU', "2x habit reward", 300, 0, 2, 1, 'component'))
         self.items.append(SetItem('Motherboard', os.path.join("assets", "art", "mobo.gif"),
-                               'component', "2x exeriance reward", 200, 0, 2, 1, 'component'))
+                               'motherboard', "2x exeriance reward", 200, 0, 2, 1, 'component'))
         self.items.append(SetItem('RAM 16gb', os.path.join("assets", "art", "ramred.gif"),
-                               'component', "Increases your characters max hacks to 16", 150, 0, 16, 1, 'component'))
+                               'RAM', "Increases your characters max hacks to 16", 150, 0, 16, 1, 'component'))
         self.items.append(SetItem('RAM 8gb', os.path.join("assets", "art", "ramgreen.gif"),
-                               'component', "Increases your characters max hacks to 8", 75, 0, 8, 1, 'component'))
+                               'RAM', "Increases your characters max hacks to 8", 75, 0, 8, 1, 'component'))
 
         # software items
         self.items.append(SetItem('Fork', os.path.join("assets", "art", "fork.gif"),
-                               'software', "2x habit reward", 10000, 5, 2, 5, 'software'))
+                               'fork', "2x habit reward", 10000, 5, 2, 5, 'software'))
         self.items.append(SetItem('Fork Burst', os.path.join("assets", "art", "fork.gif"),
-                               'software', "2x habit reward", 10000, .000138, 2, 5, 'software'))
+                               'fork', "2x habit reward", 10000, .000138, 2, 5, 'software'))
         self.items.append(SetItem('Fortify', os.path.join("assets", "art", "fortify.gif"),
-                               'software', "50% less damage for bad habits and missing habits", 2500, 5, .5, 5, 'software'))
+                               'fortify', "50% less damage for bad habits and missing habits", 2500, 5, .5, 5, 'software'))
         self.items.append(SetItem('Fortify Burst', os.path.join("assets", "art", "fortify.gif"),
-                               'software', "50% less damage for bad habits and missing habits", 2500, .000138 , .5, 5, 'software'))
+                               'fortify', "50% less damage for bad habits and missing habits", 2500, .000138 , .5, 5, 'software'))
         self.items.append(SetItem('Penetrate', os.path.join("assets", "art", "penetrate.gif"),
-                               'software', "2x damage to bosses, receive 1/2 of habit reward", 7500, 5, 2, 5, 'software'))
+                               'penetrate', "2x damage to bosses, receive 1/2 of habit reward", 7500, 5, 2, 5, 'software'))
         self.items.append(SetItem('Penetrate Burst', os.path.join("assets", "art", "penetrate.gif"),
-                               'software', "2x damage to bosses, receive 1/2 of habit reward", 7500, .000138, 2, 5, 'software'))
+                               'penetrate', "2x damage to bosses, receive 1/2 of habit reward", 7500, .000138, 2, 5, 'software'))
         self.items.append(SetItem('Smokescreen', os.path.join("assets", "art", "smoke.gif"),
-                               'software', "restore to full health", 5000, 0, 50, 5, 'software'))
+                               'smokescreen', "restore to full health", 5000, 0, 50, 5, 'software'))
         self.items.append(SetItem('Smokescreen Burst', os.path.join("assets", "art", "smoke.gif"),
-                               'software', "Restore to full health", 5000, 0, 100, 5, 'software'))
+                               'smokescreen', "Restore to full health", 5000, 0, 100, 5, 'software'))
         
         # hardware items
         self.items.append(SetItem('Desk', os.path.join("assets", "art", "desk.gif"),
-                                  'hardware', "Increase max number of software slots to 1 and component slots to 2", 500, 0, 2, 1, 'hardware'))
+                                  'desk', "Increase max number of software slots to 1 and component slots to 2", 500, 0, 2, 1, 'hardware'))
         self.items.append(SetItem('Desktop', os.path.join("assets", "art", "desktop.gif"),
-                                  'hardware', "Increase max number of software slots to 2 and component slots to 3", 2000, 0, 3, 1, 'hardware'))
+                                  'desktop', "Increase max number of software slots to 2 and component slots to 3", 2000, 0, 3, 1, 'hardware'))
         self.items.append(SetItem('Laptop', os.path.join("assets", "art", "laptop.gif"),
-                                  'hardware', "Increase max number of software slots to 1 and component slots to 3", 1250, 0, 3, 1, 'hardware'))
+                                  'laptop', "Increase max number of software slots to 1 and component slots to 3", 1250, 0, 3, 1, 'hardware'))
         self.items.append(SetItem('Server', os.path.join("assets", "art", "server.gif"),
-                                  'hardware', "Increase max number of software slots to 3 and component slots to 4", 5000, 0, 4, 1, 'hardware'))
+                                  'server', "Increase max number of software slots to 3 and component slots to 4", 5000, 0, 4, 1, 'hardware'))
         self.items.append(SetItem('Terminal', os.path.join("assets", "art", "terminal.gif"),
-                                  'hardware', "Increase max number of software slots to 3 and component slots to 5", 10000, 0, 5, 1, 'hardware'))
+                                  'terminal', "Increase max number of software slots to 3 and component slots to 5", 10000, 0, 5, 1, 'hardware'))
 
         # food items
         self.items.append(SetItem('Cake', os.path.join("assets", "art", "cake.gif"),
-                                  'food', "cake", 15,  0, 1, 1, 'food'))
+                                  'user_def', "cake", 15,  0, 1, 1, 'food'))
         self.items.append(SetItem('Chicken', os.path.join("assets", "art", "chicken.gif"),
-                                  'food', "chicken", 10,  0, 1, 1, 'food'))
+                                  'user_def', "chicken", 10,  0, 1, 1, 'food'))
         self.items.append(SetItem('Pizza', os.path.join("assets", "art", "pizza.gif"),
-                                  'food', "pizza", 20,  0, 1, 1, 'food'))
+                                  'user_def', "pizza", 20,  0, 1, 1, 'food'))
         self.items.append(SetItem('Popcorn', os.path.join("assets", "art", "popcorn.gif"),
-                                  'food', "popcorn", 5, 0, 1, 1, 'food'))
+                                  'user_def', "popcorn", 5, 0, 1, 1, 'food'))
         self.items.append(SetItem('Soda', os.path.join("assets", "art", "soda.gif"),
-                                  'food', "soda", 30, 0,  1, 1, 'food'))
+                                  'user_def', "soda", 30, 0,  1, 1, 'food'))
 
         # miscellaneous items
         self.items.append(SetItem('Change', os.path.join("assets", "art", "change.gif"),
-                                  'misc', "Increase experiance by 50", 50, 0, 50, 1, 'misc'))
+                                  'money', "Increase experiance by 50", 50, 0, 50, 1, 'misc'))
         self.items.append(SetItem('Dollars', os.path.join("assets", "art", "dollars.gif"),
-                                  'misc', "Increase experiance by 500", 500, 0, 500, 1, 'misc'))
+                                  'money', "Increase experiance by 500", 500, 0, 500, 1, 'misc'))
         self.items.append(SetItem('Gold coins', os.path.join("assets", "art", "goldcoins.gif"),
-                                  'misc', "Increase experiance by 50000", 50000, 0, 50000, 1, 'misc'))
+                                  'money', "Increase experiance by 50000", 50000, 0, 50000, 1, 'misc'))
         self.items.append(SetItem('Money bag', os.path.join("assets", "art", "moneybag.gif"),
-                                  'misc', "Increase experiance by 2000", 2000, 0, 2000, 1, 'misc'))
+                                  'money', "Increase experiance by 2000", 2000, 0, 2000, 1, 'misc'))
 
 
         # create a canvas to allow for scrolling of the shop Frame
