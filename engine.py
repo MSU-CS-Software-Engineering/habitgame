@@ -600,13 +600,50 @@ class GUI(Frame):
         self.options_menu.entryconfig(2, state="normal")
         self.update_boss_data()
 
+    def remove_cash(self, amount):
+        self.character.cash -= amount
+
+        #Set lower limit for character cash
+        if self.character.cash < 0:
+            self.character.cash = 0
+
+        
+            
     def check_dailies_init(self):
-        if self.game_data.lastran != '':
+        if len(self.game_data.lastran) > 0:
             lastran_date = datetime.strptime(self.game_data.lastran,
                                              "%Y-%m-%d").date()
-            
-            days_elapsed = self.current_date.day - lastran_date.day
+
+            missed_dailies = 0
+            days_missed = (self.current_date - lastran_date).days
+            for hack in self.character.hacks.values():
+                if hack.h_type == "daily":
+                    missed_dailies += 1
+                    
+                    self.remove_cash(int(hack.value)*days_missed)
+                    self.boss.distance_from_character -= 5
+                    self.redraw()
+                    self.update_stats_banner()
+                    self.update_boss_data()
+                    self.update_distance_bar()
+                    self.change_character_emotion(1, "mainMad.gif")
+
+            if missed_dailies:
+                if missed_dailies > 1:
+                    plural_string = "s"
+                    
+                else:
+                    plural_string = ""
+                    self.inst_notify("Exclamation",
+                                     "You failed to complete " 
+                + str(missed_dailies) + " daily hack" + plural_string + "!")
+
+            note_message_part_1 = 'Make sure to log in every day and '
+            note_message_part_2 = 'complete your hacks or you may be robbed!'
+            self.inst_notify("Note", note_message_part_1 + \
+                             note_message_part_2)
         
+                             
         
     def check_dailies(self):
         missed_dailies = 0
@@ -616,8 +653,9 @@ class GUI(Frame):
                 (self.current_date - timedelta(hours=24))):
 
                 missed_dailies += 1
+                
                 days_missed = (self.current_date - hack.timestamp).days
-                self.character.cash -= int(hack.value)*days_missed
+                self.remove_cash(int(hack.value)*days_missed)
 
                 #Make sure character cash isn't negative 
                 if self.character.cash < 0:
