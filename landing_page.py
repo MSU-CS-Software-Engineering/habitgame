@@ -186,7 +186,7 @@ class Landing_Area_Frame(Frame):
             
             for key in hack_dict.keys():
                 hack = hack_dict[key]
-                print(hack.h_type)
+ 
                 if hack.timestamp <= date.today():
                     
                     hack_frame = Hack_Frame(self, hack.ID, self.hack_type)
