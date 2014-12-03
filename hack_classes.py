@@ -100,10 +100,10 @@ class Character:
             value_mult /= self.effects['penetrate'].effect
  
         if hack.h_type == "daily":
-            if hack.timestamp < date.today():
+            if hack.timestamp <= date.today():
                 
                 self.hacks[hack_ID].timestamp = date.today() + timedelta(hours=24)
-                print(date.today())
+                
             else:
                 #self.remove_hack(hack_ID)
                 return False
@@ -202,7 +202,7 @@ class Hack:
         self.title = title
         self.description = desc
         self.ID = -1
-        self.timestamp = date.today() - timedelta(hours=24)
+        self.timestamp = date.today() #- timedelta(hours=24)
         self.value = value
         self.exp = exp    #Temporarily defaults to 100.
 
