@@ -1041,7 +1041,7 @@ class GUI(Frame):
         hack_type = self.character.get_hack(hack_ID).h_type
 
         #messagebox.showinfo("Hack Info", "Completed Hack "+str(ID))
-        if(self.character.complete_hack(hack_ID)):
+        if(self.character.complete_hack(hack_ID, current_date)):
             self.redraw()
             self.update_stats_banner()
             if hack_value < 0: # For negative habits
