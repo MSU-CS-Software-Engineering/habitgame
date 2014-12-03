@@ -10,7 +10,6 @@ class Character:
         cash: Total currency          (int)
         exp: Total experience points  (int)
         level: Current level          (int)
-        health: "Health" of character (int)
         Attack Multiplier: Damage modifier to bosses: (float)
         hacks: Current hacks          (list of Hack objects)
         items: Owned (soft|hard)ware  (list of Item objects)

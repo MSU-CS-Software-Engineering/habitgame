@@ -579,9 +579,10 @@ class GUI(Frame):
                 missed_dailies += 1
                 days_missed = (date.today() - hack.timestamp).days
                 self.character.cash -= int(hack.value)*days_missed
-                self.character.health -= 5*days_missed #FIXME Needs boss attack multiplier
+                self.boss.distance_from_character -= 5 
                 self.redraw()
                 self.update_stats_banner()
+                self.update_distance_bar()
                 self.change_character_emotion(1, "mainMad.gif")
 
         if missed_dailies:
