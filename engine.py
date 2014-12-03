@@ -1120,7 +1120,6 @@ class GUI(Frame):
         self.update_item_count()
         
     def use_item(self, item):
-        
         if item.component == 'software':
             if item.item_type == 'smokescreen':
                 self.boss.push_back(item.effect)
@@ -1223,12 +1222,18 @@ class GUI(Frame):
         #Increase character cash based on boss level
         reward = [500,750,1200,2000,5000]
 
-        self.character.cash += reward[self.boss.level]
+        if self.boss.level < len(reward):
+            self.character.cash += reward[self.boss.level]
+        else:
+            self.character.cash += reward[len(reward)-1]
 
         #Increase character experience
         experience_gain = [100,400,900,1500,2500]
-        
-        self.character.exp += experience_gain[self.boss.level]
+
+        if self.boss.level < len(experience_gain):
+            self.character.exp += experience_gain[self.boss.level]
+        else:
+            self.character.exp += experience_gain[len(experience_gain)-1]
 
         #Upgrade boss to next authoritative figure
         self.boss.next()
