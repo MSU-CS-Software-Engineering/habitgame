@@ -578,7 +578,7 @@ class GUI(Frame):
 
         self.help_menu = Menu(self.menu, tearoff=0)
         self.help_menu.add_command(label="How to play", command=self.temp_menu_func)
-        self.help_menu.add_command(label="About", command=self.temp_menu_func)
+        self.help_menu.add_command(label="About", command=self.spawn_about_window)
         #Used for distance bar debugging
         #self.help_menu.add_command(label="Distance test", command=self.distance_test)
         self.menu.add_cascade(label="HELP", menu=self.help_menu)
@@ -621,11 +621,11 @@ class GUI(Frame):
                         missed_dailies += 1
 
                         self.remove_cash(int(hack.value)*days_missed)
-                        self.boss.distance_from_character -= 5
+                        self.boss.approach_character(5)
                         self.redraw()
                         self.update_stats_banner()
                         self.update_boss_data()
-                        self.update_distance_bar()
+                        #self.update_distance_bar()
                         self.change_character_emotion(1, "mainMad.gif")
 
                 if missed_dailies:
@@ -661,11 +661,10 @@ class GUI(Frame):
                 if self.character.cash < 0:
                     self.character.cash = 0
                     
-                self.boss.distance_from_character -= 5
+                self.boss.approach_character(5)
                 self.redraw()
                 self.update_stats_banner()
                 self.update_boss_data()
-                self.update_distance_bar()
                 self.change_character_emotion(1, "mainMad.gif")
 
         if missed_dailies:
@@ -1046,6 +1045,59 @@ class GUI(Frame):
         self.component_label = Label(self.items_frame, text="Components:   ")
         self.component_label.grid(row=3, column=0, sticky=W, pady=4, padx=5)
         self.component_label.configure(font='arial 14')
+
+    def spawn_about_window(self):
+        about_window = Toplevel()
+        about_window.title("About Daily Hack")
+
+        about_window.config(background='#DCDAD5')
+        about_window.columnconfigure(0, weight=1)
+        about_window.columnconfigure(1, weight=1)
+        about_window.minsize(width=300, height=200)
+        about_window.maxsize(width=300, height=200)
+
+        #Center window
+        width = about_window.winfo_width()
+        height = about_window.winfo_height()
+        
+        
+        x = (about_window.winfo_screenwidth() // 2) - \
+            (width // 2)
+        y = (about_window.winfo_screenheight() // 2) - \
+            (height // 2)
+
+        
+        #Image frame
+        main_image = PhotoImage(file=os.path.join("assets", "art", "mainHappy.gif"))
+        main_image_frame = Label(about_window, image=main_image, padding="25 0 5 0")
+        main_image_frame.grid(row=0, column=0, rowspan=3)
+        main_image_frame.image = main_image
+
+        #Logo frame
+        logo_image = PhotoImage(file=os.path.join("assets", "art", "logo.gif"))
+        logo_image_frame = Label(about_window, image=logo_image, padding="0 0 0 0")
+        logo_image_frame.grid(row=1, column=1, sticky='w')
+        logo_image_frame.image = logo_image
+        
+        #Text frame
+        message_part_1 = 'Version 1.1'
+        message_part_2 = '\nDaily Hack is brought to you by \nMSU Software engineering \nTeam 2'
+        
+        complete_message = message_part_1 + message_part_2
+                           
+        
+        text_frame = Message(about_window, text=complete_message)  
+
+        text_frame.configure(background='#DCDAD5',
+                             foreground = '#000000',
+                             font='arial 8',
+                             justify='center',
+                             width=200)
+        
+        text_frame.grid(row=4, column=0, columnspan=2)
+                             
+        about_window.geometry('{}x{}+{}+{}'.format(width, height,
+                                                   x, y))
 
     def make_footer(self):
         # footer
