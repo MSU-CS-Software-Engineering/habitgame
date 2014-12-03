@@ -171,7 +171,7 @@ class MyInventory():
                    'Fortify Burst':os.path.join("assets", "art", "emblem_fortify.gif"),
                    'Fork Burst':os.path.join("assets", "art", "emblem_fork.gif"),
                    'Smokescreen Burst':os.path.join("assets", "art", "emblem_smoke.gif"),
-                   'Penetrate Burst':os.path.join("assets", "art", "emblem_burst.gif"),
+                   'Penetrate Burst':os.path.join("assets", "art", "emblem_penetrate.gif"),
                    'Laptop':os.path.join("assets", "art", "emblem_laptop.gif"),
                    'Desktop':os.path.join("assets", "art", "emblem_desktop.gif"),
                    'Terminal':os.path.join("assets", "art", "emblem_terminal.gif"),
