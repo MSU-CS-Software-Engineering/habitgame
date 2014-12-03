@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+    <token>xoH35mr0iRwAAAAAAAAAI0OZOexRWxqEKabFZRlf6m2WY3j8xkLEcwAEpV297oXv</token>
+    <name>Krugg</name>
+    <cash>42</cash>
+    <exp>120</exp>
+    <level>2</level>
+    <habits>
+        <habit>Practice smashing.</habit>
+        <habit>Brush teeth.</habit>
+    </habits>
+    <tasks>
+        <task>
+            <index>0</index>
+            <title>Kill Grugg</title>
+            <description>Grugg stole favorite rock. Must pay.</description>
+            <due>10/4/2014</due>
+        </task>
+        <task>
+            <index>1</index>
+            <title>Dance</title>
+            <description>Dance good.</description>
+            <due>10/10/2014</due>
+        </task>
+        <task>
+            <index>2</index>
+            <title>Grunt menacingly</title>
+            <description>Favorite activity, like sound of own voice.</description>
+            <due>10/5/2014</due>
+        </task>
+    </tasks>
+    <items>
+        <item>Laptop</item>
+        <item>Pizza</item>
+    </items>
+</data>

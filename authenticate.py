@@ -14,7 +14,8 @@ our login page to finish the process of authentication.
 db.sync_files(file_name) will sync between local and remote files.
 
 """
-   
+
+import xml.dom.minidom
 import dropbox
 import webbrowser
 import os.path
@@ -24,7 +25,6 @@ from tkinter import ttk
 
 
 class db:
-
     def set_code(self, new_code):
         self.code = new_code
 
@@ -61,7 +61,13 @@ class db:
         else:
             print('The 2 files have the same timestamp, no sync required')
 
-               
+    def getNodeText(self, nodelist):
+        rc = []
+        for node in nodelist:
+            if node.nodeType == node.TEXT_NODE:
+                rc.append(node.data)
+        return ''.join(rc)
+    
     def dropbox_start(self):
         """
         starts the dropbox process; control will be passed
@@ -76,12 +82,14 @@ class db:
         # check to see if there's an xml file already. if so, no need to go through the whole flow 
         if os.path.isfile(self.file_name):
                
-            #TODO: use XML parsing instead of reading the file line by line
+            #DONE: use XML parsing instead of reading the file line by line
                
             file = open(self.file_name)
-            line = file.readline()
-            access_token = line.strip()
-     
+            file_string = file.read()
+            character_xml_data = xml.dom.minidom.parseString(file_string)
+            token_node = character_xml_data.getElementsByTagName("token")[0]
+            access_token = self.getNodeText(token_node.childNodes)
+            
             self.client = dropbox.client.DropboxClient(access_token)
        
             # if there's a local file but no remote, push the local to db
@@ -105,7 +113,7 @@ class db:
             self.login_window()
         
 
-    def dropbox_finish(self, code):
+    def dropbox_finish(self, code, firstname, lastname, username, birthday):
         """
         Call this function to finish the dropbox flow and create a dropbox client
         (after the user pastes their authorization code in the login screen).
@@ -120,7 +128,42 @@ class db:
             file = open(self.file_name, 'wb')
             # TODO: file creation function goes here, placeholder write
             # init_file(file)
-            file.write(access_token)
+
+            newdoc = xml.dom.minidom.Document()
+
+            #Create XML Node Elements
+            root_element = newdoc.createElement('data')
+            token_element = newdoc.createElement('token')
+            firstname_element = newdoc.createElement('firstname')
+            lastname_element = newdoc.createElement('lastname')
+            username_element = newdoc.createElement('username')
+            birthday_element = newdoc.createElement('birthday')
+
+            #Create text nodes for elements
+            token_text = newdoc.createTextNode(access_token)
+            firstname_text = newdoc.createTextNode(firstname)
+            lastname_text = newdoc.createTextNode(lastname)
+            username_text = newdoc.createTextNode(username)
+            birthday_text = newdoc.createTextNode(birthday)
+
+            #Append text nodes to elements
+            token_element.appendChild(token_text)
+            firstname_element.appendChild(firstname_text)
+            lastname_element.appendChild(lastname_text)
+            username_element.appendChild(username_text)
+            birthday_element.appendChild(birthday_text)
+            
+            #Append elements to root element
+            root_element.appendChild(token_element)
+            root_element.appendChild(firstname_element)
+            root_element.appendChild(lastname_element)
+            root_element.appendChild(username_element)
+            root_element.appendChild(birthday_element)
+            newdoc.appendChild(root_element)
+            
+            self.data_document = newdoc
+            file.write(self.data_document.toprettyxml(indent="   ", encoding="utf-8"))
+            
             file.close()
    
             # for some reason open(file_name, 'r+') (read AND write) wouldn't work, so I had to
@@ -129,6 +172,7 @@ class db:
             file = open(self.file_name, 'r')
             self.client.put_file('//' + self.file_name, file)
             file.close()
+            
         else:
             # file on db, so this is an existing user w/ a new install
             file = open(self.file_name, 'wb')
@@ -144,7 +188,9 @@ class db:
         then it destroys the window when that's finished.
         """
 
-        self.dropbox_finish(self.auth_code.get())
+        birthday_string = "-".join((self.birthdate_month.get(), self.birthdate_day.get(), self.birthdate_year.get()))
+        
+        self.dropbox_finish(self.auth_code.get(), self.fname.get(), self.lname.get(), self.character_name.get(), birthday_string)
         self.root.destroy()
 
     
@@ -156,6 +202,8 @@ class db:
 
         self.root = Tk()
         self.root.title("User Information")
+        self.root.resizable(0,0)
+        self.root.protocol("WM_DELETE_WINDOW", lambda : None)
 
         self.main_window = ttk.Frame(self.root, padding = "3 3 12 12")
         self.main_window.grid(column=0, row=0, stick = 'nesw')
@@ -239,7 +287,7 @@ class db:
         """
         This runs the dropbox setup function when a db object is first initialized.
         """
-        
+        self.data_document = ''
         self.dropbox_start()
         
         

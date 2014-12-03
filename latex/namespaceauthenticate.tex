@@ -1,0 +1,24 @@
+\hypertarget{namespaceauthenticate}{\section{authenticate Namespace Reference}
+\label{namespaceauthenticate}\index{authenticate@{authenticate}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classauthenticate_1_1db}{db}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This class handles authorization and sync for the dropbox storage. How to use:
+When we start the program, instantiate the class and assign it to a variable (we
+need to have a copy of the dropbox client to sync files).
+  
+db = db()
+  
+The __init__ function below starts the authentication process. If there is a local
+character data file it will simply make the client from the data inside with no
+login window necessary. If there is no local file, it opens the dropbox site and
+our login page to finish the process of authentication.
+  
+db.sync_files(file_name) will sync between local and remote files.\end{DoxyVerb}
+ 

@@ -1,126 +1,412 @@
-#Landing Page for Daily Hack
-#Using tkinter.ttk b/c it allows for a better looking gui.
-#some functionality varies between tkinter and ttk
-
+import os.path
+from datetime import date, timedelta #For Timestamps
 from tkinter  import *
 from tkinter.ttk import *
+
 from tkinter import messagebox  #Must be explicitly imported. Used for placeholders.
-import authenticate
 
 
-class Application(Frame):              
-    def __init__(self, master=None):
-        Frame.__init__(self, master)   
-        self.grid(sticky=N+S+W+E)                     
-        self.top_frame()
+class Hack_Frame(Frame):
+    def __init__(self, parent, ID, hack_type, empty=0):
+        Frame.__init__(self, parent)
+        self.parent = parent
+        self.ID = ID
+        self.hack_type = hack_type
+        self.top_class = self.parent.parent.parent
         
+        self.name_label = Label(self,
+                                text = '',
+                                anchor = CENTER,
+                                background = "#F9D386",
+                                font = "Veranda 16 bold")
+        self.name_label.pack(fill = X, expand = True)
 
-    def top_frame(self):
-        #Top window, this allows for resizing
-        top=self.winfo_toplevel()
-        top.rowconfigure(0, weight=1)
-        top.columnconfigure(0, weight=1)
+        self.description_label = Label(self,
+                                       text = '',
+                                       wraplength = 375,
+                                       background = "#EFE4B0",
+                                       font = "arial 12",
+                                       padding = 5, justify = LEFT)
+        self.description_label.pack(fill = X, expand = True)
 
+        self.value_label = Label(self,
+                                 text = '',
+                                 font = "arial 12",
+                                 padding = 5,
+                                 background = "#EFE4B0")
+        self.value_label.pack(fill = X, expand = True)
         
-        self.rowconfigure(3,weight=1)
-        self.columnconfigure(0,weight=1)
+        self.date_time_label = Label(self,
+                                     text = '',
+                                     font = "arial 12",
+                                     padding = 5,
+                                     background = "#EFE4B0")
+        self.date_time_label.pack(fill = X, expand = True)
+ 
+        if empty == 0:
+            self.complete_button = Button(self)
+            self.complete_button.configure(text = 'Complete',
+                                           style = 'complete.TButton',
+                                           image = self.parent.parent.complete_button_image,
+                                           compound = 'left',
+                                           cursor = 'hand2',
+                                           command = self.remove)
 
+            complete_button_style = Style()
+            complete_button_style.configure('complete.TButton',
+                                            font = 'arial 12 bold',
+                                            relief = 'flat',
+                                            padding = '0 3 0 3',
+                                            foreground = 'black',
+                                            background = '#C6E29A')
+            
+            self.complete_button.image = self.parent.parent.complete_button_image
+
+            self.complete_button.pack(fill = X,
+                                      expand = True,
+                                      side = BOTTOM)
+            
+        self.set_style('frame_style.TFrame', '#EBEDF1', 100)
+
+    def remove(self):
+        #Pass the data to the top-level(parent->parent->parent)
+        self.top_class.complete_hack(self.ID)
+        self.destroy()
+
+    def function_builder(self, args):
+        messagebox.showinfo("Place Holder", "go to " + args)
+
+    def set_complete_button_text(self, text):
+        self.complete_button.configure(text = text)
         
-        top_frame = Frame(self)
-        top_frame.grid(row=0,sticky='nesw')
-       
-        app_style = Style() #Necessary to stylize application.
-
-        #Area for Program logo
-        header = Label(top_frame, text = 'Daily Hack',
-                       foreground='black')
-        header.pack(side=LEFT)
+    def set_style(self, name, background_color, height=None):
+        _style = Style()
         
-        #Frame for all of the stats to show up
-        stats =Frame(self)
-        stats.grid(row=1,sticky='nesw')
+        if height != None:
+            _style.configure(name, background = background_color,
+                             height = height)
+        else:
+            _style.configure(name, background = background_color)
+
+        self.configure(style = name)
+
+    def set_description_label(self, text):
+        self.description_label.configure(text = "Note: " + text)
+
+    def set_name_label(self, text):
+        self.name_label.configure(text = text)
+
+    def set_value_label(self, text):
+        self.value_label.configure(text = "Value: " + text)
+
+    def set_date_time_label(self, text):
+        self.date_time_label.configure(text = "Date/Time: " + text)
+
+    
         
-
-        task_ratio = Label(stats, text = 'Stats: ')
-        task_ratio.grid(row=0,column=0)
-        cash = Label(stats, text = 'Cash: ')
-        cash.grid(row=0,column=1)
+class Landing_Area_Frame(Frame):
+    def __init__(self, parent, hack_type):
+        Frame.__init__(self, parent)
+        self.set_style()
+        self.frames = []
+        self.number_of_frames = 0
+        self.empty_frames_message = ''
+        self.hack_type = hack_type
+        self.column = self.get_column()
+        self.parent = parent
+        self.current_row = 0
         
-        #Progress bar showing daily tasks completion at a glance
-        #Example: Between 0001 and 0600 100% task completion = green
-        #Example: Between 0600 and 1200 50% task completion = yello
-        #Example: Between 1200 and 1800 0% task completion = red
-        #This will likely consist of frames that color as the day goes on
-        #progression will depend on time of day.
-        #right now there is only one progress bar to for place holder
+    def remove_frames(self):
+        for frame in self.frames:
+            frame.destroy()
+
+        self.current_row = 1
+        self.frames = []
         
-        daily_countdown_frame =Frame(self)
-        daily_countdown_frame.grid(row=2,sticky='nesw')
+    def set_style(self, height=None):
+        _style = Style()
+        _style.configure('frame_style.TFrame',
+                         background = '#EBEDF1')
+        if height != None:
+            _style.configure(height = height)
         
-        daily_timeline_header = Label(daily_countdown_frame,
-                                      text = 'Daily Timeline',)
-        daily_timeline_header.grid(row = 0, column = 0)
+        self.configure(style = 'frame_style.TFrame')
 
-        time_line_progress = Progressbar(daily_countdown_frame,
-                                             orient = "horizontal", length = 400,
-                                             mode = "determinate")
-        time_line_progress.grid(row = 1, column = 0)
-        tl_label = Label(daily_countdown_frame, text = 'progress bar')
-        tl_label.grid(row = 1, column = 0)
+    def set_header(self, text, color):
+        self.header = Label(self, text = text,
+                            anchor = CENTER,
+                            font = "Veranda 18 bold",
+                            foreground = 'black',
+                            background = color)
+
+        self.header.grid(row = 0, column = self.column, sticky = 'new',
+                         pady = (3,0), padx = 3)
+
+    def get_current_row(self):
+        self.current_row += 1
+        return self.current_row
+    
+    def get_column(self):
+        if self.hack_type == 'habit':
+            return 0
+            
+        elif self.hack_type == 'daily':
+            return 2
+
+        else:
+            return 4
+
+    def set_frames(self, hack_dict):
         
+        #Hack Code Area
+        if len(hack_dict) > 4:
+            self.number_of_frames = 5
+            
+        elif len(hack_dict) == 0:
+            self.number_of_frames = 0
+            
+            hack_frame = Hack_Frame(self, 0, self.hack_type, 1)
+            hack_frame.grid(row = 1, column = self.column, sticky = 'news',pady = (3,0), padx = 3)
 
-        #Habit frame broken into tabed areas that will list respective
-        #habits, tasks, or goals
-        habit_frame = Notebook(self, height = 200, width = 400, padding=5)
-        habit_frame.grid(row=3, sticky=N+S+E+W)
-        habit_frame.grid_rowconfigure(3, weight=1)
-        
-
-        app_style.configure("W.TFrame", background='white')
-
-        tab_habit = Frame(habit_frame, style="W.TFrame")
-        tab_task = Frame(habit_frame, style ="W.TFrame")
-        tab_goal = Frame(habit_frame, style ="W.TFrame")
-
-        habit_frame.add(tab_habit, text='Habits')
-        habit_frame.add(tab_task, text='Tasks')
-        habit_frame.add(tab_goal, text='Goals')
-
-        add_habit_btn = Button(tab_habit, text='Add new habit', command = add_habit)
-        add_task_btn = Button(tab_task, text='Add new task', command = add_task)
-        add_goal_btn = Button(tab_goal, text='Add new goal', command = add_goal)
-
-        add_habit_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_task_btn.place(relx=0.95, rely=0.95, anchor=SE)
-        add_goal_btn.place(relx=0.95, rely=0.95, anchor=SE)
-
-        habit1=Frame(tab_habit)
-        habit1.grid()
+            if self.hack_type == 'daily':
+                label_string = 'dailies'
+            elif self.hack_type == 'habit':
+                label_string = 'habits'
+            else:
+                label_string = 'tasks'
                 
-        #standard bottom footer for contact infor, company info, and other
-        bottom_frame =Frame(self)
-        bottom_frame.grid(row=4, sticky=N+S+E+W)
-        bottom_header = Label(bottom_frame, text = 'Copyright 2014',
-                              foreground='black')
-        bottom_header.pack()
+            hack_frame.set_name_label("No "+label_string+" to Display")
+            self.frames.append(hack_frame)
+            
+        else:
+            self.number_of_frames = len(hack_dict)
 
-def add_habit():
-    messagebox.showinfo("Placeholder", "I'm an add_habit stub!")
+            
+        if self.number_of_frames != 0:
+            
+            for key in hack_dict.keys():
+                hack = hack_dict[key]
+ 
+                if hack.timestamp <= self.parent.parent.current_date:
+                    
+                    hack_frame = Hack_Frame(self, hack.ID, self.hack_type)
+                    hack_frame.grid(row = self.get_current_row(),
+                                    column = self.column,
+                                    sticky = 'new', pady = (3,0),
+                                    padx = 3)
+                    hack_frame.set_name_label(hack.title)
+                    hack_frame.set_description_label(hack.description)
+                    hack_frame.set_value_label(str(hack.value))
+                    hack_frame.set_date_time_label(str(hack.timestamp))
+                    
+                    self.frames.append(hack_frame)
+                    
+                else:
+                    flag_hack = False
+                    for key in hack_dict.keys():
+                        hack = hack_dict[key]
+                        if hack.h_type == 'daily' and hack.timestamp <= self.parent.parent.current_date:
+                            flag_hack = True
+                    if flag_hack == False:
+                        hack_frame = Hack_Frame(self, 0, self.hack_type, 1)
+                        hack_frame.grid(row = 1, column = self.column, sticky = 'news',pady = (3,0), padx = 3)
 
-def add_task():
-    messagebox.showinfo("Placeholder", "I'm an add_task stub!")
+                        if self.hack_type == 'daily':
+                            label_string = 'dailies'
+                        elif self.hack_type == 'habit':
+                            label_string = 'habits'
+                        else:
+                            label_string = 'tasks'
+                            
+                        hack_frame.set_name_label("No "+label_string+" to Display")
+                        self.frames.append(hack_frame)
 
-def add_goal():
-    messagebox.showinfo("Placeholder", "I'm an add_goal stub!")
+  
+class Landing_Page (Frame):
+    def __init__(self, parent, character):
+        Frame.__init__(self, parent)
 
-#handle login to dropbox
-db = authenticate.db()
+        self.parent = parent
+        self.character = character
+        self.complete_button_image = PhotoImage(file=os.path.join("assets", "art", "check.gif"))
+        
+        self.columnconfigure(0, weight = 1)
+        self.columnconfigure(2, weight = 1)
+        self.columnconfigure(4, weight = 1)
+        #self.columnconfigure(3, weight = 1)
+        #self.rowconfigure (4, weight =1)
+        #self.rowconfigure (5, weight = 1)
+        self.rowconfigure (6, weight = 1)
+        
+        
+
+        self.habit_dict = {k:self.character.hacks[k]
+                           for k in self.character.hacks
+                           if self.character.hacks[k].h_type == 'habit'}
+        self.dailies_dict = {k:self.character.hacks[k]
+                             for k in self.character.hacks
+                             if self.character.hacks[k].h_type == 'daily'}
+        self.tasks_dict = {k:self.character.hacks[k]
+                           for k in self.character.hacks
+                           if self.character.hacks[k].h_type == 'task'}
+
+        self.set_landing_window()
+        self.go_to_habits_button = Button(self.habit_area,
+                                          text = 'GO TO HABITS',
+                                          cursor = 'hand2',
+                                          style = 'go_to_button.TButton')
+                                                  
+        self.go_to_dailies_button = Button(self.daily_area,
+                                           text = 'GO TO DAILIES',
+                                           cursor = 'hand2',
+                                           style = 'go_to_button.TButton')
+                                           
+        self.go_to_tasks_button = Button(self.task_area,
+                                         text='GO TO TASKS',
+                                         cursor = 'hand2',
+                                         style = 'go_to_button.TButton')
+                                        
+        
+        go_to_button_style = Style()
+
+        go_to_button_style.configure('go_to_button.TButton',
+                                     font = 'arial 14 bold',
+                                     relief = 'flat',
+                                     padding = 5,
+                                     foreground ='#54C9EB',
+                                     background = '#283D57')
+        self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
 
 
-app = Application()                       
-app.master.title('Daily Hack')    
-app.mainloop()
+
+
+    def redraw(self, character):
+        self.go_to_habits_button.destroy()
+        self.go_to_dailies_button.destroy()
+        self.go_to_tasks_button.destroy()
+        
+
+        
+        #Update class' character data instance
+        self.character = character
+        self.habit_dict = {k:self.character.hacks[k]
+                           for k in self.character.hacks
+                           if self.character.hacks[k].h_type == 'habit'}
+        self.dailies_dict = {k:self.character.hacks[k]
+                             for k in self.character.hacks
+                             if self.character.hacks[k].h_type == 'daily'}
+        self.tasks_dict = {k:self.character.hacks[k]
+                           for k in self.character.hacks
+                           if self.character.hacks[k].h_type == 'task'}
+
+        #Destroy frames
+        self.habit_area.remove_frames()
+        self.daily_area.remove_frames()
+        self.task_area.remove_frames()
+        
+        #Update area frames
+        self.habit_area.set_frames(self.habit_dict)
+        self.daily_area.set_frames(self.dailies_dict)
+        self.task_area.set_frames(self.tasks_dict)
+
+        self.go_to_habits_button = Button(self.habit_area,
+                                          text = 'GO TO HABITS',
+                                          cursor = 'hand2',
+                                          style = 'go_to_button.TButton')
+                                                  
+        self.go_to_dailies_button = Button(self.daily_area,
+                                           text = 'GO TO DAILIES',
+                                           cursor = 'hand2',
+                                           style = 'go_to_button.TButton')
+                                           
+        self.go_to_tasks_button = Button(self.task_area,
+                                         text='GO TO TASKS',
+                                         cursor = 'hand2',
+                                         style = 'go_to_button.TButton')
+                                        
+        
+        go_to_button_style = Style()
+
+        go_to_button_style.configure('go_to_button.TButton',
+                                     font = 'arial 14 bold',
+                                     relief = 'flat',
+                                     padding = 5,
+                                     foreground ='#54C9EB',
+                                     background = '#283D57')
+        self.go_to_habits_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_dailies_button.pack(fill = X, expand = False, side = BOTTOM)
+        self.go_to_tasks_button.pack(fill = X, expand = False, side = BOTTOM)
+
+        self.parent.bind_buttons()
+        
+    def set_landing_window(self):
+        #label above progress bar
+        self.progress_label = Label(self, text="Daily Progress", padding=0)
+        self.progress_label.grid(row = 4, column =2 ,sticky='ew', pady=4, padx=5)
+        self.progress_label.configure(anchor = CENTER, font='arial 18 italic')
+        self.progress_label.rowconfigure(4, weight =1) 
+        self.progress_label.columnconfigure(3, weight = 1)
+
+        #progress bar
+        #progress = Progressbar(self, orient = 'horizontal', mode= 'determinate')
+        #progress.grid(row = 5, column=0, columnspan = 6, stick = 'ew', padx = 3)
+
+        #progress.start()
+        #progress.rowconfigure(5, weight =1)
+        #progress.columnconfigure(0, weight = 1)
+
+        #three areas for adding dailies, task, habit widgets
+ 
+        self.habit_area = Landing_Area_Frame(self, 'habit')
+        self.habit_area.set_header('HABITS', '#D95B5B')
+        self.habit_area.set_frames(self.habit_dict)
+        self.habit_area.grid(row = 6, column = 0,
+                             columnspan = 2, rowspan = 4,
+                             padx = 5, sticky = 'enws')
+
+        self.habit_area.grid_propagate(False)
+        self.habit_area.rowconfigure(6, weight = 1)
+        self.habit_area.columnconfigure(0, weight = 1)
+
+
+        self.daily_area = Landing_Area_Frame(self, 'daily')
+        self.daily_area.set_header('DAILIES', '#9AD95B')
+        self.daily_area.set_frames(self.dailies_dict)
+        self.daily_area.grid(row = 6, column = 2, columnspan = 2,
+                             rowspan = 4, padx = 5, sticky = 'enws')
+        self.daily_area.rowconfigure(6, weight = 1)
+        self.daily_area.columnconfigure(2, weight = 1)
+        self.daily_area.grid_propagate(False)
+        
+        
+        self.task_area = Landing_Area_Frame(self, 'task')
+        self.task_area.set_header('TASKS', '#5BADD9')
+        self.task_area.set_frames(self.tasks_dict)
+        self.task_area.grid(row = 6, column = 4, columnspan = 2,
+                            rowspan = 4, padx = 5, sticky = 'news')
+        self.task_area.rowconfigure(6, weight = 1)
+        self.task_area.columnconfigure(4, weight = 1)
+        self.task_area.grid_propagate(False)
+
+
+        
+        #Bottom go to buttons
+
+        
+
+        
+ 
 
 
 
+    def start(self):
+        self.progress["value"] = 0
+        self.max = 24
+        self.progress["midnight"]=24
+        self.progress["value"] = 12
 
+    def button_default(self):
+        #Placeholder
+        pass
