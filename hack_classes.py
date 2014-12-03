@@ -97,11 +97,12 @@ class Character:
         if 'fork' in self.effects:
             value_mult *= self.effects['fork'].effect
         if 'penetrate' in self.effects:
-            value_mult /= self.effects['penetrate'].effect
+            value_mult /= self.effects['penetrate'].effect   
  
         if hack.h_type == "daily":
-            if hack.timestamp < current_date:
-                self.hacks[hack_ID].timestamp = current_date
+            
+            if hack.timestamp <= current_date:
+                self.hacks[hack_ID].timestamp = date.today() + timedelta(hours=24)
 
             else:
                 #self.remove_hack(hack_ID)
