@@ -90,7 +90,7 @@ class Shop():
         self.items.append(SetItem('GPU 2gb', os.path.join("assets", "art", "gpured.gif"),
                                'GPU', "2x habit reward", 300, 0, 2, 1, 'component'))
         self.items.append(SetItem('Motherboard', os.path.join("assets", "art", "mobo.gif"),
-                               'motherboard', "2x exeriance reward", 200, 0, 2, 1, 'component'))
+                               'motherboard', "2x experiance reward", 200, 0, 2, 1, 'component'))
         self.items.append(SetItem('RAM 16gb', os.path.join("assets", "art", "ramred.gif"),
                                'RAM', "Increases your characters max hacks to 16", 150, 0, 16, 1, 'component'))
         self.items.append(SetItem('RAM 8gb', os.path.join("assets", "art", "ramgreen.gif"),

@@ -361,10 +361,7 @@ class GUI(Frame):
         self.const_current_date = self.current_date
 
         #Check for software updater
-        self.updater = Updater(self.game_data.version,
-                               master)
-        
-        self.updater.check_update()
+
 
         #bring back root window
         master.deiconify()
@@ -646,21 +643,23 @@ class GUI(Frame):
         
     def check_dailies(self):
         missed_dailies = 0
-
+        loss_mult = 1
+        if 'fortify' in self.character.effects:
+            loss_mult *= self.character.effects['fortify'].effect
         for hack in self.character.hacks.values():
             if hack.h_type == "daily" and (hack.timestamp < 
                 (self.current_date - timedelta(hours=24))):
-
+                
                 missed_dailies += 1
                 
                 days_missed = (self.current_date - hack.timestamp).days
-                self.remove_cash(int(hack.value)*days_missed)
+                self.remove_cash(int(hack.value)*days_missed//loss_mult)
 
                 #Make sure character cash isn't negative 
                 if self.character.cash < 0:
                     self.character.cash = 0
                     
-                self.boss.approach_character(5)
+                self.boss.approach_character(5//loss_mult)
                 self.redraw()
                 self.update_stats_banner()
                 self.update_boss_data()
@@ -1287,6 +1286,7 @@ class GUI(Frame):
             elif item.component == 'misc':
                 self.character.use_item(item)
                 self.update_exp()
+                self.check_level()
             elif item.component == 'food':
                 messagebox.showinfo('Break Time', 'Go enjoy some ' + str(item.description))
                 self.remove_item(item)
