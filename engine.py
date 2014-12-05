@@ -1358,6 +1358,7 @@ class GUI(Frame):
         if self.boss.health < 1:
             self.defeat_boss()
         self.check_time()
+        self.update_boss_data()
 
     #def defeat_boss(self):
     #    self.inst_notify("exclamation", self.boss.get_title() + 
